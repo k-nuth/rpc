@@ -779,7 +779,7 @@ nlohmann::json getaddressdeltas(std::vector<std::string> const& payment_addresse
         chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
                                                      libbitcoin::chain::history_compact::list history_compact_list) {
             if (ec == libbitcoin::error::success) {
-                auto const history_list = bitprim::expand(history_compact_list);
+                auto const history_list = expand(history_compact_list);
                 for (const auto & history : history_list) {
                     if (history.spend.hash() == libbitcoin::null_hash && history.output_height >= start_height &&
                         history.output_height <= end_height) {
@@ -916,7 +916,7 @@ nlohmann::json getaddressutxos(std::vector<std::string> const& payment_addresses
         chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
                                                      libbitcoin::chain::history_compact::list history_compact_list) {
             if (ec == libbitcoin::error::success) {
-                auto const history_list = bitprim::expand(history_compact_list);
+                auto const history_list = expand(history_compact_list);
                 for (const auto & history : history_list) {
                     if (history.spend.hash() == libbitcoin::null_hash) {
                         //Es outpoint

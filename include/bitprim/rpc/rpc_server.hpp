@@ -61,8 +61,8 @@ private:
     libbitcoin::blockchain::block_chain & chain_;
 
     // ZMQ
-    void *      ;
-    void *      ;
+    void *context_;
+    void *publisher_;
     uint32_t nSequence;
 };
 
