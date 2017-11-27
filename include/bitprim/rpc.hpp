@@ -20,11 +20,11 @@
 #ifndef BITPRIM_RPC_HPP_
 #define BITPRIM_RPC_HPP_
 
-#include <bitprim/blockchain.hpp>
+#include <bitcoin/blockchain.hpp>
 #include <bitprim/rpc/define.hpp>
 #include <bitprim/rpc/messages.hpp>
-#include <bitprim/rpc/rpc_server.hpp>
-#include <bitprim/rpc/server_http.hpp>
-#include <bitprim/pc/version.hpp>
+#include <bitprim/rpc/http/rpc_server.hpp>
+#include <bitprim/rpc/http/server_http.hpp>
+#include <bitprim/rpc/version.hpp>
 
 #endif /* BITPRIM_RPC_HPP_ */
