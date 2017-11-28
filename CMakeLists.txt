@@ -205,6 +205,7 @@ add_library(bitprim-rpc ${MODE}
     src/messages/blockchain/getblockcount.cpp
     src/messages/blockchain/getdifficulty.cpp
     src/messages/blockchain/getchaintips.cpp
+    src/messages/blockchain/getaddressmempool.cpp
     src/messages/mining/getblocktemplate.cpp
     src/messages/mining/submitblock.cpp
     src/messages/mining/getmininginfo.cpp
@@ -319,6 +320,7 @@ set(_bitprim_headers
         bitprim/rpc/messages/blockchain/getblockcount.hpp
         bitprim/rpc/messages/blockchain/getdifficulty.hpp
         bitprim/rpc/messages/blockchain/getchaintips.hpp
+        bitprim/rpc/messages/blockchain/getaddressmempool.hpp
         bitprim/rpc/messages/mining/getblocktemplate.hpp
         bitprim/rpc/messages/mining/submitblock.hpp
         bitprim/rpc/messages/mining/getmininginfo.hpp

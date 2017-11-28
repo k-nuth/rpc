@@ -24,7 +24,6 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-//getrawtransaction
 namespace bitprim {
 
     bool getbestblockhash (nlohmann::json& json_object, int& error, std::string& error_code, libbitcoin::blockchain::block_chain const& chain);

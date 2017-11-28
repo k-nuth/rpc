@@ -66,9 +66,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     }
 
     if (json_in["method"].get<std::string>() == "getaddressmempool"){
-        std::vector<std::string> payment_address;
-        json_in_getaddressmempool(json_in, payment_address);
-        return json_out(json_in, getaddressmempool(payment_address, chain));
+        return process_getaddressmempool(json_in, chain, use_testnet_rules);
     }
 
     if (json_in["method"].get<std::string>() == "getbestblockhash"){
@@ -119,22 +117,6 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     return nlohmann::json(); //TODO: error!
 }
 
-nlohmann::json json_out(nlohmann::json const& json_in, nlohmann::json const& json_resp){
-    nlohmann::json container;
-    container["result"] = json_resp;
-    container["error"];
-    container["id"] = json_in["id"];
-    return container;
-}
-
-void copy_id(nlohmann::json const& json_in, nlohmann::json & json_resp){
-    json_resp["id"] = json_in["id"];
-}
-
-bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<std::string>& payment_address){
-    return true;
-}
-
 std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain) {
     //std::cout << "method: " << json_object["method"].get<std::string>() << "\n";
     //Bitprim-mining process data
@@ -152,11 +134,6 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
 }
 
 
-nlohmann::json getaddressmempool(std::vector<std::string> const& addresses, libbitcoin::blockchain::block_chain const& chain) {
-    nlohmann::json json_resp;
-    json_resp = nlohmann::json::array();
-    return json_resp;
 
-}
 
 }} // namespace bitprim::rpc

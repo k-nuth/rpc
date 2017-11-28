@@ -24,13 +24,11 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-//getrawtransaction
 namespace bitprim {
 
     bool json_in_getblock(nlohmann::json const& json_object, std::string & hash, bool & verbose);
     bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, const std::string & block_hash, bool verbose, libbitcoin::blockchain::block_chain const& chain);
     nlohmann::json process_getblock(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules = false);
-
 
 }
 

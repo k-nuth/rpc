@@ -24,7 +24,6 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-//getrawtransaction
 namespace bitprim {
 
     bool getinfo (nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, libbitcoin::blockchain::block_chain const& chain);

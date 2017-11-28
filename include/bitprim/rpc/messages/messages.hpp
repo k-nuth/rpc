@@ -36,6 +36,7 @@
 #include <bitprim/rpc/messages/blockchain/getblockcount.hpp>
 #include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
 #include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
+#include <bitprim/rpc/messages/blockchain/getaddressmempool.hpp>
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
 #include <bitprim/rpc/messages/mining/submitblock.hpp>
 #include <bitprim/rpc/messages/mining/getmininginfo.hpp>

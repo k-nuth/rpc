@@ -24,7 +24,6 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-//getrawtransaction
 namespace bitprim {
 
     bool json_in_getspentinfo(nlohmann::json const& json_object, std::string& tx_id, size_t& index);

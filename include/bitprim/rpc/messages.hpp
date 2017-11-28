@@ -28,19 +28,6 @@ namespace bitprim {
     // First message:
     std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain);
 
-
-    // RPC
-    // ------------------------------------------------------------------------
-    nlohmann::json getaddressmempool(std::vector<std::string> const& addresses, libbitcoin::blockchain::block_chain const& chain);
-
-    //JSON IN
-    //-------------------------------------------------------------------
-    bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<std::string>& payment_address);
-
-    //JSON OUT
-    //-------------------------------------------------------------------
-    nlohmann::json json_out(nlohmann::json const& json_in, nlohmann::json const& json_resp);
-    void copy_id(nlohmann::json const& json_in, nlohmann::json & json_resp);
 }
 
 #endif //BITPRIM_RPC_MESSAGES_HPP_
