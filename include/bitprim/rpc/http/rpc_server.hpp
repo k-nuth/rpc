@@ -19,10 +19,10 @@
  */
 
 
-        #ifndef BITPRIM_RPC_SERVER_HPP_
+#ifndef BITPRIM_RPC_SERVER_HPP_
 #define	BITPRIM_RPC_SERVER_HPP_
 
-#include <bitprim/rpc/server_http.hpp>         
+#include <bitprim/rpc/http/server_http.hpp>
 
 #include <bitprim/rpc/json/json.hpp>
 #include <bitprim/rpc/messages.hpp>         
@@ -35,20 +35,14 @@ namespace bitprim { namespace rpc {
 class rpc_server {
     using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 public:
-    rpc_server(bool use_testnet_rules, libbitcoin::blockchain::block_chain & chain, uint32_t rpc_port, uint32_t subscriber_port);
-            //non-copyable
-            rpc_server(rpc_server const&) = delete;
+    rpc_server(bool use_testnet_rules, libbitcoin::blockchain::block_chain & chain, uint32_t rpc_port);
+    //non-copyable
+    rpc_server(rpc_server const&) = delete;
     rpc_server& operator=(rpc_server const&) = delete;
 
     bool start();
     bool stop();
     bool stopped() const;
-
-    bool send_hash_block_handler(libbitcoin::code ec, size_t height, libbitcoin::block_const_ptr_list_const_ptr incoming,
-                                                libbitcoin::block_const_ptr_list_const_ptr outgoing);
-    bool send_raw_transaction_handler(libbitcoin::code ec, libbitcoin::transaction_const_ptr incoming);
-
-    bool SendMessage(const char *command, const void *data, size_t size);
 
 private:        
     void configure_server();
@@ -59,11 +53,6 @@ private:
     // If the subscribe methods are removed from here
     // the chain_ can be const
     libbitcoin::blockchain::block_chain & chain_;
-
-    // ZMQ
-    void *context_;
-    void *publisher_;
-    uint32_t nSequence;
 };
 
 }} // namespace bitprim::rpc

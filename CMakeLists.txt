@@ -190,8 +190,6 @@ if (ENABLE_SHARED)
 endif()
 
 add_library(bitprim-rpc ${MODE}
-    src/messages.cpp
-    src/rpc_server.cpp
     src/messages/blockchain/getrawtransaction.cpp
     src/messages/blockchain/getaddressbalance.cpp
     src/messages/blockchain/getspentinfo.cpp
@@ -214,6 +212,10 @@ add_library(bitprim-rpc ${MODE}
     src/messages/util/getinfo.cpp
     src/messages/util/validateaddress.cpp
     src/messages/utils.cpp
+    src/http/rpc_server.cpp
+    src/zmq/zmq_helper.cpp
+    src/manager.cpp
+    src/testing-main.cpp
 )
 
 if (ENABLE_POSITION_INDEPENDENT_CODE) 
@@ -279,6 +281,16 @@ if (WITH_TESTS)
           reservations_tests
           settings_tests)
 endif()
+
+
+add_executable(rpc.bn
+        src/testing-main.cpp)
+target_link_libraries(rpc.bn bitprim-rpc)
+set_target_properties(
+        rpc.bn PROPERTIES
+        FOLDER "rpc"
+        OUTPUT_NAME rpc)
+
 
 
 # Install
