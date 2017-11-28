@@ -1,0 +1,80 @@
+/**
+* Copyright (c) 2017 Bitprim developers (see AUTHORS)
+*
+* This file is part of bitprim-node.
+*
+* bitprim-node is free software: you can redistribute it and/or
+* modify it under the terms of the GNU Affero General Public License with
+* additional permissions to the one published by the Free Software
+* Foundation, either version 3 of the License, or (at your option)
+* any later version. For more information see LICENSE.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU Affero General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <bitprim/rpc/messages/mining/submitblock.hpp>
+#include <bitprim/rpc/messages/utils.hpp>
+#include <boost/thread/latch.hpp>
+
+namespace bitprim {
+
+bool json_in_submitblock(nlohmann::json const& json_object, std::string& block_hex_str){
+    if (json_object["params"].size() == 0)
+        return false;
+
+    block_hex_str = json_object["params"][0].get<std::string>();
+    return true;
+}
+
+void handle_organize(const libbitcoin::code& ec){
+    if(ec)
+        std::cout<< "Failed to submit block" << std::endl;
+    else std::cout<< "Block submited successfully" << std::endl;
+}
+
+bool submitblock(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& incoming_hex, bool use_testnet_rules,libbitcoin::blockchain::block_chain& chain) {
+    const auto block = std::make_shared<bc::message::block>();
+    libbitcoin::data_chunk out;
+    libbitcoin::decode_base16(out,incoming_hex);
+    block->from_data(1, out);
+    chain.organize(block, [&](const libbitcoin::code & ec){ handle_organize(ec);});
+    //TODO: error messages
+    return true;
+}
+
+nlohmann::json process_submitblock(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain& chain, bool use_testnet_rules)
+{
+    nlohmann::json container, result;
+    container["id"] = json_in["id"];
+
+    int error;
+    std::string error_code;
+
+    std::string block_str;
+    if (!json_in_submitblock(json_in, block_str)) //if false return error
+    {
+        container["result"];
+        container["error"]["code"] = -1;
+        container["error"]["message"] = "submitblock \"hexdata\" ( \"jsonparametersobject\" )\n\nAttempts to submit new block to network.\nThe 'jsonparametersobject' parameter is currently ignored.\nSee https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n\nArguments\n1. \"hexdata\"    (string, required) the hex-encoded block data to submit\n2. \"jsonparametersobject\"     (string, optional) object of optional parameters\n    {\n      \"workid\" : \"id\"    (string, optional) if the server provided a workid, it MUST be included with submissions\n    }\n\nResult:\n\nExamples:\n> bitcoin-cli submitblock \"mydata\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"submitblock\", \"params\": [\"mydata\"] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/\n";
+        return container;
+    }
+
+    if (submitblock(result, error, error_code, block_str, use_testnet_rules, chain))
+    {
+        container["result"] = result;
+        container["error"];
+    } else {
+        container["error"]["code"] = error;
+        container["error"]["message"] = error_code;
+    }
+
+    return container;
+}
+
+}

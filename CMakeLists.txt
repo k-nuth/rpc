@@ -192,6 +192,28 @@ endif()
 add_library(bitprim-rpc ${MODE}
     src/messages.cpp
     src/rpc_server.cpp
+    src/messages/blockchain/getrawtransaction.cpp
+    src/messages/blockchain/getaddressbalance.cpp
+    src/messages/blockchain/getspentinfo.cpp
+    src/messages/blockchain/getaddresstxids.cpp
+    src/messages/blockchain/getaddressdeltas.cpp
+    src/messages/blockchain/getaddressutxos.cpp
+    src/messages/blockchain/getblockhashes.cpp
+    src/messages/blockchain/getbestblockhash.cpp
+    src/messages/blockchain/getblock.cpp
+    src/messages/blockchain/getblockhash.cpp
+    src/messages/blockchain/getblockchaininfo.cpp
+    src/messages/blockchain/getblockheader.cpp
+    src/messages/blockchain/getblockcount.cpp
+    src/messages/blockchain/getdifficulty.cpp
+    src/messages/blockchain/getchaintips.cpp
+    src/messages/mining/getblocktemplate.cpp
+    src/messages/mining/submitblock.cpp
+    src/messages/mining/getmininginfo.cpp
+    src/messages/wallet/sendrawtransaction.cpp
+    src/messages/util/getinfo.cpp
+    src/messages/util/validateaddress.cpp
+    src/messages/utils.cpp
 )
 
 if (ENABLE_POSITION_INDEPENDENT_CODE) 
@@ -269,6 +291,29 @@ set(_bitprim_headers
         bitprim/rpc.hpp
         bitprim/rpc/define.hpp
         bitprim/rpc/version.hpp
+        bitprim/rpc/messages/messages.hpp
+        bitprim/rpc/messages/blockchain/getrawtransaction.hpp
+        bitprim/rpc/messages/blockchain/getaddressbalance.hpp
+        bitprim/rpc/messages/blockchain/getspentinfo.hpp
+        bitprim/rpc/messages/blockchain/getaddresstxids.hpp
+        bitprim/rpc/messages/blockchain/getaddressdeltas.hpp
+        bitprim/rpc/messages/blockchain/getaddressutxos.hpp
+        bitprim/rpc/messages/blockchain/getblockhashes.hpp
+        bitprim/rpc/messages/blockchain/getbestblockhash.hpp
+        bitprim/rpc/messages/blockchain/getblock.hpp
+        bitprim/rpc/messages/blockchain/getblockhash.hpp
+        bitprim/rpc/messages/blockchain/getblockchaininfo.hpp
+        bitprim/rpc/messages/blockchain/getblockheader.hpp
+        bitprim/rpc/messages/blockchain/getblockcount.hpp
+        bitprim/rpc/messages/blockchain/getdifficulty.hpp
+        bitprim/rpc/messages/blockchain/getchaintips.hpp
+        bitprim/rpc/messages/mining/getblocktemplate.hpp
+        bitprim/rpc/messages/mining/submitblock.hpp
+        bitprim/rpc/messages/mining/getmininginfo.hpp
+        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
+        bitprim/rpc/messages/util/getinfo.hpp
+        bitprim/rpc/messages/util/validateaddress.hpp
+        bitprim/rpc/messages/utils.hpp
 )
 
 foreach (_header ${_bitprim_headers})
