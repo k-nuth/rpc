@@ -32,6 +32,7 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
 //TODO 
 bool getaddressmempool (nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, libbitcoin::blockchain::block_chain const& chain)
 {
+    json_object = nlohmann::json::array();
     return true;
 }
 
