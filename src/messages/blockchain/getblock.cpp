@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/blockchain/getblock.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
@@ -38,68 +39,82 @@ bool json_in_getblock(nlohmann::json const& json_object, std::string & hash, boo
 bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, const std::string & block_hash, bool verbose, libbitcoin::blockchain::block_chain const& chain)
 {
     libbitcoin::hash_digest hash;
-    libbitcoin::decode_hash(hash, block_hash);
+    if(libbitcoin::decode_hash(hash, block_hash)){
+        boost::latch latch(2);
+        chain.fetch_block(hash, [&] (const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height){
+            if (ec == libbitcoin::error::success) {
+                if (!verbose) {
+                    json_object = libbitcoin::encode_base16(block->to_data(0));
+                } else {
+                    json_object["hash"] = libbitcoin::encode_hash(block->hash());
 
-    boost::latch latch(2);
-    chain.fetch_block(hash, [&] (const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height){
-        if (ec == libbitcoin::error::success) {
-            if (!verbose) {
-                json_object = libbitcoin::encode_base16(block->to_data(0));
-            } else {
-                json_object["hash"] = libbitcoin::encode_hash(block->hash());
+                    size_t top_height;
+                    chain.get_last_height(top_height);
+                    json_object["confirmations"] = top_height - height + 1;
 
-                size_t top_height;
-                chain.get_last_height(top_height);
-                json_object["confirmations"] = top_height - height + 1;
+                    json_object["size"] = block->serialized_size(0);
+                    json_object["height"] = height;
+                    json_object["version"] = block->header().version();
+                    // TODO: encode the version to base 16
+                    json_object["versionHex"] = block->header().version();
+                    json_object["merkleroot"] = libbitcoin::encode_hash(block->header().merkle());
 
-                json_object["size"] = block->serialized_size(0);
-                json_object["height"] = height;
-                json_object["version"] = block->header().version();
-                // TODO: encode the version to base 16
-                json_object["versionHex"] = block->header().version();
-                json_object["merkleroot"] = libbitcoin::encode_hash(block->header().merkle());
-
-                int i = 0;
-                for (const auto & txns : block->transactions()) {
-                    json_object["tx"][i] = libbitcoin::encode_hash(txns.hash());
-                    ++i;
-                }
-
-                json_object["time"] = block->header().timestamp();
-                // TODO: get real median time
-                json_object["mediantime"] = block->header().timestamp();
-                json_object["nonce"] = block->header().nonce();
-                // TODO: encode bits to base 16
-                json_object["bits"] = block->header().bits();
-                json_object["difficulty"] = bits_to_difficulty(block->header().bits());
-                // TODO: validate that proof is chainwork
-                // Optimizate the encoded to base 16
-                std::stringstream ss;
-                ss << std::setfill('0')
-                   << std::nouppercase
-                   << std::hex
-                   << block->proof();
-                json_object["chainwork"] = ss.str();
-                json_object["previousblockhash"] = libbitcoin::encode_hash(block->header().previous_block_hash());
-                json_object["nextblockhash"];
-
-                boost::latch latch2(2);
-                chain.fetch_block(height + 1, [&] (const libbitcoin::code &ec, libbitcoin::block_const_ptr block_2, size_t) {
-                    if (ec == libbitcoin::error::success) {
-                        json_object["nextblockhash"] = libbitcoin::encode_hash(block_2->header().hash());
+                    int i = 0;
+                    for (const auto & txns : block->transactions()) {
+                        json_object["tx"][i] = libbitcoin::encode_hash(txns.hash());
+                        ++i;
                     }
-                    latch2.count_down();
-                });
-                latch2.count_down_and_wait();
+
+                    json_object["time"] = block->header().timestamp();
+                    // TODO: get real median time
+                    json_object["mediantime"] = block->header().timestamp();
+                    json_object["nonce"] = block->header().nonce();
+                    // TODO: encode bits to base 16
+                    json_object["bits"] = block->header().bits();
+                    json_object["difficulty"] = bits_to_difficulty(block->header().bits());
+                    // TODO: validate that proof is chainwork
+                    // Optimizate the encoded to base 16
+                    std::stringstream ss;
+                    ss << std::setfill('0')
+                       << std::nouppercase
+                       << std::hex
+                       << block->proof();
+                    json_object["chainwork"] = ss.str();
+                    json_object["previousblockhash"] = libbitcoin::encode_hash(block->header().previous_block_hash());
+                    json_object["nextblockhash"];
+
+                    boost::latch latch2(2);
+                    chain.fetch_block(height + 1, [&] (const libbitcoin::code &ec, libbitcoin::block_const_ptr block_2, size_t) {
+                        if (ec == libbitcoin::error::success) {
+                            json_object["nextblockhash"] = libbitcoin::encode_hash(block_2->header().hash());
+                        }
+                        latch2.count_down();
+                    });
+                    latch2.count_down_and_wait();
+                }
+            } else {
+                if(ec == libbitcoin::error::not_found)
+                {
+                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error_code = "Block not found";
+                } else {
+                    error = bitprim::RPC_INTERNAL_ERROR;
+                    error_code = "Can't read block from disk";
+                } 
             }
-        } else {
-            error = -8;
-            error_code = "Block height out of range";
-        }
-        latch.count_down();
-    });
-    latch.count_down_and_wait();
+            latch.count_down();
+        });
+        latch.count_down_and_wait();
+
+    } else {
+        error = bitprim::RPC_INVALID_PARAMETER;
+        error_code = "Invalid block hash";
+    }
+
+    if(error !=0)
+        return false;
     return true;
+
 }
 
 nlohmann::json process_getblock(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules)
@@ -107,7 +122,7 @@ nlohmann::json process_getblock(nlohmann::json const& json_in, libbitcoin::block
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     std::string hash;

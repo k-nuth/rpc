@@ -35,7 +35,7 @@ nlohmann::json process_getdifficulty(nlohmann::json const& json_in, libbitcoin::
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     if (getdifficulty(result, error, error_code, chain))

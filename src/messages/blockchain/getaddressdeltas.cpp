@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/blockchain/getaddressdeltas.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
@@ -63,85 +64,95 @@ bool getaddressdeltas (nlohmann::json& json_object, int& error, std::string& err
     int i = 0;
     for(const auto & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
-        boost::latch latch(2);
-        chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
-                                                     libbitcoin::chain::history_compact::list history_compact_list) {
-            if (ec == libbitcoin::error::success) {
-                for(const auto & history : history_compact_list) {
-                    if (history.kind == libbitcoin::chain::point_kind::output &&
-                        history.height >= start_height && history.height <= end_height) {
-                        //It's an output
-                        boost::latch latch2(2);
-                        //Fetch txn to get the blockindex and height
-                        chain.fetch_transaction(history.point.hash(), false,
-                                                [&](const libbitcoin::code &ec,
-                                                    libbitcoin::transaction_const_ptr tx_ptr, size_t index,
-                                                    size_t height) {
-                                                    if (ec == libbitcoin::error::success) {
-                                                        if (height >= start_height && height <= end_height) {
-                                                            json_object[i]["txid"] = libbitcoin::encode_hash(
-                                                                    history.point.hash());
-                                                            json_object[i]["index"] = history.point.index();
-                                                            json_object[i]["address"] = address.encoded();
-                                                            json_object[i]["blockindex"] = index;
-                                                            json_object[i]["height"] = height;
-                                                            json_object[i]["satoshis"] = std::to_string(history.value);
-                                                            ++i;
-                                                        }
-                                                    } else {
-                                                        std::cout << "Tx not found" << std::endl;
-                                                    }
-                                                    latch2.count_down();
-                                                });
-                        latch2.count_down_and_wait();
-
-                        //Check if it was spent and get the txn data
-                        boost::latch latch3(2);
-                        chain.fetch_spend(history.point, [&](const libbitcoin::code &ec,
-                                                             libbitcoin::chain::input_point input) {
-                            if (ec == libbitcoin::error::success) {
-                                boost::latch latch4(2);
-                                chain.fetch_transaction(input.hash(), false,
-                                                        [&](const libbitcoin::code &ec,
-                                                            libbitcoin::transaction_const_ptr tx_ptr,
-                                                            size_t index,
-                                                            size_t height) {
-                                                            if (ec == libbitcoin::error::success) {
-                                                                if (height >= start_height &&
-                                                                    height <= end_height) {
-                                                                    json_object[i]["txid"] = libbitcoin::encode_hash(
-                                                                            input.hash());
-                                                                    json_object[i]["index"] = input.index();
-                                                                    json_object[i]["address"] = address.encoded();
-                                                                    json_object[i]["blockindex"] = index;
-                                                                    json_object[i]["height"] = height;
-                                                                    json_object[i]["satoshis"] =
-                                                                            "-" + std::to_string(history.value);
-                                                                    ++i;
-                                                                } else {
-                                                                    // Do nothing out of limits
-                                                                    std::cout << "\tInput > height"
-                                                                              << std::endl;
-                                                                }
-                                                            } else {
-                                                                std::cout << "Tx not found" << std::endl;
+        if(address)
+        {
+            boost::latch latch(2);
+            chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
+                                                         libbitcoin::chain::history_compact::list history_compact_list) {
+                if (ec == libbitcoin::error::success) {
+                    for(const auto & history : history_compact_list) {
+                        if (history.kind == libbitcoin::chain::point_kind::output &&
+                            history.height >= start_height && history.height <= end_height) {
+                            //It's an output
+                            boost::latch latch2(2);
+                            //Fetch txn to get the blockindex and height
+                            chain.fetch_transaction(history.point.hash(), false,
+                                                    [&](const libbitcoin::code &ec,
+                                                        libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                                                        size_t height) {
+                                                        if (ec == libbitcoin::error::success) {
+                                                            if (height >= start_height && height <= end_height) {
+                                                                json_object[i]["txid"] = libbitcoin::encode_hash(
+                                                                        history.point.hash());
+                                                                json_object[i]["index"] = history.point.index();
+                                                                json_object[i]["address"] = address.encoded();
+                                                                json_object[i]["blockindex"] = index;
+                                                                json_object[i]["height"] = height;
+                                                                json_object[i]["satoshis"] = std::to_string(history.value);
+                                                                ++i;
                                                             }
-                                                            latch4.count_down();
-                                                        });
-                                latch4.count_down_and_wait();
-                            }
-                            latch3.count_down();
-                        });
-                        latch3.count_down_and_wait();
+                                                        } else {
+                                                            std::cout << "Tx not found" << std::endl;
+                                                        }
+                                                        latch2.count_down();
+                                                    });
+                            latch2.count_down_and_wait();
+
+                            //Check if it was spent and get the txn data
+                            boost::latch latch3(2);
+                            chain.fetch_spend(history.point, [&](const libbitcoin::code &ec,
+                                                                 libbitcoin::chain::input_point input) {
+                                if (ec == libbitcoin::error::success) {
+                                    boost::latch latch4(2);
+                                    chain.fetch_transaction(input.hash(), false,
+                                                            [&](const libbitcoin::code &ec,
+                                                                libbitcoin::transaction_const_ptr tx_ptr,
+                                                                size_t index,
+                                                                size_t height) {
+                                                                if (ec == libbitcoin::error::success) {
+                                                                    if (height >= start_height &&
+                                                                        height <= end_height) {
+                                                                        json_object[i]["txid"] = libbitcoin::encode_hash(
+                                                                                input.hash());
+                                                                        json_object[i]["index"] = input.index();
+                                                                        json_object[i]["address"] = address.encoded();
+                                                                        json_object[i]["blockindex"] = index;
+                                                                        json_object[i]["height"] = height;
+                                                                        json_object[i]["satoshis"] =
+                                                                                "-" + std::to_string(history.value);
+                                                                        ++i;
+                                                                    } else {
+                                                                        // Do nothing out of limits
+                                                                        std::cout << "\tInput > height"
+                                                                                  << std::endl;
+                                                                    }
+                                                                } else {
+                                                                    std::cout << "Tx not found" << std::endl;
+                                                                }
+                                                                latch4.count_down();
+                                                            });
+                                    latch4.count_down_and_wait();
+                                }
+                                latch3.count_down();
+                            });
+                            latch3.count_down_and_wait();
+                        }
                     }
+                } else {
+                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error_code = "No information available for address " + address;
                 }
-            } else {
-                std::cout << "No Encontrado" << std::endl;
-            }
-            latch.count_down();
-        });
-        latch.count_down_and_wait();
+                latch.count_down();
+            });
+            latch.count_down_and_wait();
+        } else {
+            error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+            error_code = "Invalid address";
+        }
     }
+    if(error !=0)
+        return false;
+
     return true;
 }
 
@@ -150,7 +161,7 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, libbitcoi
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     std::vector<std::string> payment_address;

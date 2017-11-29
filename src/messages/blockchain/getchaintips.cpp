@@ -83,7 +83,7 @@ nlohmann::json process_getchaintips(nlohmann::json const& json_in, libbitcoin::b
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     if (getchaintips(result, error, error_code, chain))

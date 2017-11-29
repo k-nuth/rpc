@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/blockchain/getblockhashes.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
@@ -48,14 +49,22 @@ void update_mid(size_t top_height, size_t low_height, size_t& mid, libbitcoin::m
 bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_code, uint32_t time_high, uint32_t time_low, bool no_orphans, bool logical_times, libbitcoin::blockchain::block_chain const& chain)
 {
     if(time_high < time_low)
+    {
+        error = RPC_INVALID_PARAMETER;
+        error_code = "Parameter \"HIGH\" is smaller than \"LOW\"";
         return false;
+    }
 
     libbitcoin::message::header::ptr genesis, top, mid_header;
     getblockheader(0, genesis, chain);
     uint32_t time_genesis = genesis->timestamp();
 
     if(time_high < time_genesis)
+    {
+        error = RPC_INVALID_PARAMETER;
+        error_code = "Parameter \"HIGH\" is older than genesis timestamp.";
         return false;
+    }
 
     if (time_low < time_genesis) time_low = time_genesis;
 
@@ -66,7 +75,11 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     uint32_t time_top = top->timestamp();
 
     if(time_top < time_low)
+    {
+        error = RPC_INVALID_PARAMETER;
+        error_code = "Parameter \"LOW\" is newer than top timestamp.";
         return false;
+    }
 
     if (time_high > time_top) time_high = time_top;
 
@@ -133,7 +146,7 @@ nlohmann::json process_getblockhashes(nlohmann::json const& json_in, libbitcoin:
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     uint32_t time_high;

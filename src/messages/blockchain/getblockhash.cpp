@@ -46,7 +46,7 @@ nlohmann::json process_getblockhash(nlohmann::json const& json_in, libbitcoin::b
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     size_t height;

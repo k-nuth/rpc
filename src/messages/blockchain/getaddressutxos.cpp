@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/blockchain/getaddressdeltas.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
@@ -58,47 +59,54 @@ bool getaddressutxos (nlohmann::json& json_object, int& error, std::string& erro
     int i = 0;
     for(const auto & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
-        chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
-                                                     libbitcoin::chain::history_compact::list history_compact_list) {
-            if (ec == libbitcoin::error::success) {
-                for(const auto & history : history_compact_list) {
-                    if (history.kind == libbitcoin::chain::point_kind::output) {
-                        // It's outpoint
-                        boost::latch latch2(2);
-                        chain.fetch_spend(history.point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
-                            if (ec == libbitcoin::error::not_found) {
-                                // Output not spent
-                                utxos[i]["address"] = address.encoded();
-                                utxos[i]["txid"] = libbitcoin::encode_hash(history.point.hash());
-                                utxos[i]["outputIndex"] = history.point.index();
-                                utxos[i]["satoshis"] = history.value;
-                                utxos[i]["height"] = history.height;
-                                // We need to fetch the txn to get the script
-                                boost::latch latch3(2);
-                                chain.fetch_transaction(history.point.hash(), false,
-                                                        [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
-                                                            size_t height) {
-                                                            if (ec == libbitcoin::error::success) {
-                                                                utxos[i]["script"] = libbitcoin::encode_base16(tx_ptr->outputs().at(history.point.index()).script().to_data(0));
-                                                            } else {
-                                                                utxos[i]["script"] = "";
-                                                            }
-                                                            latch3.count_down();
-                                });
-                                latch3.count_down_and_wait();
-                                ++i;
-                            }
-                            latch2.count_down();
-                        });
-                        latch2.count_down_and_wait();
+        if(address)
+        {
+            chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
+                                                         libbitcoin::chain::history_compact::list history_compact_list) {
+                if (ec == libbitcoin::error::success) {
+                    for(const auto & history : history_compact_list) {
+                        if (history.kind == libbitcoin::chain::point_kind::output) {
+                            // It's outpoint
+                            boost::latch latch2(2);
+                            chain.fetch_spend(history.point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
+                                if (ec == libbitcoin::error::not_found) {
+                                    // Output not spent
+                                    utxos[i]["address"] = address.encoded();
+                                    utxos[i]["txid"] = libbitcoin::encode_hash(history.point.hash());
+                                    utxos[i]["outputIndex"] = history.point.index();
+                                    utxos[i]["satoshis"] = history.value;
+                                    utxos[i]["height"] = history.height;
+                                    // We need to fetch the txn to get the script
+                                    boost::latch latch3(2);
+                                    chain.fetch_transaction(history.point.hash(), false,
+                                                            [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                                                                size_t height) {
+                                                                if (ec == libbitcoin::error::success) {
+                                                                    utxos[i]["script"] = libbitcoin::encode_base16(tx_ptr->outputs().at(history.point.index()).script().to_data(0));
+                                                                } else {
+                                                                    utxos[i]["script"] = "";
+                                                                }
+                                                                latch3.count_down();
+                                    });
+                                    latch3.count_down_and_wait();
+                                    ++i;
+                                }
+                                latch2.count_down();
+                            });
+                            latch2.count_down_and_wait();
+                        }
                     }
+                } else {
+                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error_code = "No information available for address " + address;
                 }
-            } else {
-                std::cout << "No Encontrado" << std::endl;
-            }
-            latch.count_down();
-        });
-        latch.count_down_and_wait();
+                latch.count_down();
+            });
+            latch.count_down_and_wait();
+        } else {
+            error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+            error_code = "Invalid address";
+        }
     }
 
     if (chain_info) {
@@ -128,8 +136,10 @@ bool getaddressutxos (nlohmann::json& json_object, int& error, std::string& erro
         json_object = utxos;
     }
 
-    return true;
+    if(error !=0)
+        return false;
 
+    return true;
 }
 
 nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules)
@@ -138,7 +148,7 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, libbitcoin
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     std::vector<std::string> payment_address;

@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/blockchain/getaddresstxids.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -54,32 +55,43 @@ bool getaddresstxids (nlohmann::json& json_object, int& error, std::string& erro
     int i = 0;
     for(const auto & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
-        boost::latch latch(2);
-        chain.fetch_txns(address, INT_MAX, start_height,
-                            [&](const libbitcoin::code &ec, const std::vector<libbitcoin::hash_digest>& history_list) {
-                                if (ec == libbitcoin::error::success) {
-                                // TODO: remove this if the new code pass the tests
-//                                    for (const auto & history : history_list) {
-//                                        libbitcoin::hash_digest temp;
-//                                        if (history.height < end_height) {
-//                                            // If a txns spend more than one utxo from the address, just add the first one
-//                                            temp = history.point.hash();
-//                                            if (std::find (unique_data.begin(), unique_data.end(), history.point.hash()) == unique_data.end()){
-//                                                unique_data.push_back(temp);
-//                                            }
-//                                        }
-//                                    }
-                                    for (auto it = history_list.rbegin(); it != history_list.rend(); ++it){
-                                        json_object[i] = libbitcoin::encode_hash(*it);
-                                        ++i;
+        if(address)
+        {
+            boost::latch latch(2);
+            chain.fetch_txns(address, INT_MAX, start_height,
+                                [&](const libbitcoin::code &ec, const std::vector<libbitcoin::hash_digest>& history_list) {
+                                    if (ec == libbitcoin::error::success) {
+                                    // TODO: remove this if the new code pass the tests
+    //                                    for (const auto & history : history_list) {
+    //                                        libbitcoin::hash_digest temp;
+    //                                        if (history.height < end_height) {
+    //                                            // If a txns spend more than one utxo from the address, just add the first one
+    //                                            temp = history.point.hash();
+    //                                            if (std::find (unique_data.begin(), unique_data.end(), history.point.hash()) == unique_data.end()){
+    //                                                unique_data.push_back(temp);
+    //                                            }
+    //                                        }
+    //                                    }
+                                        for (auto it = history_list.rbegin(); it != history_list.rend(); ++it){
+                                            json_object[i] = libbitcoin::encode_hash(*it);
+                                            ++i;
+                                        }
+                                    } else 
+                                    {
+                                        error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                                        error_code = "No information available for address " + address;
                                     }
-                                } else {
-                                    std::cout << "No Encontrado" << std::endl;
-                                }
-                                latch.count_down();
-                            });
-        latch.count_down_and_wait();
+                                    latch.count_down();
+                                });
+            latch.count_down_and_wait();
+        } else {
+            error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+            error_code = "Invalid address";
+        }
     }
+    if(error !=0)
+        return false;
+
     return true;
 }
 nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules)
@@ -87,7 +99,7 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, libbitcoin
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     std::vector<std::string> payment_address;

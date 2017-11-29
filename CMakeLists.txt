@@ -330,6 +330,7 @@ set(_bitprim_headers
         bitprim/rpc/messages/util/getinfo.hpp
         bitprim/rpc/messages/util/validateaddress.hpp
         bitprim/rpc/messages/utils.hpp
+        bitprim/rpc/messages/error_codes.hpp
 )
 
 foreach (_header ${_bitprim_headers})

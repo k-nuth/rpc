@@ -37,7 +37,7 @@ nlohmann::json process_getblockcount(nlohmann::json const& json_in, libbitcoin::
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     if (getblockcount(result, error, error_code, chain))

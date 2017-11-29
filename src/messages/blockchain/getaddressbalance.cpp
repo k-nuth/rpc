@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/blockchain/getaddressbalance.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -48,30 +49,38 @@ bool getaddressbalance (nlohmann::json& json_result, int& error, std::string& er
     uint64_t received = 0;
     for(const auto & address : addresses){
         libbitcoin::wallet::payment_address payment_address(address);
-        boost::latch latch(2);
-        chain.fetch_history(payment_address, INT_MAX, 0, [&](const libbitcoin::code &ec, libbitcoin::chain::history_compact::list history_compact_list) {
-            if (ec == libbitcoin::error::success) {
-                for(const auto & history : history_compact_list) {
-                    if (history.kind == libbitcoin::chain::point_kind::output) {
-                        received += history.value;
-                        boost::latch latch2(2);
-                        chain.fetch_spend(history.point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
-                            if (ec == libbitcoin::error::not_found) {
-                                // Output not spent
-                                balance += history.value;
-                            }
-                            latch2.count_down();
-                        });
-                        latch2.count_down_and_wait();
+        if(payment_address)
+        {
+            boost::latch latch(2);
+            chain.fetch_history(payment_address, INT_MAX, 0, [&](const libbitcoin::code &ec, libbitcoin::chain::history_compact::list history_compact_list) {
+                if (ec == libbitcoin::error::success) {
+                    for(const auto & history : history_compact_list) {
+                        if (history.kind == libbitcoin::chain::point_kind::output) {
+                            received += history.value;
+                            boost::latch latch2(2);
+                            chain.fetch_spend(history.point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
+                                if (ec == libbitcoin::error::not_found) {
+                                    // Output not spent
+                                    balance += history.value;
+                                }
+                                latch2.count_down();
+                            });
+                            latch2.count_down_and_wait();
+                        }
                     }
                 }
-            }
-            else {
-                std::cout << "No Encontrado" << std::endl;
-            }
-            latch.count_down();
-        });
-        latch.count_down_and_wait();
+                else {
+                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error_code = "No information available for address " + address;
+                }
+                latch.count_down();
+            });
+            latch.count_down_and_wait();
+        } else 
+        {
+            error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+            error_code = "Invalid address";
+        }
     }
     if(error != 0)
         return false;
