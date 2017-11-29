@@ -24,7 +24,7 @@
 #include <bitcoin/bitcoin/bitcoin_cash_support.hpp>
 #include <bitcoin/bitcoin/error.hpp>
 
-namespace bitprim { namespace rpc {
+namespace bitprim {
 
 
 // FIRST MESSAGE:
@@ -136,4 +136,4 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
 
 
 
-}} // namespace bitprim::rpc
+} // namespace bitprim::rpc
