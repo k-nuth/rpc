@@ -34,7 +34,7 @@ public:
     bool is_stopped();
 
 private:
-    bool stopped;
+    bool stopped_;
     zmq zmq_;
     rpc_server http_;
 
