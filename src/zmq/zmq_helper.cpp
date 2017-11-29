@@ -39,7 +39,6 @@ zmq::~zmq(){
 }
 
 void zmq::close(){
-    //TODO: should we do something with the subscribers?
     if (context_) {
         int linger = 0;
         zmq_setsockopt(publisher_, ZMQ_LINGER, &linger, sizeof(linger));
@@ -50,15 +49,34 @@ void zmq::close(){
 }
 
 void zmq::start(){
+    // Only send messages when the chain is not stale
+    if (!chain_.is_stale()){
+        start_sending_messages();
+    } else {
+        // Check until the chain is no longer stale
+        chain_.subscribe_blockchain([&](libbitcoin::code ec, size_t height,
+                                        libbitcoin::block_const_ptr_list_const_ptr incoming,
+                                        libbitcoin::block_const_ptr_list_const_ptr outgoing) {
+            if (chain_.is_stale()){
+                return true;
+            } else {
+                start_sending_messages();
+                return false;
+            }
+        });
+    }
+}
+
+void zmq::start_sending_messages(){
     chain_.subscribe_blockchain([&](libbitcoin::code ec, size_t height,
                                     libbitcoin::block_const_ptr_list_const_ptr incoming,
                                     libbitcoin::block_const_ptr_list_const_ptr outgoing) {
-        if (context_){
-            return send_hash_block_handler(ec, height, incoming, outgoing);
-        } else {
-            // There is no context, the zmq was closed, so it unsubscribes
-            return false;
-        }
+                                    if (context_){
+                                        return send_hash_block_handler(ec, height, incoming, outgoing);
+                                    } else {
+                                        // There is no context, the zmq was closed, so it unsubscribes
+                                        return false;
+                                    }
                                 }
     );
     chain_.subscribe_transaction([&](libbitcoin::code ec, libbitcoin::transaction_const_ptr tx) {
@@ -70,7 +88,6 @@ void zmq::start(){
         }
     });
 }
-
 
 static int zmq_send_multipart(void *sock, const void *data, size_t size, ...) {
     va_list args;
@@ -159,6 +176,7 @@ bool zmq::send_raw_transaction_handler(libbitcoin::code ec, libbitcoin::transact
         return send_message(MSG_RAWTX, &(*temp.begin()), temp.size());
     }
 
+    return true;
 }
 
 }}

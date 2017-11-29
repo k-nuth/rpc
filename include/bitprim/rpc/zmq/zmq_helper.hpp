@@ -34,6 +34,7 @@ public:
     ~zmq();
     void close();
     void start();
+    void start_sending_messages();
 
 public:
     bool send_message(const char *command, const void *data, size_t size);
