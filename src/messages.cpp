@@ -23,7 +23,7 @@
 #include <bitcoin/bitcoin/bitcoin_cash_support.hpp>
 #include <bitcoin/bitcoin/error.hpp>
 
-namespace bitprim { namespace rpc {
+namespace bitprim {
 
 
 // FIRST MESSAGE:
@@ -1661,4 +1661,4 @@ nlohmann::json getmininginfo(bool use_testnet_rules, libbitcoin::blockchain::blo
     return json_resp;
 }
 
-}} // namespace bitprim::rpc
+} // namespace bitprim::rpc

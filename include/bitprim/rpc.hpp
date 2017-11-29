@@ -23,8 +23,11 @@
 #include <bitcoin/blockchain.hpp>
 #include <bitprim/rpc/define.hpp>
 #include <bitprim/rpc/messages.hpp>
+#include <bitprim/rpc/json/json.hpp>
 #include <bitprim/rpc/http/rpc_server.hpp>
 #include <bitprim/rpc/http/server_http.hpp>
+#include <bitprim/rpc/zmq/zmq_helper.hpp>
+#include <bitprim/rpc/manager.hpp>
 #include <bitprim/rpc/version.hpp>
 
 #endif /* BITPRIM_RPC_HPP_ */

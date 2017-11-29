@@ -53,11 +53,21 @@ void zmq::start(){
     chain_.subscribe_blockchain([&](libbitcoin::code ec, size_t height,
                                     libbitcoin::block_const_ptr_list_const_ptr incoming,
                                     libbitcoin::block_const_ptr_list_const_ptr outgoing) {
-                                    return send_hash_block_handler(ec, height, incoming, outgoing);
+        if (context_){
+            return send_hash_block_handler(ec, height, incoming, outgoing);
+        } else {
+            // There is no context, the zmq was closed, so it unsubscribes
+            return false;
+        }
                                 }
     );
     chain_.subscribe_transaction([&](libbitcoin::code ec, libbitcoin::transaction_const_ptr tx) {
-        return send_raw_transaction_handler(ec, tx);
+        if (context_){
+            return send_raw_transaction_handler(ec, tx);
+        } else {
+            // There is no context, the zmq was closed, so it unsubscribes
+            return false;
+        }
     });
 }
 

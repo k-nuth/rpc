@@ -31,6 +31,7 @@ public:
     ~manager();
     void start();
     void stop();
+    bool is_stopped();
 
 private:
     bool stopped;
