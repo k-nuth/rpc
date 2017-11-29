@@ -213,6 +213,7 @@ add_library(bitprim-rpc ${MODE}
     src/messages/util/getinfo.cpp
     src/messages/util/validateaddress.cpp
     src/messages/utils.cpp
+    src/messages.cpp
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
     src/manager.cpp
@@ -304,6 +305,7 @@ set(_bitprim_headers
         bitprim/rpc.hpp
         bitprim/rpc/define.hpp
         bitprim/rpc/version.hpp
+        bitprim/rpc/messages.hpp
         bitprim/rpc/messages/messages.hpp
         bitprim/rpc/messages/blockchain/getrawtransaction.hpp
         bitprim/rpc/messages/blockchain/getaddressbalance.hpp
