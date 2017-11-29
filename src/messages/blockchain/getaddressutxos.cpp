@@ -26,6 +26,9 @@ namespace bitprim {
 
 
 bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std::string>& payment_address, bool& chain_info){
+    // Example:
+    //  curl --user bitcoin:local321 --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "getaddressutxos", "params": [{"addresses": ["2N8Cdq7BcCCqb8KiA3HzYaGDLJ6tXmVjcZ1"], "chainInfo":true}] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/
+
     if (json_object["params"].size() == 0)
         return false;
 
@@ -34,7 +37,7 @@ bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std:
     auto temp = json_object["params"][0];
     if (temp.is_object()){
         if(!temp["chainInfo"].is_null()){
-            chain_info  = temp["chainInfo"][0];
+            chain_info  = temp["chainInfo"];
         }
 
         for (const auto & addr : temp["addresses"]){
@@ -58,29 +61,36 @@ bool getaddressutxos (nlohmann::json& json_object, int& error, std::string& erro
         chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
                                                      libbitcoin::chain::history_compact::list history_compact_list) {
             if (ec == libbitcoin::error::success) {
-                auto const history_list = expand(history_compact_list);
-                for (const auto & history : history_list) {
-                    if (history.spend.hash() == libbitcoin::null_hash) {
-                        //Es outpoint
-                        //Error de wallets no se guarda history.spend
-                        //Lo busco en la DB
-                        {
-                            boost::latch latch2(2);
-                            chain.fetch_spend(history.output, [&](const libbitcoin::code &ec,
-                                                                  libbitcoin::chain::input_point input) {
-                                if (ec == libbitcoin::error::not_found) {
-                                    utxos[i]["address"] = address.encoded();
-                                    utxos[i]["txid"] = libbitcoin::encode_hash(history.output.hash());
-                                    utxos[i]["outputIndex"] = history.output.index();
-                                    utxos[i]["script"] = history.output.validation.cache.script().to_data(0);
-                                    utxos[i]["satoshis"] = history.value;
-                                    utxos[i]["height"] = history.output_height;
-                                    ++i;
-                                }
-                                latch2.count_down();
-                            });
-                            latch2.count_down_and_wait();
-                        }
+                for(const auto & history : history_compact_list) {
+                    if (history.kind == libbitcoin::chain::point_kind::output) {
+                        // It's outpoint
+                        boost::latch latch2(2);
+                        chain.fetch_spend(history.point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
+                            if (ec == libbitcoin::error::not_found) {
+                                // Output not spent
+                                utxos[i]["address"] = address.encoded();
+                                utxos[i]["txid"] = libbitcoin::encode_hash(history.point.hash());
+                                utxos[i]["outputIndex"] = history.point.index();
+                                utxos[i]["satoshis"] = history.value;
+                                utxos[i]["height"] = history.height;
+                                // We need to fetch the txn to get the script
+                                boost::latch latch3(2);
+                                chain.fetch_transaction(history.point.hash(), false,
+                                                        [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                                                            size_t height) {
+                                                            if (ec == libbitcoin::error::success) {
+                                                                utxos[i]["script"] = libbitcoin::encode_base16(tx_ptr->outputs().at(history.point.index()).script().to_data(0));
+                                                            } else {
+                                                                utxos[i]["script"] = "";
+                                                            }
+                                                            latch3.count_down();
+                                });
+                                latch3.count_down_and_wait();
+                                ++i;
+                            }
+                            latch2.count_down();
+                        });
+                        latch2.count_down_and_wait();
                     }
                 }
             } else {
