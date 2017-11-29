@@ -23,7 +23,7 @@ namespace bitprim { namespace rpc {
 
 manager::manager(bool use_testnet_rules, libbitcoin::blockchain::block_chain &chain, uint32_t rpc_port,
                  uint32_t subscriber_port) :
-        stopped(false),
+        stopped_(false),
         zmq_(subscriber_port, chain),
         http_(use_testnet_rules, chain, rpc_port)
         {}
@@ -33,20 +33,20 @@ manager::~manager(){
 }
 
 void manager::start() {
+    stopped_ = false;
     zmq_.start();
     http_.start();
-    stopped = false;
 }
 
 void manager::stop() {
-    if (!stopped) {
+    if (!stopped_) {
         zmq_.close();
         http_.stop();
     }
-    stopped = true;
+    stopped_ = true;
 }
 
 bool manager::is_stopped(){
-    return stopped;
+    return stopped_;
 }
 }}
