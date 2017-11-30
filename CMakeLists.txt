@@ -98,7 +98,7 @@ if (NOT USE_CONAN)
   if (NOT TARGET bitprim-blockchain)
     find_package(bitprim-blockchain 0.3.0 REQUIRED)
   endif()
-
+  ##TODO: import zmq using conan
   # Require zmq of at least version 4.1.1 and output ${zmq_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -242,6 +242,7 @@ endif()
 
 if (NOT USE_CONAN)
     target_link_libraries(bitprim-rpc PUBLIC bitprim-blockchain)
+    ##TODO: import zmq using conan
     target_include_directories(bitprim-rpc PUBLIC ${ZeroMQ_INCLUDE_DIR})
     target_link_libraries(bitprim-rpc PUBLIC ${ZeroMQ_LIBRARIES})
 endif()
@@ -305,6 +306,10 @@ set(_bitprim_headers
         bitprim/rpc.hpp
         bitprim/rpc/define.hpp
         bitprim/rpc/version.hpp
+        bitprim/rpc/http/server_http.hpp
+        bitprim/rpc/http/rpc_server.hpp
+        bitprim/rpc/json/json.hpp
+        bitprim/rpc/zmq/zmq_helper.hpp
         bitprim/rpc/messages.hpp
         bitprim/rpc/messages/messages.hpp
         bitprim/rpc/messages/blockchain/getrawtransaction.hpp
