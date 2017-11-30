@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/mining/submitblock.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
