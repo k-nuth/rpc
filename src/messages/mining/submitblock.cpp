@@ -42,9 +42,20 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
     const auto block = std::make_shared<bc::message::block>();
     libbitcoin::data_chunk out;
     libbitcoin::decode_base16(out,incoming_hex);
-    block->from_data(1, out);
-    chain.organize(block, [&](const libbitcoin::code & ec){ handle_organize(ec);});
-    //TODO: error messages
+    if(block->from_data(1, out)){
+        chain.organize(block, [&](const libbitcoin::code & ec){
+            if(ec){
+                error = bitprim::RPC_VERIFY_ERROR;
+                error_code = "Failed to submit block.";
+            }
+        });
+    } else {
+        error = bitprim::RPC_DESERIALIZATION_ERROR;
+        error_code = "Block decode failed";
+    }
+
+    if(error != 0)
+        return false;
     return true;
 }
 
@@ -53,7 +64,7 @@ nlohmann::json process_submitblock(nlohmann::json const& json_in, libbitcoin::bl
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     std::string block_str;

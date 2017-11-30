@@ -44,20 +44,27 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
     const auto tx = std::make_shared<bc::message::transaction>();
     libbitcoin::data_chunk out;
     libbitcoin::decode_base16(out,incoming_hex);
-    tx->from_data(1, out);
-    //TODO: error TX decode failed if from_data failed
+    if(tx->from_data(1, out)){
+        boost::latch latch(2);
+        chain.organize(tx, [&](const libbitcoin::code & ec){
+            if (ec){
+                error = bitprim::RPC_VERIFY_ERROR;
+                error_code = "Failed to submit transaction.";
+                json_object;
+            }else {
+                json_object=libbitcoin::encode_hash(tx->hash());
+            }
+            latch.count_down();
+        });
+        latch.count_down_and_wait();
+    } else {
+        error = bitprim::RPC_DESERIALIZATION_ERROR;
+        error_code = "TX decode failed.";
+    }
 
-    boost::latch latch(2);
-    chain.organize(tx, [&](const libbitcoin::code & ec){
-        if (ec){
-            //TODO: error when sending the txn
-            json_object;
-        }else {
-            json_object=libbitcoin::encode_hash(tx->hash());
-        }
-        latch.count_down();
-    });
-    latch.count_down_and_wait();
+    if(error != 0)
+        return false;
+
     return true;
 }
 
@@ -66,7 +73,7 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, libbitc
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error;
+    int error = 0;
     std::string error_code;
 
     std::string tx_str;
