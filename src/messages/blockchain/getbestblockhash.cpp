@@ -30,7 +30,7 @@ bool getbestblockhash (nlohmann::json& json_object, int& error, std::string& err
     libbitcoin::message::header::ptr top;
     chain.get_last_height(top_height);
     getblockheader(top_height, top, chain);
-    
+
     json_object = libbitcoin::encode_hash(top->hash());
     return true;
 }

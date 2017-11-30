@@ -30,22 +30,25 @@ bool json_in_getaddresstxids(nlohmann::json const& json_object, std::vector<std:
 
     start_height = 0;
     end_height = libbitcoin::max_size_t;
+    try {
+        auto temp = json_object["params"][0];
+        if (temp.is_object()){
+            if (!temp["start"].is_null()){
+                start_height = temp["start"];
+            }
+            if (!temp["end"].is_null()){
+                end_height = temp["end"];
+            }
 
-    auto temp = json_object["params"][0];
-    if (temp.is_object()){
-        if (!temp["start"].is_null()){
-            start_height = temp["start"][0];
+            for (const auto & addr : temp["addresses"]){
+                payment_address.push_back(addr);
+            }
+        } else {
+            //Only one address:
+            payment_address.push_back(json_object["params"][0].get<std::string>());
         }
-        if (!temp["end"].is_null()){
-            end_height = temp["end"][0];
-        }
-
-        for (const auto & addr : temp["addresses"]){
-            payment_address.push_back(addr);
-        }
-    } else {
-        //Only one address:
-        payment_address.push_back(json_object["params"][0]);
+    } catch (const std :: exception & e) {
+        return false;
     }
     return true;
 }
@@ -107,8 +110,25 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, libbitcoin
     size_t end_height;
     if (!json_in_getaddresstxids(json_in, payment_address, start_height, end_height)) 
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getaddresstxids\n"
+            "\nReturns the txids for an address(es) (requires addressindex to be enabled).\n"
+            "\nArguments:\n"
+            "{\n"
+            "  \"addresses\"\n"
+            "    [\n"
+            "      \"address\"  (string) The base58check encoded address\n"
+            "      ,...\n"
+            "    ]\n"
+            "  \"start\" (number) The start block height\n"
+            "  \"end\" (number) The end block height\n"
+            "}\n"
+            "\nResult:\n"
+            "[\n"
+            "  \"transactionid\"  (string) The transaction id\n"
+            "  ,...\n"
+            "]\n";
+        return container;
     }
 
     if (getaddresstxids(result, error, error_code, payment_address, start_height, end_height, chain))

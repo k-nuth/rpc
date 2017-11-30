@@ -18,7 +18,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <bitprim/rpc/messages/blockchain/getblock.hpp>
+#include <bitprim/rpc/messages/blockchain/getblockhash.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
@@ -28,7 +29,12 @@ namespace bitprim {
 bool json_in_getblockhash(nlohmann::json const& json_object, size_t& height){
     if (json_object["params"].size() == 0)
         return false;
-    height = json_object["params"][0];
+    try {
+        height = json_object["params"][0].get<size_t>();
+    } catch (const std :: exception & e) {
+        return false;
+    }
+
     return true;
 }
 
@@ -52,8 +58,14 @@ nlohmann::json process_getblockhash(nlohmann::json const& json_in, libbitcoin::b
     size_t height;
     if (!json_in_getblockhash(json_in, height)) //if false return error
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getblockhash height\n"
+            "\nReturns hash of block in best-block-chain at height provided.\n"
+            "\nArguments:\n"
+            "1. height         (numeric, required) The height index\n"
+            "\nResult:\n"
+            "\"hash\"         (string) The block hash\n";
+        return container;
     }
 
     if (getblockhash(result, error, error_code, height, chain))

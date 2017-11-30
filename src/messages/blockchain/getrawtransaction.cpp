@@ -30,13 +30,17 @@ bool json_in_getrawtransaction(nlohmann::json const& json_object, std::string& t
     if (json_object["params"].size() == 0)
         return false;
     verbose = false;
-    tx_id = json_object["params"][0];
-    if (json_object["params"].size() == 2) {
-        if (json_object["params"][1].is_boolean()){
-            verbose = json_object["params"][1];
-        } else if (json_object["params"][1].is_number() && json_object["params"][1] == 1){
-            verbose = true;
+    try {
+        tx_id = json_object["params"][0];
+        if (json_object["params"].size() == 2) {
+            if (json_object["params"][1].is_boolean()){
+                verbose = json_object["params"][1];
+            } else if (json_object["params"][1].is_number() && json_object["params"][1] == 1){
+                verbose = true;
+            }
         }
+    } catch (const std :: exception & e) {
+        return false;
     }
     return true;
 }
@@ -147,7 +151,9 @@ bool getrawtransaction (nlohmann::json& json_object, int& error, std::string& er
 
                                                  // SPENT INFO
                                                  nlohmann::json spent;
-                                                 getspentinfo(spent, error, error_code,libbitcoin::encode_hash(tx_ptr->hash()), i, chain);
+                                                 int spent_error;
+                                                 std::string spent_error_code;
+                                                 getspentinfo(spent, spent_error, spent_error_code,libbitcoin::encode_hash(tx_ptr->hash()), i, chain);
                                                  if (!spent.empty()) {
                                                      json_object["vout"][i]["spentTxId"] = spent["txid"];
                                                      json_object["vout"][i]["spentIndex"] = spent["index"];
@@ -235,8 +241,81 @@ nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, libbitco
     bool verbose;
     if(!json_in_getrawtransaction(json_in, tx_id, verbose)) //if false return error
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] =             "getrawtransaction \"txid\" ( verbose )\n"
+
+            "\nNOTE: By default this function only works for mempool "
+            "transactions. If the -txindex option is\n"
+            "enabled, it also works for blockchain transactions.\n"
+            "DEPRECATED: for now, it also works for transactions with unspent "
+            "outputs.\n"
+
+            "\nReturn the raw transaction data.\n"
+            "\nIf verbose is 'true', returns an Object with information about "
+            "'txid'.\n"
+            "If verbose is 'false' or omitted, returns a string that is "
+            "serialized, hex-encoded data for 'txid'.\n"
+
+            "\nArguments:\n"
+            "1. \"txid\"      (string, required) The transaction id\n"
+            "2. verbose       (bool, optional, default=false) If false, return "
+            "a string, otherwise return a json object\n"
+
+            "\nResult (if verbose is not set or set to false):\n"
+            "\"data\"      (string) The serialized, hex-encoded data for "
+            "'txid'\n"
+
+            "\nResult (if verbose is set to true):\n"
+            "{\n"
+            "  \"hex\" : \"data\",       (string) The serialized, hex-encoded "
+            "data for 'txid'\n"
+            "  \"txid\" : \"id\",        (string) The transaction id (same as "
+            "provided)\n"
+            "  \"hash\" : \"id\",        (string) The transaction hash "
+            "(differs from txid for witness transactions)\n"
+            "  \"size\" : n,             (numeric) The serialized transaction "
+            "size\n"
+            "  \"version\" : n,          (numeric) The version\n"
+            "  \"locktime\" : ttt,       (numeric) The lock time\n"
+            "  \"vin\" : [               (array of json objects)\n"
+            "     {\n"
+            "       \"txid\": \"id\",    (string) The transaction id\n"
+            "       \"vout\": n,         (numeric) \n"
+            "       \"scriptSig\": {     (json object) The script\n"
+            "         \"asm\": \"asm\",  (string) asm\n"
+            "         \"hex\": \"hex\"   (string) hex\n"
+            "       },\n"
+            "       \"sequence\": n      (numeric) The script sequence number\n"
+            "     }\n"
+            "     ,...\n"
+            "  ],\n"
+            "  \"vout\" : [              (array of json objects)\n"
+            "     {\n"
+            //TODO use correct currency unit
+            "       \"value\" : x.xxx,            (numeric) The value in BCC\n"
+            "       \"n\" : n,                    (numeric) index\n"
+            "       \"scriptPubKey\" : {          (json object)\n"
+            "         \"asm\" : \"asm\",          (string) the asm\n"
+            "         \"hex\" : \"hex\",          (string) the hex\n"
+            "         \"reqSigs\" : n,            (numeric) The required sigs\n"
+            "         \"type\" : \"pubkeyhash\",  (string) The type, eg "
+            "'pubkeyhash'\n"
+            "         \"addresses\" : [           (json array of string)\n"
+            "           \"address\"        (string) bitcoin address\n"
+            "           ,...\n"
+            "         ]\n"
+            "       }\n"
+            "     }\n"
+            "     ,...\n"
+            "  ],\n"
+            "  \"blockhash\" : \"hash\",   (string) the block hash\n"
+            "  \"confirmations\" : n,      (numeric) The confirmations\n"
+            "  \"time\" : ttt,             (numeric) The transaction time in "
+            "seconds since epoch (Jan 1 1970 GMT)\n"
+            "  \"blocktime\" : ttt         (numeric) The block time in seconds "
+            "since epoch (Jan 1 1970 GMT)\n"
+            "}\n";
+        return container;
     }
 
     if(getrawtransaction(result, error, error_code, tx_id, verbose, chain, use_testnet_rules))

@@ -28,10 +28,14 @@ bool json_in_getspentinfo(nlohmann::json const& json_object, std::string& tx_id,
 {
     if (json_object["params"].size() == 0)
         return false;
-    auto temp = json_object["params"][0];
-    if (temp.is_object()){
-        tx_id = temp["txid"];
-        index = temp["index"];
+    try {
+        auto temp = json_object["params"][0];
+        if (temp.is_object()){
+            tx_id = temp["txid"];
+            index = temp["index"];
+        }
+    } catch (const std :: exception & e) {
+        return false;
     }
     return true;
 }
@@ -82,15 +86,28 @@ nlohmann::json process_getspentinfo(nlohmann::json const& json_in, libbitcoin::b
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
-    int error =0;
+    int error = 0;
     std::string error_code;
 
     std::string tx_id;
     size_t index;
     if (!json_in_getspentinfo(json_in, tx_id, index)) //if false return error
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getspentinfo\n"
+            "\nReturns the txid and index where an output is spent.\n"
+            "\nArguments:\n"
+            "{\n"
+            "  \"txid\" (string) The hex string of the txid\n"
+            "  \"index\" (number) The start block height\n"
+            "}\n"
+            "\nResult:\n"
+            "{\n"
+            "  \"txid\"  (string) The transaction id\n"
+            "  \"index\"  (number) The spending input index\n"
+            "  ,...\n"
+            "}\n";
+        return container;
     }
 
     if (getspentinfo(result, error, error_code, tx_id, index, chain))

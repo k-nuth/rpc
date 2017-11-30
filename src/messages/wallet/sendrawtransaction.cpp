@@ -29,13 +29,15 @@ bool json_in_sendrawtransaction(nlohmann::json const& json_object, std::string& 
     auto const & size = json_object["params"].size();
     if (size == 0)
         return false;
+    try {
+        tx_str = json_object["params"][0].get<std::string>();
 
-    tx_str = json_object["params"][0].get<std::string>();
-
-    if (size == 2) {
-        allowhighfees = json_object["params"][1].get<bool>();
+        if (size == 2) {
+            allowhighfees = json_object["params"][1].get<bool>();
+        }
+    } catch (const std :: exception & e) {
+        return false;
     }
-
     return true;
 }
 
@@ -82,7 +84,7 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, libbitc
     if (!json_in_sendrawtransaction(json_in, tx_str, allowhighfees)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = -1;
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
         container["error"]["message"] = "sendrawtransaction \"hexstring\" ( allowhighfees )\n"
                 "\nSubmits raw transaction (serialized, hex-encoded) to local node "
                 "and network.\n"

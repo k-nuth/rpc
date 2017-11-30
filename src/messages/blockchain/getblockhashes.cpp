@@ -29,14 +29,19 @@ bool json_in_getblockhashes(nlohmann::json const& json_object, uint32_t& time_hi
     if (json_object["params"].size() == 0)
         return false;
 
-    time_high = json_object["params"][0].get<uint32_t>();
-    time_low = json_object["params"][1].get<uint32_t>();
     no_orphans = true;
     logical_times = false;
-    // TODO: params[2] should work if only one parameter is sent, fix the size() == 2
-    if (!json_object["params"][2].is_null() && json_object["params"][2].is_object() && json_object["params"][2].size() ==2){
-        no_orphans = json_object["params"][2]["noOrphans"];
-        logical_times = json_object["params"][2]["logicalTimes"];
+    try {
+        time_high = json_object["params"][0].get<uint32_t>();
+        time_low = json_object["params"][1].get<uint32_t>();
+
+        // TODO: params[2] should work if only one parameter is sent, fix the size() == 2
+        if (!json_object["params"][2].is_null() && json_object["params"][2].is_object() && json_object["params"][2].size() ==2){
+            no_orphans = json_object["params"][2]["noOrphans"];
+            logical_times = json_object["params"][2]["logicalTimes"];
+        }
+    } catch (const std :: exception & e) {
+        return false;
     }
     return true;
 }
@@ -156,8 +161,28 @@ nlohmann::json process_getblockhashes(nlohmann::json const& json_in, libbitcoin:
 
     if (!json_in_getblockhashes(json_in, time_high, time_low, no_orphans, logical_times)) 
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getblockhashes timestamp\n"
+            "\nReturns array of hashes of blocks within the timestamp range provided.\n"
+            "\nArguments:\n"
+            "1. high         (numeric, required) The newer block timestamp\n"
+            "2. low          (numeric, required) The older block timestamp\n"
+            "3. options      (string, required) A json object\n"
+            "    {\n"
+            "      \"noOrphans\":true   (boolean) will only include blocks on the main chain\n"
+            "      \"logicalTimes\":true   (boolean) will include logical timestamps with hashes\n"
+            "    }\n"
+            "\nResult:\n"
+            "[\n"
+            "  \"hash\"         (string) The block hash\n"
+            "]\n"
+            "[\n"
+            "  {\n"
+            "    \"blockhash\": (string) The block hash\n"
+            "    \"logicalts\": (numeric) The logical timestamp\n"
+            "  }\n"
+            "]\n";
+        return container;
     }
 
     if (getblockhashes(result, error, error_code, time_high, time_low, no_orphans, logical_times, chain))

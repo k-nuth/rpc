@@ -36,26 +36,30 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
     start_height = 0;
     end_height = libbitcoin::max_size_t;
     include_chain_info = false;
+    try {
+        auto temp = json_object["params"][0];
+        if (temp.is_object()){
+            if (!temp["start"].is_null()){
+                start_height = temp["start"].get<size_t>();
+            }
+            if (!temp["end"].is_null()){
+                end_height = temp["end"].get<size_t>();
+            }
+            if(!temp["chainInfo"].is_null()){
+                include_chain_info = temp["chainInfo"].get<bool>();
+            }
 
-    auto temp = json_object["params"][0];
-    if (temp.is_object()){
-        if (!temp["start"].is_null()){
-            start_height = temp["start"];
+            for (const auto & addr : temp["addresses"]){
+                payment_address.push_back(addr);
+            }
+        } else {
+            //Only one address:
+            payment_address.push_back(json_object["params"][0].get<std::string>());
         }
-        if (!temp["end"].is_null()){
-            end_height = temp["end"];
-        }
-        if(!temp["chainInfo"].is_null()){
-            include_chain_info = temp["chainInfo"];
-        }
-
-        for (const auto & addr : temp["addresses"]){
-            payment_address.push_back(addr);
-        }
-    } else {
-        //Only one address:
-        payment_address.push_back(json_object["params"][0]);
+    } catch (const std :: exception & e) {
+        return false;
     }
+
     return true;
 }
 
@@ -92,7 +96,8 @@ bool getaddressdeltas (nlohmann::json& json_object, int& error, std::string& err
                                                                 ++i;
                                                             }
                                                         } else {
-                                                            std::cout << "Tx not found" << std::endl;
+                                                            error = bitprim::RPC_DATABASE_ERROR;
+                                                            error_code = "Error fetching transaction.";
                                                         }
                                                         latch2.count_down();
                                                     });
@@ -121,13 +126,10 @@ bool getaddressdeltas (nlohmann::json& json_object, int& error, std::string& err
                                                                         json_object[i]["satoshis"] =
                                                                                 "-" + std::to_string(history.value);
                                                                         ++i;
-                                                                    } else {
-                                                                        // Do nothing out of limits
-                                                                        std::cout << "\tInput > height"
-                                                                                  << std::endl;
                                                                     }
                                                                 } else {
-                                                                    std::cout << "Tx not found" << std::endl;
+                                                                    error = bitprim::RPC_DATABASE_ERROR;
+                                                                    error_code = "Error fetching transaction.";
                                                                 }
                                                                 latch4.count_down();
                                                             });
@@ -170,8 +172,31 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, libbitcoi
     bool include_chain_info;
     if (!json_in_getaddressdeltas(json_in, payment_address, start_height, end_height, include_chain_info)) 
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getaddressdeltas\n"
+            "\nReturns all changes for an address (requires addressindex to be enabled).\n"
+            "\nArguments:\n"
+            "{\n"
+            "  \"addresses\"\n"
+            "    [\n"
+            "      \"address\"  (string) The base58check encoded address\n"
+            "      ,...\n"
+            "    ]\n"
+            "  \"start\" (number) The start block height\n"
+            "  \"end\" (number) The end block height\n"
+            "  \"chainInfo\" (boolean) Include chain info in results, only applies if start and end specified\n"
+            "}\n"
+            "\nResult:\n"
+            "[\n"
+            "  {\n"
+            "    \"satoshis\"  (number) The difference of satoshis\n"
+            "    \"txid\"  (string) The related txid\n"
+            "    \"index\"  (number) The related input or output index\n"
+            "    \"height\"  (number) The block height\n"
+            "    \"address\"  (string) The base58check encoded address\n"
+            "  }\n"
+            "]\n";
+        return container;
     }
 
     if (getaddressdeltas(result, error, error_code, payment_address, start_height, end_height, include_chain_info, chain))

@@ -26,18 +26,21 @@ namespace bitprim {
 
 bool json_in_getaddressbalance(nlohmann::json const& json_object, std::vector<std::string>& address)
 {
-    if (json_object["params"].size() == 0)
+    if (json_object["params"].size() == 0) {
         return false;
-    else {
-        auto temp = json_object["params"][0];
-        if (temp.is_object()){
-            for (const auto & addr : temp["addresses"]){
-                std::cout << addr << std::endl;
-                address.push_back(addr);
+    } else {
+        try {
+            auto temp = json_object["params"][0];
+            if (temp.is_object()){
+                for (const auto & addr : temp["addresses"]){
+                    address.push_back(addr);
+                }
+            } else {
+                //Only one address:
+                address.push_back(json_object["params"][0].get<std::string>());
             }
-        } else {
-            //Only one address:
-            address.push_back(json_object["params"][0]);
+        } catch (const std :: exception & e) {
+            return false;
         }
     }
     return true;
@@ -101,8 +104,23 @@ nlohmann::json process_getaddressbalance(nlohmann::json const& json_in, libbitco
     std::vector<std::string> payment_addresses;
     if(!json_in_getaddressbalance(json_in, payment_addresses)) //if false return error
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getaddressbalance\n"
+            "\nReturns the balance for an address(es) (requires addressindex to be enabled).\n"
+            "\nArguments:\n"
+            "{\n"
+            "  \"addresses\"\n"
+            "    [\n"
+            "      \"address\"  (string) The base58check encoded address\n"
+            "      ,...\n"
+            "    ]\n"
+            "}\n"
+            "\nResult:\n"
+            "{\n"
+            "  \"balance\"  (string) The current balance in satoshis\n"
+            "  \"received\"  (string) The total number of satoshis received (including change)\n"
+            "}\n";
+        return container;
     }
 
     if(getaddressbalance(result, error, error_code, payment_addresses, chain))

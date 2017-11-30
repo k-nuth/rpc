@@ -30,9 +30,13 @@ bool json_in_getblockheader(nlohmann::json const& json_object, std::string & has
     if (json_object["params"].size() == 0)
         return false;
     verbose = true;
-    hash = json_object["params"][0];
-    if (json_object["params"].size() == 2) {
-        verbose = json_object["params"][1];
+    try {
+        hash = json_object["params"][0];
+        if (json_object["params"].size() == 2) {
+            verbose = json_object["params"][1];
+        }
+    } catch (const std :: exception & e) {
+        return false;
     }
     return true;
 }
@@ -122,8 +126,45 @@ nlohmann::json process_getblockheader(nlohmann::json const& json_in, libbitcoin:
     bool verbose;
     if (!json_in_getblockheader(json_in, hash, verbose)) //if false return error
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getblockheader \"hash\" ( verbose )\n"
+            "\nIf verbose is false, returns a string that is serialized, "
+            "hex-encoded data for blockheader 'hash'.\n"
+            "If verbose is true, returns an Object with information about "
+            "blockheader <hash>.\n"
+            "\nArguments:\n"
+            "1. \"hash\"          (string, required) The block hash\n"
+            "2. verbose           (boolean, optional, default=true) true for a "
+            "json object, false for the hex encoded data\n"
+            "\nResult (for verbose = true):\n"
+            "{\n"
+            "  \"hash\" : \"hash\",     (string) the block hash (same as "
+            "provided)\n"
+            "  \"confirmations\" : n,   (numeric) The number of confirmations, "
+            "or -1 if the block is not on the main chain\n"
+            "  \"height\" : n,          (numeric) The block height or index\n"
+            "  \"version\" : n,         (numeric) The block version\n"
+            "  \"versionHex\" : \"00000000\", (string) The block version "
+            "formatted in hexadecimal\n"
+            "  \"merkleroot\" : \"xxxx\", (string) The merkle root\n"
+            "  \"time\" : ttt,          (numeric) The block time in seconds "
+            "since epoch (Jan 1 1970 GMT)\n"
+            "  \"mediantime\" : ttt,    (numeric) The median block time in "
+            "seconds since epoch (Jan 1 1970 GMT)\n"
+            "  \"nonce\" : n,           (numeric) The nonce\n"
+            "  \"bits\" : \"1d00ffff\", (string) The bits\n"
+            "  \"difficulty\" : x.xxx,  (numeric) The difficulty\n"
+            "  \"chainwork\" : \"0000...1f3\"     (string) Expected number of "
+            "hashes required to produce the current chain (in hex)\n"
+            "  \"previousblockhash\" : \"hash\",  (string) The hash of the "
+            "previous block\n"
+            "  \"nextblockhash\" : \"hash\",      (string) The hash of the "
+            "next block\n"
+            "}\n"
+            "\nResult (for verbose=false):\n"
+            "\"data\"             (string) A string that is serialized, "
+            "hex-encoded data for block 'hash'.\n";
+        return container;
     }
 
     if (rpc_getblockheader(result, error, error_code, hash, verbose, chain))

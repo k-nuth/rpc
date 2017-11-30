@@ -34,21 +34,24 @@ bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std:
         return false;
 
     chain_info = false;
+    try {
+        auto temp = json_object["params"][0];
+        if (temp.is_object()){
+            if(!temp["chainInfo"].is_null()){
+                chain_info  = temp["chainInfo"];
+            }
 
-    auto temp = json_object["params"][0];
-    if (temp.is_object()){
-        if(!temp["chainInfo"].is_null()){
-            chain_info  = temp["chainInfo"];
+            for (const auto & addr : temp["addresses"]){
+                payment_address.push_back(addr);
+            }
+        } else {
+            //Only one address:
+            payment_address.push_back(json_object["params"][0].get<std::string>());
         }
 
-        for (const auto & addr : temp["addresses"]){
-            payment_address.push_back(addr);
-        }
-    } else {
-        //Only one address:
-        payment_address.push_back(json_object["params"][0]);
+    } catch (const std :: exception & e) {
+        return false;
     }
-
     return true;
 }
 
@@ -155,8 +158,30 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, libbitcoin
     bool chain_info;
     if (!json_in_getaddressutxos(json_in, payment_address, chain_info)) 
     {
-        //load error code
-        //return
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getaddressutxos\n"
+            "\nReturns all unspent outputs for an address (requires addressindex to be enabled).\n"
+            "\nArguments:\n"
+            "{\n"
+            "  \"addresses\"\n"
+            "    [\n"
+            "      \"address\"  (string) The base58check encoded address\n"
+            "      ,...\n"
+            "    ],\n"
+            "  \"chainInfo\"  (boolean) Include chain info with results\n"
+            "}\n"
+            "\nResult\n"
+            "[\n"
+            "  {\n"
+            "    \"address\"  (string) The address base58check encoded\n"
+            "    \"txid\"  (string) The output txid\n"
+            "    \"height\"  (number) The block height\n"
+            "    \"outputIndex\"  (number) The output index\n"
+            "    \"script\"  (string) The script hex encoded\n"
+            "    \"satoshis\"  (number) The number of satoshis of the output\n"
+            "  }\n"
+            "]\n";
+        return container;
     }
 
     if (getaddressutxos(result, error, error_code, payment_address, chain_info, chain))
