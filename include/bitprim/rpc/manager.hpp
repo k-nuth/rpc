@@ -18,27 +18,29 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_MANAGER_HPP
-#define BITPRIM_MANAGER_HPP
+#ifndef BITPRIM_RPC_MANAGER_HPP_
+#define BITPRIM_RPC_MANAGER_HPP_
 
 #include <bitprim/rpc/http/rpc_server.hpp>
 #include <bitprim/rpc/zmq/zmq_helper.hpp>
 
 namespace bitprim { namespace rpc {
-class manager{
+class manager {
 public:
-    manager(bool use_testnet_rules, libbitcoin::blockchain::block_chain & chain, uint32_t rpc_port, uint32_t subscriber_port);
-    ~manager();
-    void start();
-    void stop();
-    bool is_stopped();
+    manager(bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, uint32_t rpc_port, uint32_t subscriber_port);
+   ~manager();
+
+   void start();
+   void stop();
+   bool is_stopped() const;
 
 private:
-    bool stopped_;
-    zmq zmq_;
-    rpc_server http_;
-
+   bool stopped_;
+   zmq zmq_;
+   rpc_server http_;
 };
-}
-}
-#endif //BITPRIM_MANAGER_HPP
+
+}} //namespace bitprim::rpc
+
+#endif //BITPRIM_RPC_MANAGER_HPP_
+

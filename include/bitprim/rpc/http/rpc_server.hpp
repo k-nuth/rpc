@@ -46,7 +46,7 @@ public:
 
 private:        
     void configure_server();
-    const bool use_testnet_rules_;
+    bool use_testnet_rules_;
     bool stopped_;      
     //int port_;
     HttpServer server_;
