@@ -89,6 +89,10 @@ if (NO_CONAN_AT_ALL)
       COMPONENTS chrono date_time filesystem iostreams locale log program_options regex system thread unit_test_framework
     )
   endif()
+  # Require zmq of at least version 4.1.1 and output ${zmq_CPPFLAGS/LIBS/PKG}.
+  #------------------------------------------------------------------------------
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+  find_package(ZeroMQ 4.1.1 REQUIRED)
 endif()
 
 
@@ -98,11 +102,7 @@ if (NOT USE_CONAN)
   if (NOT TARGET bitprim-blockchain)
     find_package(bitprim-blockchain 0.3.0 REQUIRED)
   endif()
-  ##TODO: import zmq using conan
-  # Require zmq of at least version 4.1.1 and output ${zmq_CPPFLAGS/LIBS/PKG}.
-  #------------------------------------------------------------------------------
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  find_package(ZeroMQ 4.1.1 REQUIRED)
+
 endif()
 
 
@@ -242,13 +242,13 @@ endif()
 
 if (NOT USE_CONAN)
     target_link_libraries(bitprim-rpc PUBLIC bitprim-blockchain)
-    ##TODO: import zmq using conan
-    target_include_directories(bitprim-rpc PUBLIC ${ZeroMQ_INCLUDE_DIR})
-    target_link_libraries(bitprim-rpc PUBLIC ${ZeroMQ_LIBRARIES})
 endif()
 
 if (NOT NO_CONAN_AT_ALL)
   target_link_libraries(bitprim-rpc PUBLIC ${CONAN_LIBS})
+elseif()
+  target_include_directories(bitprim-rpc PUBLIC ${ZeroMQ_INCLUDE_DIR})
+  target_link_libraries(bitprim-rpc PUBLIC ${ZeroMQ_LIBRARIES})
 endif()
 
 if (USE_CONAN)
