@@ -78,7 +78,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     }
 
     if (json_in["method"].get<std::string>() == "getblockhash"){
-        return process_getbestblockhash(json_in, chain, use_testnet_rules);
+        return process_getblockhash(json_in, chain, use_testnet_rules);
     }
 
     if (json_in["method"].get<std::string>() == "getblockchaininfo"){
