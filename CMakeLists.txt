@@ -97,10 +97,10 @@ endif()
 
 
 if (NOT USE_CONAN)
-  # Require bitprim-blockchain of at least version 0.3.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require bitprim-blockchain of at least version 0.4.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   if (NOT TARGET bitprim-blockchain)
-    find_package(bitprim-blockchain 0.3.0 REQUIRED)
+    find_package(bitprim-blockchain 0.4.0 REQUIRED)
   endif()
 
 endif()

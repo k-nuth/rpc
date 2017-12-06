@@ -4,11 +4,11 @@ import os
 
 channel = os.getenv("CONAN_CHANNEL", "testing")
 username = os.getenv("CONAN_USERNAME", "bitprim")
-
+version = "0.4"
 
 class BitprimRPCTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = "bitprim-rpc/0.4@%s/%s" % (username, channel)
+    requires = "bitprim-rpc/%s@%s/%s" % (version, username, channel)
     generators = "cmake"
 
     def build(self):
