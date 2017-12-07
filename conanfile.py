@@ -50,7 +50,7 @@ class BitprimRPCConan(ConanFile):
 
     requires = (("bitprim-conan-boost/1.64.0@bitprim/stable"),
                 ("libzmq/4.2.2@bitprim/stable"),
-                ("bitprim-blockchain/0.4@bitprim/stable"))
+                ("bitprim-blockchain/0.4@bitprim/testing"))
 
     def build(self):
         cmake = CMake(self)
