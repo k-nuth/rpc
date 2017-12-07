@@ -35,7 +35,7 @@ bool json_in_getrawtransaction(nlohmann::json const& json_object, std::string& t
         if (json_object["params"].size() == 2) {
             if (json_object["params"][1].is_boolean()){
                 verbose = json_object["params"][1];
-            } else if (json_object["params"][1].is_number() && json_object["params"][1] == 1){
+            } else if (json_object["params"][1].is_number() && json_object["params"][1].get<uint32_t>() == 1){
                 verbose = true;
             }
         }
