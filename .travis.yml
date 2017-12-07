@@ -87,9 +87,9 @@ install:
     fi    
 
 script:
-  - git fetch --unshallow
-  - export BITPRIM_BUILD_NUMBER="$(git describe)"
-  - echo "${BITPRIM_BUILD_NUMBER}"
+#  - git fetch --unshallow || true
+#  - export BITPRIM_BUILD_NUMBER="$(git describe)"
+#  - echo "${BITPRIM_BUILD_NUMBER}"
 
   - |
     if [[ "${PUSH_TO_REPOS}" == "true" ]]; then
