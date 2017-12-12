@@ -233,7 +233,7 @@ target_include_directories(bitprim-rpc PUBLIC
 target_compile_definitions(bitprim-rpc PUBLIC -DBITPRIM_BUILD_NUMBER="\\"${BITPRIM_BUILD_NUMBER}\\"")
 
 if (NOT ENABLE_SHARED)
-  target_compile_definitions(bitprim-rpc PUBLIC -DBCR_STATIC)
+  target_compile_definitions(bitprim-rpc PUBLIC -DBCR_STATIC -DBCB_STATIC -DBCD_STATIC -DBC_STATIC)
 endif()
 
 if (NOT MSVC)
