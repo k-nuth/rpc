@@ -144,7 +144,7 @@ nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, libbitcoi
     int error = 0;
     std::string error_code;
 
-    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash()) - 20000, std::chrono::seconds(30), chain))
+    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size() - 20000, std::chrono::seconds(30), chain))
     {
         container["result"] = result;
         container["error"];
