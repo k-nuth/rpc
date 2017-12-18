@@ -75,9 +75,9 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["previousblockhash"] = libbitcoin::encode_hash(header->hash());
 
-    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops(libbitcoin::is_bitcoin_cash()); //OLD max_block_sigops; //TODO: this value is hardcoded using bitcoind pcap
-    json_object["sizelimit"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash()); //OLD max_block_size;   //TODO: this value is hardcoded using bitcoind pcap
-    json_object["weightlimit"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());//                    //TODO: this value is hardcoded using bitcoind pcap
+    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops(); //OLD max_block_sigops; //TODO: this value is hardcoded using bitcoind pcap
+    json_object["sizelimit"] = libbitcoin::get_max_block_size(); //OLD max_block_size;   //TODO: this value is hardcoded using bitcoind pcap
+    json_object["weightlimit"] = libbitcoin::get_max_block_size();//                    //TODO: this value is hardcoded using bitcoind pcap
 
     auto now = std::chrono::high_resolution_clock::now();
 
