@@ -19,6 +19,7 @@
 */
 
 #include <bitprim/rpc/zmq/zmq_helper.hpp>
+
 namespace bitprim { namespace rpc {
 
 zmq::zmq(uint32_t subscriber_port, libbitcoin::blockchain::block_chain & chain) :

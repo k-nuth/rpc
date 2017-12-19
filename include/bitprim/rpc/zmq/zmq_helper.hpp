@@ -20,11 +20,16 @@
 
 #ifndef BITPRIM_ZMQ_HELPER_HPP
 #define BITPRIM_ZMQ_HELPER_HPP
-#include <zmq.h>
-#include <bitcoin/blockchain.hpp>
-#include <thread>
+
 #include <chrono>
+#include <thread>
+
+#include <bitcoin/blockchain.hpp>
+
+#include <zmq.h>
+
 namespace bitprim { namespace rpc {
+
 class zmq {
 public:
     zmq(uint32_t subscriber_port, libbitcoin::blockchain::block_chain & chain);
@@ -44,10 +49,8 @@ public:
                                  libbitcoin::block_const_ptr_list_const_ptr outgoing);
     bool send_raw_transaction_handler(libbitcoin::code ec, libbitcoin::transaction_const_ptr incoming);
 
-
-
-    bool send_random_data (){
-        const char *MSG_RAWTX = "rawtx";
+    bool send_random_data () {
+        char const* MSG_RAWTX = "rawtx";
         std::string temp = "ESTO ES UN MENSAJE DE PRUEBAS";
         return send_message(MSG_RAWTX, &(*temp.data()), temp.length());
     };
