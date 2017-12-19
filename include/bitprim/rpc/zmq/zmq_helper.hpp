@@ -20,10 +20,14 @@
 
 #ifndef BITPRIM_ZMQ_HELPER_HPP
 #define BITPRIM_ZMQ_HELPER_HPP
-#include <zmq.h>
-#include <bitcoin/blockchain.hpp>
-#include <thread>
+
 #include <chrono>
+#include <thread>
+
+#include <bitcoin/blockchain.hpp>
+
+#include <zmq.h>
+
 namespace bitprim { namespace rpc {
 class zmq {
 public:
