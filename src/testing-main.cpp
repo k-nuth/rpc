@@ -19,8 +19,8 @@
 */
 
 #include <iostream>
-#include <bitprim/rpc/zmq/zmq_helper.hpp>
 #include <bitcoin/blockchain.hpp>
+#include <bitprim/rpc/zmq/zmq_helper.hpp>
 
 int main (){
     libbitcoin::threadpool t(0);
