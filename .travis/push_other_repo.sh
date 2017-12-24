@@ -43,6 +43,15 @@ mkdir temp
 cd temp
 
 
+echo "Travis branch: ${TRAVIS_BRANCH}"
+echo "Travis tag: ${TRAVIS_TAG}"
+
+if [[ ${TRAVIS_BRANCH} == ${TRAVIS_TAG} ]]; then
+    export BITPRIM_BRANCH=master
+else
+    export BITPRIM_BRANCH=${TRAVIS_BRANCH}
+fi
+echo "Bitprim branch: ${BITPRIM_BRANCH}"
 
 # --------------------------------------------------------------------------------------------------------------------
 # bitprim-node-exe
@@ -50,8 +59,7 @@ cd temp
 git clone https://github.com/bitprim/bitprim-node-exe.git
 
 cd bitprim-node-exe
-echo "Travis branch: ${TRAVIS_BRANCH}"
-git checkout ${TRAVIS_BRANCH}
+git checkout ${BITPRIM_BRANCH}
 
 replace_versions bitprim-rpc $BITPRIM_BUILD_NUMBER
 
@@ -59,7 +67,7 @@ cat versions.txt
 git add . versions.txt
 git commit --message "Travis bitprim-rpc build: $BITPRIM_BUILD_NUMBER, $TRAVIS_BUILD_NUMBER" || true
 git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-exe.git > /dev/null 2>&1
-git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH}  || true
+git push --quiet --set-upstream origin-commit ${BITPRIM_BRANCH}  || true
 
 cd ..
 
@@ -70,8 +78,7 @@ cd ..
 # git clone https://github.com/bitprim/bitprim-node-cint.git
 
 # cd bitprim-node-cint
-# echo "Travis branch: ${TRAVIS_BRANCH}"
-# git checkout ${TRAVIS_BRANCH}
+# git checkout ${BITPRIM_BRANCH}
 
 # replace_versions bitprim-rpc $BITPRIM_BUILD_NUMBER
 
@@ -79,7 +86,7 @@ cd ..
 # git add . versions.txt
 # git commit --message "Travis bitprim-rpc build: $BITPRIM_BUILD_NUMBER, $TRAVIS_BUILD_NUMBER" || true
 # git remote add origin-commit https://${GH_TOKEN}@github.com/bitprim/bitprim-node-cint.git > /dev/null 2>&1
-# git push --quiet --set-upstream origin-commit ${TRAVIS_BRANCH} || true
+# git push --quiet --set-upstream origin-commit ${BITPRIM_BRANCH} || true
 
 # cd ..
 
