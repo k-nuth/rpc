@@ -30,8 +30,8 @@ namespace bitprim {
 // FIRST MESSAGE:
 
 nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain) {
-    std::cout << "Processing json " << json_in["method"].get<std::string>() << std::endl;
-    std::cout << "Detail json " << json_in << std::endl;
+    //std::cout << "Processing json " << json_in["method"].get<std::string>() << std::endl;
+    //std::cout << "Detail json " << json_in << std::endl;
 
     if (json_in["method"].get<std::string>() == "getrawtransaction"){
         return process_getrawtransaction(json_in, chain, use_testnet_rules);
