@@ -23,11 +23,13 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-
 namespace bitprim {
-    // First message:
-    std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain);
 
-}
+using message_signature = nlohmann::json(*)(nlohmann::json const&, libbitcoin::blockchain::block_chain const&, bool);
+using signature_map = std::unordered_map<std::string, message_signature>;
+std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map);
+signature_map load_signature_map();
+
+} //namespace bitprim
 
 #endif //BITPRIM_RPC_MESSAGES_HPP_

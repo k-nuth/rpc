@@ -29,10 +29,29 @@ namespace bitprim {
 
 // FIRST MESSAGE:
 
-nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain) {
-    std::cout << "Processing json " << json_in["method"].get<std::string>() << std::endl;
-    std::cout << "Detail json " << json_in << std::endl;
+nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map) {
+    
+	auto key = json_in["method"].get<std::string>();
 
+	std::cout << "Processing json " << key << std::endl;
+    std::cout << "Detail json " << json_in << std::endl;
+	
+	auto it = signature_map.find(key);
+
+	if (it != signature_map.end()) {
+		return it->second(json_in, chain, use_testnet_rules);
+	}
+
+	if (key == "submitblock")
+		return process_submitblock(json_in, chain, use_testnet_rules);
+
+	if (key == "sendrawtransaction")
+		return process_sendrawtransaction(json_in, chain, use_testnet_rules);
+
+	std::cout << json_in["method"].get<std::string>() << " Command Not yet implemented." << std::endl;
+	return nlohmann::json(); //TODO: error!
+
+	/*
     if (json_in["method"].get<std::string>() == "getrawtransaction"){
         return process_getrawtransaction(json_in, chain, use_testnet_rules);
     }
@@ -115,25 +134,52 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
     std::cout << json_in["method"].get<std::string>() << " Command Not yet implemented." << std::endl;
     return nlohmann::json(); //TODO: error!
+	*/
 }
 
-std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain) {
+std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map) {
     //std::cout << "method: " << json_object["method"].get<std::string>() << "\n";
     //Bitprim-mining process data
     if (json_object.is_array()) {
         nlohmann::json res;
         size_t i = 0;
         for (const auto & method : json_object) {
-            res[i] = process_data_element(method, use_testnet_rules, chain);
+            res[i] = process_data_element(method, use_testnet_rules, chain, signature_map);
             ++i;
         }
         return res.dump();
     } else {
-        return process_data_element(json_object, use_testnet_rules, chain).dump();
+        return process_data_element(json_object, use_testnet_rules, chain, signature_map).dump();
     }
 }
 
-
-
+signature_map load_signature_map() {
+	
+	signature_map map {
+		{"getrawtransaction", process_getrawtransaction},
+		{"getrawtransaction", process_getrawtransaction},
+		{"getaddressbalance", process_getaddressbalance},
+		{"getspentinfo", process_getspentinfo},
+		{"getaddresstxids", process_getaddresstxids},
+		{"getaddressdeltas", process_getaddressdeltas},
+		{"getaddressutxos", process_getaddressutxos},
+		{"getblockhashes", process_getblockhashes},
+		{"getinfo", process_getinfo},
+		{"getaddressmempool", process_getaddressmempool},
+		{"getbestblockhash", process_getbestblockhash},
+		{"getblock", process_getblock},
+		{"getblockhash", process_getblockhash},
+		{"getblockchaininfo", process_getblockchaininfo},
+		{"getblockheader", process_getblockheader},
+		{"getblockcount", process_getblockcount},
+		{"getdifficulty", process_getdifficulty},
+		{"getchaintips", process_getchaintips},
+		{"validateaddress", process_validateaddress},
+		{"getblocktemplate", process_getblocktemplate},
+		{"getmininginfo", process_getmininginfo}
+	};
+	
+	return map;
+}
 
 } // namespace bitprim::rpc
