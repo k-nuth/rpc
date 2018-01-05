@@ -46,6 +46,9 @@ option(ENABLE_POSITION_INDEPENDENT_CODE "Enable POSITION_INDEPENDENT_CODE proper
 #------------------------------------------------------------------------------
 option(WITH_TESTS "Compile with unit tests." ON)
 
+message("HEY")
+message(${WITH_TESTS})
+
 # # Implement --with-litecoin.
 # #------------------------------------------------------------------------------
 # option(WITH_LITECOIN "Compile with Litecoin support." OFF)
@@ -268,21 +271,41 @@ endif()
 # local: test/bitprim_rpc_test
 #------------------------------------------------------------------------------
 if (WITH_TESTS)
+
+  message("PEPE")
+  add_custom_target(tests ALL
+      COMMAND ${CMAKE_CTEST_COMMAND} -C Debug --output-on-failure -R "test.+"
+      COMMENT "Build and run all the unit tests.")
+
   add_executable(bitprim_rpc_test
-          test/utility.hpp
+          test/rpc.cpp
   )
 
   target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
-  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-  _add_tests(bitprim_rpc_test
-          configuration_tests
-          node_tests
-          header_queue_tests
-          performance_tests
-          reservation_tests
-          reservations_tests
-          settings_tests)
+  # _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+
+  add_test(NAME test.rpc.tests COMMAND bitprim_rpc_test)
+
+  add_dependencies(tests test.rpc.tests)
+
+
+
+#  add_executable(bitprim_rpc_test
+#          test/rpc.cpp
+#  )
+
+#  target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
+#  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+
+#  _add_tests(bitprim_rpc_test
+#          configuration_tests
+#          node_tests
+#          header_queue_tests
+#          performance_tests
+#          reservation_tests
+#          reservations_tests
+#          settings_tests)
 endif()
 
 
