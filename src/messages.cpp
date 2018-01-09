@@ -157,7 +157,6 @@ signature_map load_signature_map() {
 	
 	signature_map map {
 		{"getrawtransaction", process_getrawtransaction},
-		{"getrawtransaction", process_getrawtransaction},
 		{"getaddressbalance", process_getaddressbalance},
 		{"getspentinfo", process_getspentinfo},
 		{"getaddresstxids", process_getaddresstxids},

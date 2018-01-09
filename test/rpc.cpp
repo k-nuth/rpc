@@ -17,16 +17,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <bitprim/rpc/messages.hpp>
+
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
-
 
 // Unit Tests ----------------------------------------------------
 #ifdef DOCTEST_LIBRARY_INCLUDED
 
 
-TEST_CASE("[NOMBRE DEL TEST] DESCRIPCION") {
-    CHECK(true);
+TEST_CASE("[load_signature_map] validate map keys") {
+    
+	auto map = bitprim::load_signature_map();
+
+	CHECK(map.count("getrawtransaction") == 1);
+	CHECK(map.count("getaddressbalance") == 1);
+	CHECK(map.count("getspentinfo") == 1);
+	CHECK(map.count("getaddresstxids") == 1);
+	CHECK(map.count("getaddressdeltas") == 1);
+	CHECK(map.count("getaddressutxos") == 1);
+	CHECK(map.count("getblockhashes") == 1);
+	CHECK(map.count("getinfo") == 1);
+	CHECK(map.count("getaddressmempool") == 1);
+	CHECK(map.count("getbestblockhash") == 1);
+	CHECK(map.count("getblock") == 1);
+	CHECK(map.count("getblockhash") == 1);
+	CHECK(map.count("getblockchaininfo") == 1);
+	CHECK(map.count("getblockheader") == 1);
+	CHECK(map.count("getblockcount") == 1);
+	CHECK(map.count("getdifficulty") == 1);
+	CHECK(map.count("getchaintips") == 1);
+	CHECK(map.count("validateaddress") == 1);
+	CHECK(map.count("getblocktemplate") == 1);
+	CHECK(map.count("getmininginfo") == 1);
+	
+	CHECK(map.count("submitblock") == 0);
+	CHECK(map.count("sendrawtransaction") == 0);
+
 }
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
+
