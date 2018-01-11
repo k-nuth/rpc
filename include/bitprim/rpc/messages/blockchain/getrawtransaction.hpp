@@ -27,8 +27,12 @@
 namespace bitprim {
 
     bool json_in_getrawtransaction(nlohmann::json const& json_object, std::string& tx_id, bool& verbose);
-    bool getrawtransaction (nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules = false);
-    nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules = false);
+	
+	template <typename Blockchain>
+	bool getrawtransaction (nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, Blockchain const& chain, bool use_testnet_rules = false);
+	
+	template <typename Blockchain>
+	nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules = false);
 
 }
 

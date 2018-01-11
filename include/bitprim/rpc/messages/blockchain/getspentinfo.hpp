@@ -27,8 +27,12 @@
 namespace bitprim {
 
     bool json_in_getspentinfo(nlohmann::json const& json_object, std::string& tx_id, size_t& index);
-    bool getspentinfo (nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, size_t const& index, libbitcoin::blockchain::block_chain const& chain);
-    nlohmann::json process_getspentinfo(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules = false);
+	
+	template <typename Blockchain>
+	bool getspentinfo (nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, size_t const& index, Blockchain const& chain);
+	
+	template <typename Blockchain>
+	nlohmann::json process_getspentinfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules = false);
 
 }
 

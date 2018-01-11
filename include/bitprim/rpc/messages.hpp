@@ -22,13 +22,55 @@
 
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <bitprim/rpc/messages/messages.hpp>
 
 namespace bitprim {
 
-using message_signature = nlohmann::json(*)(nlohmann::json const&, libbitcoin::blockchain::block_chain const&, bool);
-using signature_map = std::unordered_map<std::string, message_signature>;
-std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map);
-signature_map load_signature_map();
+
+template <typename Blockchain>
+using message_signature = nlohmann::json(*)(nlohmann::json const&, Blockchain const&, bool);
+
+template <typename Blockchain>
+using signature_map = std::unordered_map<std::string, message_signature<Blockchain>>;
+
+
+template <typename Blockchain> 
+std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Blockchain& chain, signature_map<Blockchain> const& signature_map);
+
+// std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map);
+
+
+template <typename Blockchain>
+signature_map<Blockchain> load_signature_map() {
+
+	return signature_map<Blockchain>  {
+		{"getrawtransaction", process_getrawtransaction}
+	};
+
+/*
+	return signature_map<Blockchain>  {
+		{"getrawtransaction", process_getrawtransaction},
+		{ "getaddressbalance", process_getaddressbalance },
+		{ "getspentinfo", process_getspentinfo },
+		{ "getaddresstxids", process_getaddresstxids },
+		{ "getaddressdeltas", process_getaddressdeltas },
+		{ "getaddressutxos", process_getaddressutxos },
+		{ "getblockhashes", process_getblockhashes },
+		{ "getinfo", process_getinfo },
+		{ "getaddressmempool", process_getaddressmempool },
+		{ "getbestblockhash", process_getbestblockhash },
+		{ "getblock", process_getblock },
+		{ "getblockhash", process_getblockhash },
+		{ "getblockchaininfo", process_getblockchaininfo },
+		{ "getblockheader", process_getblockheader },
+		{ "getblockcount", process_getblockcount },
+		{ "getdifficulty", process_getdifficulty },
+		{ "getchaintips", process_getchaintips },
+		{ "validateaddress", process_validateaddress },
+		{ "getblocktemplate", process_getblocktemplate },
+		{ "getmininginfo", process_getmininginfo }
+	};*/
+}
 
 } //namespace bitprim
 

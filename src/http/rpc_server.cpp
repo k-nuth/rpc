@@ -28,7 +28,7 @@ rpc_server::rpc_server(bool use_testnet_rules, libbitcoin::blockchain::block_cha
 	: use_testnet_rules_(use_testnet_rules)
     , stopped_(true)
     , chain_(chain)
-	, signature_map_(load_signature_map())
+	, signature_map_(load_signature_map<libbitcoin::blockchain::block_chain>())
 {
     server_.config.port = rpc_port;
     configure_server();

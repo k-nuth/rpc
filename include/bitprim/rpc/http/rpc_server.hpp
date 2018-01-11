@@ -58,7 +58,7 @@ private:
     // If the subscribe methods are removed from here
     // the chain_ can be const
     libbitcoin::blockchain::block_chain & chain_;
-	signature_map signature_map_;
+	signature_map<libbitcoin::blockchain::block_chain> signature_map_;
 };
 
 }} // namespace bitprim::rpc

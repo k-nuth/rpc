@@ -83,8 +83,8 @@ std::string get_txn_type(const libbitcoin::chain::script& script){
 }
 
 
-
-bool getrawtransaction (nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules)
+template <typename Blockchain>
+bool getrawtransaction (nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, Blockchain const& chain, bool use_testnet_rules)
 {
     libbitcoin::hash_digest hash;
     if(libbitcoin::decode_hash(hash, txid)){
@@ -228,8 +228,8 @@ bool getrawtransaction (nlohmann::json& json_object, int& error, std::string& er
 
 }
 
-
-nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules)
+template <typename Blockchain>
+nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
 {
     nlohmann::json container, result;
     container["id"] = json_in["id"];
