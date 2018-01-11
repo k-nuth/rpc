@@ -33,8 +33,8 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     
 	auto key = json_in["method"].get<std::string>();
 
-	std::cout << "Processing json " << key << std::endl;
-    std::cout << "Detail json " << json_in << std::endl;
+	//std::cout << "Processing json " << key << std::endl;
+    //std::cout << "Detail json " << json_in << std::endl;
 	
 	auto it = signature_map.find(key);
 
