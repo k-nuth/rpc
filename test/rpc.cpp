@@ -311,8 +311,8 @@ TEST_SUITE("rpc") {
 		auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
 
 		CHECK(map.count("getrawtransaction") == 1);
-		CHECK(map.count("getaddressbalance") == 1);
 		CHECK(map.count("getspentinfo") == 1);
+		/*CHECK(map.count("getaddressbalance") == 1);
 		CHECK(map.count("getaddresstxids") == 1);
 		CHECK(map.count("getaddressdeltas") == 1);
 		CHECK(map.count("getaddressutxos") == 1);
@@ -332,12 +332,9 @@ TEST_SUITE("rpc") {
 		CHECK(map.count("getmininginfo") == 1);
 
 		CHECK(map.count("submitblock") == 0);
-		CHECK(map.count("sendrawtransaction") == 0);
+		CHECK(map.count("sendrawtransaction") == 0);*/
 	}
-	
-
 	/*
-
 	TEST_CASE("[process_data] validate invocation") {
 
 		using blk_t = libbitcoin::blockchain::block_chain;
@@ -357,13 +354,11 @@ TEST_SUITE("rpc") {
 
 		blk_t chain(threadpool, chain_settings, database_settings, true);
 
-		//auto ret = bitprim::process_data(input, false, chain, map);
-	
-
+		auto ret = bitprim::process_data(input, false, chain, map);
 
 		CHECK(true);
-
-	}*/
+	}
+	*/
 }
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
