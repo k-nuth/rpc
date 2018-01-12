@@ -25,7 +25,7 @@
 // Unit Tests ----------------------------------------------------
 #ifdef DOCTEST_LIBRARY_INCLUDED
 
-/*
+
 class block_chain_dummy
 {
 public:
@@ -164,9 +164,9 @@ public:
 	//void fetch_block(const hash_digest& hash,
 	//	block_fetch_handler handler) const;
 
-	///// fetch block header by height.
-	//// virtual      // OLD previo a merge de Feb2017 
-	//void fetch_block_header(size_t height, block_header_fetch_handler handler) const;
+	/// fetch block header by height.
+	// virtual      // OLD previo a merge de Feb2017 
+	void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const;
 
 
 	///// fetch block header by hash.
@@ -195,12 +195,11 @@ public:
 	//void fetch_block_height(const hash_digest& hash,
 	//	block_height_fetch_handler handler) const;
 
-	///// fetch height of latest block.
-	//void fetch_last_height(last_height_fetch_handler handler) const;
+	/// fetch height of latest block.
+	void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const;
 
-	///// fetch transaction by hash.
-	//void fetch_transaction(const hash_digest& hash, bool require_confirmed,
-	//	transaction_fetch_handler handler) const;
+	/// fetch transaction by hash.
+	void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const;
 
 	///// Generate fees for mining
 	//std::pair<bool, uint64_t> total_input_value(libbitcoin::chain::transaction const& tx) const;
@@ -239,8 +238,7 @@ public:
 	////-------------------------------------------------------------------------
 
 	///// fetch the inpoint (spender) of an outpoint.
-	//void fetch_spend(const chain::output_point& outpoint,
-	//	spend_fetch_handler handler) const;
+	void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const;
 
 	///// fetch outputs, values and spends for an address_hash.
 	//void fetch_history(const short_hash& address_hash, size_t limit,
@@ -302,64 +300,62 @@ public:
 	//const settings& chain_settings() const;
 
 };
-*/
 
-TEST_SUITE("rpc") {
 
-	TEST_CASE("[load_signature_map] validate map keys") {
+TEST_CASE("[load_signature_map] validate map keys") {
 
-		auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
+	auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
 
-		CHECK(map.count("getrawtransaction") == 1);
-		CHECK(map.count("getspentinfo") == 1);
-		/*CHECK(map.count("getaddressbalance") == 1);
-		CHECK(map.count("getaddresstxids") == 1);
-		CHECK(map.count("getaddressdeltas") == 1);
-		CHECK(map.count("getaddressutxos") == 1);
-		CHECK(map.count("getblockhashes") == 1);
-		CHECK(map.count("getinfo") == 1);
-		CHECK(map.count("getaddressmempool") == 1);
-		CHECK(map.count("getbestblockhash") == 1);
-		CHECK(map.count("getblock") == 1);
-		CHECK(map.count("getblockhash") == 1);
-		CHECK(map.count("getblockchaininfo") == 1);
-		CHECK(map.count("getblockheader") == 1);
-		CHECK(map.count("getblockcount") == 1);
-		CHECK(map.count("getdifficulty") == 1);
-		CHECK(map.count("getchaintips") == 1);
-		CHECK(map.count("validateaddress") == 1);
-		CHECK(map.count("getblocktemplate") == 1);
-		CHECK(map.count("getmininginfo") == 1);
+	CHECK(map.count("getrawtransaction") == 1);
+	CHECK(map.count("getspentinfo") == 1);
+	/*CHECK(map.count("getaddressbalance") == 1);
+	CHECK(map.count("getaddresstxids") == 1);
+	CHECK(map.count("getaddressdeltas") == 1);
+	CHECK(map.count("getaddressutxos") == 1);
+	CHECK(map.count("getblockhashes") == 1);
+	CHECK(map.count("getinfo") == 1);
+	CHECK(map.count("getaddressmempool") == 1);
+	CHECK(map.count("getbestblockhash") == 1);
+	CHECK(map.count("getblock") == 1);
+	CHECK(map.count("getblockhash") == 1);
+	CHECK(map.count("getblockchaininfo") == 1);
+	CHECK(map.count("getblockheader") == 1);
+	CHECK(map.count("getblockcount") == 1);
+	CHECK(map.count("getdifficulty") == 1);
+	CHECK(map.count("getchaintips") == 1);
+	CHECK(map.count("validateaddress") == 1);
+	CHECK(map.count("getblocktemplate") == 1);
+	CHECK(map.count("getmininginfo") == 1);
 
-		CHECK(map.count("submitblock") == 0);
-		CHECK(map.count("sendrawtransaction") == 0);*/
-	}
-	/*
-	TEST_CASE("[process_data] validate invocation") {
-
-		using blk_t = libbitcoin::blockchain::block_chain;
-		//using blk_t = block_chain_dummy;
-
-		auto map = bitprim::load_signature_map<blk_t>();
-		
-		nlohmann::json input;
-
-		input["method"] = "invalid_key";
-
-		libbitcoin::threadpool threadpool;
-		libbitcoin::blockchain::settings chain_settings;
-		libbitcoin::database::settings database_settings;
-
-		//libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
-
-		blk_t chain(threadpool, chain_settings, database_settings, true);
-
-		auto ret = bitprim::process_data(input, false, chain, map);
-
-		CHECK(true);
-	}
-	*/
+	CHECK(map.count("submitblock") == 0);
+	CHECK(map.count("sendrawtransaction") == 0);*/
 }
+
+TEST_CASE("[process_data] validate invocation") {
+
+	//using blk_t = libbitcoin::blockchain::block_chain;
+	using blk_t = block_chain_dummy;
+
+	auto map = bitprim::load_signature_map<blk_t>();
+
+	nlohmann::json input;
+
+	input["method"] = "invalid_key";
+
+	libbitcoin::threadpool threadpool;
+	libbitcoin::blockchain::settings chain_settings;
+	libbitcoin::database::settings database_settings;
+
+	//libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
+
+	//blk_t chain(threadpool, chain_settings, database_settings, true);
+	blk_t chain;
+
+	auto ret = bitprim::process_data(input, false, chain, map);
+
+	CHECK(true);
+}
+
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
 
