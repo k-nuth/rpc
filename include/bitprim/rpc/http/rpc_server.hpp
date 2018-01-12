@@ -29,13 +29,14 @@
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
 #include <zmq.h>
+#include <unordered_set>
 
 namespace bitprim { namespace rpc {
 
 class rpc_server {
     using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 public:
-    rpc_server(bool use_testnet_rules, libbitcoin::blockchain::block_chain & chain, uint32_t rpc_port);
+    rpc_server(bool use_testnet_rules, libbitcoin::blockchain::block_chain & chain, uint32_t rpc_port, const std::unordered_set<std::string> & rpc_allowed_ips);
     //non-copyable
     rpc_server(rpc_server const&) = delete;
     rpc_server& operator=(rpc_server const&) = delete;
@@ -53,6 +54,7 @@ private:
     // If the subscribe methods are removed from here
     // the chain_ can be const
     libbitcoin::blockchain::block_chain & chain_;
+    std::unordered_set<std::string> rpc_allowed_ips_;
 };
 
 }} // namespace bitprim::rpc

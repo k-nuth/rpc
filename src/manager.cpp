@@ -22,10 +22,10 @@
 
 namespace bitprim { namespace rpc {
 
-manager::manager(bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, uint32_t rpc_port, uint32_t subscriber_port)
+manager::manager(bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, uint32_t rpc_port, uint32_t subscriber_port, const std::unordered_set<std::string> & rpc_allowed_ips)
    : stopped_(false)
    , zmq_(subscriber_port, chain)
-   , http_(use_testnet_rules, chain, rpc_port)
+   , http_(use_testnet_rules, chain, rpc_port, rpc_allowed_ips)
 {}
 
 manager::~manager() {
