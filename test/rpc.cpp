@@ -166,7 +166,10 @@ public:
 
 	/// fetch block header by height.
 	// virtual      // OLD previo a merge de Feb2017 
-	void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const;
+	void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const
+	{
+
+	}
 
 
 	///// fetch block header by hash.
@@ -196,10 +199,16 @@ public:
 	//	block_height_fetch_handler handler) const;
 
 	/// fetch height of latest block.
-	void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const;
+	void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const
+	{
+
+	}
 
 	/// fetch transaction by hash.
-	void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const;
+	void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const
+	{
+
+	}
 
 	///// Generate fees for mining
 	//std::pair<bool, uint64_t> total_input_value(libbitcoin::chain::transaction const& tx) const;
@@ -238,7 +247,10 @@ public:
 	////-------------------------------------------------------------------------
 
 	///// fetch the inpoint (spender) of an outpoint.
-	void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const;
+	void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const
+	{
+
+	}
 
 	///// fetch outputs, values and spends for an address_hash.
 	//void fetch_history(const short_hash& address_hash, size_t limit,
@@ -342,9 +354,9 @@ TEST_CASE("[process_data] validate invocation") {
 
 	input["method"] = "invalid_key";
 
-	libbitcoin::threadpool threadpool;
-	libbitcoin::blockchain::settings chain_settings;
-	libbitcoin::database::settings database_settings;
+	//libbitcoin::threadpool threadpool;
+	//libbitcoin::blockchain::settings chain_settings;
+	//libbitcoin::database::settings database_settings;
 
 	//libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
 
@@ -352,8 +364,8 @@ TEST_CASE("[process_data] validate invocation") {
 	blk_t chain;
 
 	auto ret = bitprim::process_data(input, false, chain, map);
-
-	CHECK(true);
+	
+	CHECK(ret == "null");
 }
 
 
