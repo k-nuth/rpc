@@ -214,7 +214,6 @@ add_library(bitprim-rpc ${MODE}
     src/messages/util/getinfo.cpp
     src/messages/util/validateaddress.cpp
     src/messages/utils.cpp
-    src/messages.cpp
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
     src/manager.cpp
