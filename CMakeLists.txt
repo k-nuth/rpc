@@ -208,9 +208,7 @@ add_library(bitprim-rpc ${MODE}
     src/messages/blockchain/getchaintips.cpp
     src/messages/blockchain/getaddressmempool.cpp
     src/messages/mining/getblocktemplate.cpp
-    src/messages/mining/submitblock.cpp
     src/messages/mining/getmininginfo.cpp
-    src/messages/wallet/sendrawtransaction.cpp
     src/messages/util/getinfo.cpp
     src/messages/util/validateaddress.cpp
     src/messages/utils.cpp

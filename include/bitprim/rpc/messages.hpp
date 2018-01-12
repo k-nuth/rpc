@@ -93,13 +93,13 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 	if (it != signature_map.end()) {
 		return it->second(json_in, chain, use_testnet_rules);
 	}
-	/*
+	
 	if (key == "submitblock")
 		return process_submitblock(json_in, chain, use_testnet_rules);
 
 	if (key == "sendrawtransaction")
 		return process_sendrawtransaction(json_in, chain, use_testnet_rules);
-	*/
+	
 	//std::cout << key << " Command Not yet implemented." << std::endl;
 	return nlohmann::json(); //TODO: error!
 

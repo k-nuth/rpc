@@ -166,8 +166,7 @@ public:
 
 	/// fetch block header by height.
 	// virtual      // OLD previo a merge de Feb2017 
-	void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const
-	{
+	void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const {
 
 	}
 
@@ -199,14 +198,12 @@ public:
 	//	block_height_fetch_handler handler) const;
 
 	/// fetch height of latest block.
-	void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const
-	{
+	void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const {
 
 	}
 
 	/// fetch transaction by hash.
-	void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const
-	{
+	void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const {
 
 	}
 
@@ -247,8 +244,7 @@ public:
 	////-------------------------------------------------------------------------
 
 	///// fetch the inpoint (spender) of an outpoint.
-	void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const
-	{
+	void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const {
 
 	}
 
@@ -300,10 +296,14 @@ public:
 	////-------------------------------------------------------------------------
 
 	///// Organize a block into the block pool if valid and sufficient.
-	//void organize(block_const_ptr block, result_handler handler);
+	void organize(libbitcoin::block_const_ptr block, libbitcoin::blockchain::safe_chain::result_handler handler) {
+
+	}
 
 	///// Store a transaction to the pool if valid.
-	//void organize(transaction_const_ptr tx, result_handler handler);
+	void organize(libbitcoin::transaction_const_ptr tx, libbitcoin::blockchain::safe_chain::result_handler handler) {
+
+	}
 
 	//// Properties.
 	////-------------------------------------------------------------------------
@@ -337,10 +337,10 @@ TEST_CASE("[load_signature_map] validate map keys") {
 	CHECK(map.count("getchaintips") == 1);
 	CHECK(map.count("validateaddress") == 1);
 	CHECK(map.count("getblocktemplate") == 1);
-	CHECK(map.count("getmininginfo") == 1);
+	CHECK(map.count("getmininginfo") == 1);*/
 
 	CHECK(map.count("submitblock") == 0);
-	CHECK(map.count("sendrawtransaction") == 0);*/
+	CHECK(map.count("sendrawtransaction") == 0);
 }
 
 TEST_CASE("[process_data] validate invocation") {
