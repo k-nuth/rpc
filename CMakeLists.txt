@@ -282,9 +282,9 @@ if (WITH_TESTS)
 
   # _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-  add_test(NAME test.rpc.tests COMMAND bitprim_rpc_test)
+  add_test(NAME bitprim_rpc_test COMMAND bitprim_rpc_test)
 
-  add_dependencies(tests test.rpc.tests)
+  add_dependencies(tests bitprim_rpc_test)
 
 
 
