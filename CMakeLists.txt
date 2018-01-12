@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-rpc
 #==============================================================================
 project(bitprim-rpc
-        VERSION 0.4.0
+        VERSION 0.5.0
         LANGUAGES CXX C)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -97,10 +97,10 @@ endif()
 
 
 if (NOT USE_CONAN)
-  # Require bitprim-blockchain of at least version 0.4.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require bitprim-blockchain of at least version 0.5.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   if (NOT TARGET bitprim-blockchain)
-    find_package(bitprim-blockchain 0.4.0 REQUIRED)
+    find_package(bitprim-blockchain 0.5.0 REQUIRED)
   endif()
 
 endif()
