@@ -193,9 +193,7 @@ if (ENABLE_SHARED)
 endif()
 
 add_library(bitprim-rpc ${MODE}
-    src/messages/blockchain/getrawtransaction.cpp
     src/messages/blockchain/getaddressbalance.cpp
-    src/messages/blockchain/getspentinfo.cpp
     src/messages/blockchain/getaddresstxids.cpp
     src/messages/blockchain/getaddressdeltas.cpp
     src/messages/blockchain/getaddressutxos.cpp
