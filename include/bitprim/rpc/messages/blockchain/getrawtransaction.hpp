@@ -31,6 +31,44 @@
 namespace bitprim {
 	
 
+
+	// RPC CODE
+	// ----------------------------------------------------------------------------
+	// TODO: move this code to a better place
+
+	std::string get_txn_type(const libbitcoin::chain::script& script) {
+		auto pattern = script.pattern();
+		// The first operations access must be method-based to guarantee the cache.
+		if (pattern == libbitcoin::machine::script_pattern::null_data)
+			return "nulldata";
+
+		if (pattern == libbitcoin::machine::script_pattern::pay_multisig)
+			return "pay_multisig";
+
+		if (pattern == libbitcoin::machine::script_pattern::pay_public_key)
+			return "pay_public_key";
+
+		if (pattern == libbitcoin::machine::script_pattern::pay_key_hash)
+			return "pay_key_hash";
+
+		if (pattern == libbitcoin::machine::script_pattern::pay_script_hash)
+			return "pay_script_hash";
+
+		if (pattern == libbitcoin::machine::script_pattern::sign_multisig)
+			return "sign_multisig";
+
+		if (pattern == libbitcoin::machine::script_pattern::sign_public_key)
+			return "sign_public_key";
+
+		if (pattern == libbitcoin::machine::script_pattern::sign_key_hash)
+			return "sign_key_hash";
+
+		if (pattern == libbitcoin::machine::script_pattern::sign_script_hash)
+			return "sign_script_hash";
+
+		return "non_standard";
+	}
+
 	bool json_in_getrawtransaction(nlohmann::json const& json_object, std::string& tx_id, bool& verbose)
 	{
 		if (json_object["params"].size() == 0)
@@ -312,43 +350,7 @@ namespace bitprim {
 	}
 
 
-
-	// RPC CODE
-	// ----------------------------------------------------------------------------
-	// TODO: move this code to a better place
-
-	std::string get_txn_type(const libbitcoin::chain::script& script) {
-		auto pattern = script.pattern();
-		// The first operations access must be method-based to guarantee the cache.
-		if (pattern == libbitcoin::machine::script_pattern::null_data)
-			return "nulldata";
-
-		if (pattern == libbitcoin::machine::script_pattern::pay_multisig)
-			return "pay_multisig";
-
-		if (pattern == libbitcoin::machine::script_pattern::pay_public_key)
-			return "pay_public_key";
-
-		if (pattern == libbitcoin::machine::script_pattern::pay_key_hash)
-			return "pay_key_hash";
-
-		if (pattern == libbitcoin::machine::script_pattern::pay_script_hash)
-			return "pay_script_hash";
-
-		if (pattern == libbitcoin::machine::script_pattern::sign_multisig)
-			return "sign_multisig";
-
-		if (pattern == libbitcoin::machine::script_pattern::sign_public_key)
-			return "sign_public_key";
-
-		if (pattern == libbitcoin::machine::script_pattern::sign_key_hash)
-			return "sign_key_hash";
-
-		if (pattern == libbitcoin::machine::script_pattern::sign_script_hash)
-			return "sign_script_hash";
-
-		return "non_standard";
-	}
+	
 
 }
 
