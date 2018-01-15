@@ -25,7 +25,7 @@ def option_on_off(option):
 
 class BitprimRPCConan(ConanFile):
     name = "bitprim-rpc"
-    version = "0.5"
+    version = "0.6"
     license = "http://www.boost.org/users/license.html"
     url = "https://github.com/bitprim/bitprim-rpc"
     description = "Bitprim RPC (HTTP+JSON) API"
@@ -50,7 +50,7 @@ class BitprimRPCConan(ConanFile):
 
     requires = (("bitprim-conan-boost/1.64.0@bitprim/stable"),
                 ("libzmq/4.2.2@bitprim/stable"),
-                ("bitprim-blockchain/0.5@bitprim/testing"))
+                ("bitprim-blockchain/0.6@bitprim/testing"))
 
     def build(self):
         cmake = CMake(self)
@@ -73,7 +73,7 @@ class BitprimRPCConan(ConanFile):
                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
 
         cmake.definitions["BITPRIM_BUILD_NUMBER"] = os.getenv('BITPRIM_BUILD_NUMBER', '-')
-        cmake.configure(source_dir=self.conanfile_directory)
+        cmake.configure(source_dir=self.source_folder)
         cmake.build()
 
     def imports(self):
