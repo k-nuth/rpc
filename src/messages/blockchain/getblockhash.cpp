@@ -41,7 +41,11 @@ bool json_in_getblockhash(nlohmann::json const& json_object, size_t& height){
 bool getblockhash(nlohmann::json& json_object, int& error, std::string& error_code, const size_t height, libbitcoin::blockchain::block_chain const& chain)
 {
     libbitcoin::message::header::ptr header;
-    getblockheader(height, header, chain);
+    if (getblockheader(height, header, chain) != libbitcoin::error::success){
+        error_code = "Block height out of range";
+        error = -8;
+        return false;
+    }
     json_object = libbitcoin::encode_hash(header->hash());
     return true;
 }
