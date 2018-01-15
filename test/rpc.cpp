@@ -355,7 +355,7 @@ TEST_CASE("[load_signature_map] validate map keys") {
 	CHECK(map.count("sendrawtransaction") == 0);
 }
 
-TEST_CASE("[process_data] validate invocation") {
+TEST_CASE("[process_data] invalid key") {
 
 	//using blk_t = libbitcoin::blockchain::block_chain;
 	using blk_t = block_chain_dummy;
@@ -380,6 +380,30 @@ TEST_CASE("[process_data] validate invocation") {
 	CHECK(ret == "null");
 }
 
+
+TEST_CASE("[process_data] getrawtransaction error invalid params") {
+
+	using blk_t = block_chain_dummy;
+
+	auto map = bitprim::load_signature_map<blk_t>();
+
+	nlohmann::json input;
+
+	input["method"] = "getrawtransaction";
+	input["id"] = 123;
+	input["params"] = nullptr;
+
+	blk_t chain;
+
+	auto ret = bitprim::process_data(input, false, chain, map);
+	
+	//MESSAGE(ret);
+	
+	nlohmann::json output = nlohmann::json::parse(ret);
+
+	CHECK(output["id"] == input["id"]);
+	CHECK((int)output["error"]["code"] == bitprim::RPC_PARSE_ERROR);
+}
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
 
