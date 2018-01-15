@@ -30,30 +30,16 @@
 
 namespace bitprim {
 
-
 template <typename Blockchain>
 using message_signature = nlohmann::json(*)(nlohmann::json const&, Blockchain const&, bool);
 
 template <typename Blockchain>
 using signature_map = std::unordered_map<std::string, message_signature<Blockchain>>;
 
-/*
-template <typename Blockchain> 
-std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Blockchain& chain, signature_map<Blockchain> const& signature_map);
-*/
-
-// std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map);
-
 
 template <typename Blockchain>
 signature_map<Blockchain> load_signature_map() {
 
-	return signature_map<Blockchain>  {
-		{"getrawtransaction", process_getrawtransaction},
-		{ "getspentinfo", process_getspentinfo }
-	};
-
-/*
 	return signature_map<Blockchain>  {
 		{"getrawtransaction", process_getrawtransaction},
 		{ "getaddressbalance", process_getaddressbalance },
@@ -75,14 +61,12 @@ signature_map<Blockchain> load_signature_map() {
 		{ "validateaddress", process_validateaddress },
 		{ "getblocktemplate", process_getblocktemplate },
 		{ "getmininginfo", process_getmininginfo }
-	};*/
+	};
 }
-
 
 template <typename Blockchain>
 nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, Blockchain& chain, signature_map<Blockchain> const& signature_map) {
-	//nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map) {
-
+	
 	auto key = json_in["method"].get<std::string>();
 
 	//std::cout << "Processing json " << key << std::endl;
@@ -104,7 +88,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 	return nlohmann::json(); //TODO: error!
 
 }
-//std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, signature_map const& signature_map) {
+
 template <typename Blockchain>
 std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Blockchain& chain, signature_map<Blockchain> const& signature_map) {
 	//std::cout << "method: " << json_object["method"].get<std::string>() << "\n";

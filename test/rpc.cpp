@@ -76,8 +76,10 @@ public:
 	///// Get the version of the block with the given height.
 	//bool get_version(uint32_t& out_version, const size_t& height) const;
 
-	///// Get height of latest block.
-	//bool get_last_height(size_t& out_height) const;
+	/// Get height of latest block.
+	bool get_last_height(size_t& out_height) const {
+		return true;
+	}
 
 	///// Get the output that is referenced by the outpoint.
 	//bool get_output(chain::output& out_output, size_t& out_height,
@@ -128,8 +130,11 @@ public:
 	//// Properties
 	//// ------------------------------------------------------------------------
 
-	///// Get forks chain state relative to chain top.
-	//chain::chain_state::ptr chain_state() const;
+	/// Get forks chain state relative to chain top.
+	libbitcoin::chain::chain_state::ptr chain_state() const
+	{
+		return  libbitcoin::chain::chain_state::ptr();
+	}
 
 	///// Get full chain state relative to the branch top.
 	//chain::chain_state::ptr chain_state(branch::const_ptr branch) const;
@@ -156,13 +161,16 @@ public:
 	//// Node Queries.
 	//// ------------------------------------------------------------------------
 
-	///// fetch a block by height.
-	//// virtual      // OLD previo a merge de Feb2017
-	//void fetch_block(size_t height, block_fetch_handler handler) const;
+	/// fetch a block by height.
+	// virtual      // OLD previo a merge de Feb2017
+	void fetch_block(size_t height, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {
 
-	///// fetch a block by hash.
-	//void fetch_block(const hash_digest& hash,
-	//	block_fetch_handler handler) const;
+	}
+
+	/// fetch a block by hash.
+	void fetch_block(const libbitcoin::hash_digest& hash, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {
+
+	}
 
 	/// fetch block header by height.
 	// virtual      // OLD previo a merge de Feb2017 
@@ -214,10 +222,12 @@ public:
 	////    bool is_double_spent(chain::transaction const& tx) const;
 
 	///// fetch_mempool_all()
-	//using tx_mempool = std::tuple<chain::transaction, uint64_t, uint64_t, std::string, size_t>;
+	using tx_mempool = std::tuple<libbitcoin::chain::transaction, uint64_t, uint64_t, std::string, size_t>;
 
 	//std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
-	//std::vector<tx_mempool> fetch_mempool_all(size_t max_bytes) const;
+	std::vector<tx_mempool> fetch_mempool_all(size_t max_bytes) const {
+		return std::vector<tx_mempool>();
+	}
 	//std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
 	//std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;
 	//std::tuple<bool, size_t, uint64_t> validate_tx_2(chain::transaction const& tx, size_t height) const;
@@ -248,13 +258,15 @@ public:
 
 	}
 
-	///// fetch outputs, values and spends for an address_hash.
-	//void fetch_history(const short_hash& address_hash, size_t limit,
-	//	size_t from_height, history_fetch_handler handler) const;
+	/// fetch outputs, values and spends for an address_hash.
+	void fetch_history(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::history_fetch_handler handler) const {
 
-	///// Fetch all the txns used by the wallet
-	//void fetch_txns(const short_hash& address_hash, size_t limit,
-	//	size_t from_height, txns_fetch_handler handler) const;
+	}
+
+	/// Fetch all the txns used by the wallet
+	void fetch_txns(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::txns_fetch_handler handler) const {
+
+	}
 
 	///// fetch stealth results.
 	//void fetch_stealth(const binary& filter, size_t from_height,
@@ -320,7 +332,7 @@ TEST_CASE("[load_signature_map] validate map keys") {
 
 	CHECK(map.count("getrawtransaction") == 1);
 	CHECK(map.count("getspentinfo") == 1);
-	/*CHECK(map.count("getaddressbalance") == 1);
+	CHECK(map.count("getaddressbalance") == 1);
 	CHECK(map.count("getaddresstxids") == 1);
 	CHECK(map.count("getaddressdeltas") == 1);
 	CHECK(map.count("getaddressutxos") == 1);
@@ -337,7 +349,7 @@ TEST_CASE("[load_signature_map] validate map keys") {
 	CHECK(map.count("getchaintips") == 1);
 	CHECK(map.count("validateaddress") == 1);
 	CHECK(map.count("getblocktemplate") == 1);
-	CHECK(map.count("getmininginfo") == 1);*/
+	CHECK(map.count("getmininginfo") == 1);
 
 	CHECK(map.count("submitblock") == 0);
 	CHECK(map.count("sendrawtransaction") == 0);

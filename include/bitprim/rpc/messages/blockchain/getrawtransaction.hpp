@@ -31,7 +31,6 @@
 namespace bitprim {
 	
 
-
 	// RPC CODE
 	// ----------------------------------------------------------------------------
 	// TODO: move this code to a better place
@@ -90,8 +89,6 @@ namespace bitprim {
 		}
 		return true;
 	}
-
-
 
 
 	template <typename Blockchain>

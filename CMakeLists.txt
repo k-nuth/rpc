@@ -193,24 +193,6 @@ if (ENABLE_SHARED)
 endif()
 
 add_library(bitprim-rpc ${MODE}
-    src/messages/blockchain/getaddressbalance.cpp
-    src/messages/blockchain/getaddresstxids.cpp
-    src/messages/blockchain/getaddressdeltas.cpp
-    src/messages/blockchain/getaddressutxos.cpp
-    src/messages/blockchain/getblockhashes.cpp
-    src/messages/blockchain/getbestblockhash.cpp
-    src/messages/blockchain/getblock.cpp
-    src/messages/blockchain/getblockhash.cpp
-    src/messages/blockchain/getblockchaininfo.cpp
-    src/messages/blockchain/getblockheader.cpp
-    src/messages/blockchain/getblockcount.cpp
-    src/messages/blockchain/getdifficulty.cpp
-    src/messages/blockchain/getchaintips.cpp
-    src/messages/blockchain/getaddressmempool.cpp
-    src/messages/mining/getblocktemplate.cpp
-    src/messages/mining/getmininginfo.cpp
-    src/messages/util/getinfo.cpp
-    src/messages/util/validateaddress.cpp
     src/messages/utils.cpp
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
