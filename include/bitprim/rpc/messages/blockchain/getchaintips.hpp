@@ -75,7 +75,9 @@ namespace bitprim {
 		size_t top_height;
 		libbitcoin::message::header::ptr top;
 		chain.get_last_height(top_height);
-		getblockheader(top_height, top, chain);
+		if (getblockheader(top_height, top, chain) != libbitcoin::error::success) {
+			return false;
+		}
 		active["height"] = top_height;
 		active["hash"] = libbitcoin::encode_hash(top->hash());
 		active["branchlen"] = 0;

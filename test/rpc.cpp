@@ -405,5 +405,33 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
 	CHECK((int)output["error"]["code"] == bitprim::RPC_PARSE_ERROR);
 }
 
+
+
+TEST_CASE("[process_data] submitblock ") {
+
+	using blk_t = block_chain_dummy;
+
+	auto map = bitprim::load_signature_map<blk_t>();
+
+	nlohmann::json input;
+
+	input["method"] = "submitblock";
+	input["id"] = 123;
+	input["params"] = nullptr;
+
+	blk_t chain;
+
+	auto ret = bitprim::process_data(input, false, chain, map);
+
+	//MESSAGE(ret);
+
+	nlohmann::json output = nlohmann::json::parse(ret);
+
+	CHECK(output["id"] == input["id"]);
+	CHECK((int)output["error"]["code"] == bitprim::RPC_MISC_ERROR);
+}
+
+
+
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
 

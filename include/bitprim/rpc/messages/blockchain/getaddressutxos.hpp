@@ -161,7 +161,9 @@ namespace bitprim {
 	nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
 	{
 
-		nlohmann::json container, result;
+		nlohmann::json container;
+		nlohmann::json result = nlohmann::json::array();
+
 		container["id"] = json_in["id"];
 
 		int error = 0;

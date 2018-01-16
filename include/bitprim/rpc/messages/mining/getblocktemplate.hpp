@@ -68,7 +68,9 @@ namespace bitprim {
 		size_t last_height;
 		chain.get_last_height(last_height);
 		libbitcoin::message::header::ptr header;
-		getblockheader(last_height, header, chain);
+		if (getblockheader(last_height, header, chain) != libbitcoin::error::success) {
+			return false;
+		}
 
 		auto time_now = get_clock_now();
 		json_object["curtime"] = time_now;
