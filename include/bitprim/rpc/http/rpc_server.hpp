@@ -52,14 +52,14 @@ public:
 private:        
     void configure_server();
 
-	bool use_testnet_rules_;
+    bool use_testnet_rules_;
     bool stopped_;      
-	//int port_;
+    //int port_;
     HttpServer server_;
     // If the subscribe methods are removed from here
     // the chain_ can be const
     libbitcoin::blockchain::block_chain & chain_;
-	signature_map<libbitcoin::blockchain::block_chain> signature_map_;
+    signature_map<libbitcoin::blockchain::block_chain> signature_map_;
     std::unordered_set<std::string> rpc_allowed_ips_;
 };
 

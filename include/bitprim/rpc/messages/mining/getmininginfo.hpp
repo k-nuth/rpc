@@ -30,62 +30,62 @@
 
 namespace bitprim {
 
-	template <typename Blockchain>
-	bool getmininginfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Blockchain const& chain)
-	{
-		auto last_block_data = get_last_block_difficulty(chain);
+    template <typename Blockchain>
+    bool getmininginfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Blockchain const& chain)
+    {
+        auto last_block_data = get_last_block_difficulty(chain);
 
-		if (std::get<0>(last_block_data)) {
-			json_object["blocks"] = std::get<1>(last_block_data);
-		}
+        if (std::get<0>(last_block_data)) {
+            json_object["blocks"] = std::get<1>(last_block_data);
+        }
 
-		//TODO: check size and weight on mainnet, testnet is sending 0s
-		json_object["currentblocksize"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());
-		json_object["currentblockweight"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());
-		json_object["currentblocktx"] = 0;
+        //TODO: check size and weight on mainnet, testnet is sending 0s
+        json_object["currentblocksize"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());
+        json_object["currentblockweight"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());
+        json_object["currentblocktx"] = 0;
 
-		json_object["difficulty"] = std::get<2>(last_block_data);
-		//TODO: check errors
-		json_object["errors"] = "";
+        json_object["difficulty"] = std::get<2>(last_block_data);
+        //TODO: check errors
+        json_object["errors"] = "";
 
-		//TODO: calculate networkhashps
-		json_object["networkhashps"] = 0.0;
-		//TODO: calculate pooledtx
-		json_object["pooledtx"] = 0;
+        //TODO: calculate networkhashps
+        json_object["networkhashps"] = 0.0;
+        //TODO: calculate pooledtx
+        json_object["pooledtx"] = 0;
 
-		json_object["testnet"] = use_testnet_rules;
+        json_object["testnet"] = use_testnet_rules;
 
-		//TODO: libbitcoin does not support regtest
-		if (use_testnet_rules) {
-			json_object["chain"] = "test";
-		}
-		else {
-			json_object["chain"] = "main";
-		}
-		return true;
-	}
+        //TODO: libbitcoin does not support regtest
+        if (use_testnet_rules) {
+            json_object["chain"] = "test";
+        }
+        else {
+            json_object["chain"] = "main";
+        }
+        return true;
+    }
 
-	template <typename Blockchain>
-	nlohmann::json process_getmininginfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
-	{
-		nlohmann::json container, result;
-		container["id"] = json_in["id"];
+    template <typename Blockchain>
+    nlohmann::json process_getmininginfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
+    {
+        nlohmann::json container, result;
+        container["id"] = json_in["id"];
 
-		int error = 0;
-		std::string error_code;
+        int error = 0;
+        std::string error_code;
 
-		if (getmininginfo(result, error, error_code, use_testnet_rules, chain))
-		{
-			container["result"] = result;
-			container["error"];
-		}
-		else {
-			container["error"]["code"] = error;
-			container["error"]["message"] = error_code;
-		}
+        if (getmininginfo(result, error, error_code, use_testnet_rules, chain))
+        {
+            container["result"] = result;
+            container["error"];
+        }
+        else {
+            container["error"]["code"] = error;
+            container["error"]["message"] = error_code;
+        }
 
-		return container;
-	}
+        return container;
+    }
 
 
 }
