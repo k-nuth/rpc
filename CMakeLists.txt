@@ -46,8 +46,6 @@ option(ENABLE_POSITION_INDEPENDENT_CODE "Enable POSITION_INDEPENDENT_CODE proper
 #------------------------------------------------------------------------------
 option(WITH_TESTS "Compile with unit tests." ON)
 
-message("HEY")
-message(${WITH_TESTS})
 
 # # Implement --with-litecoin.
 # #------------------------------------------------------------------------------
