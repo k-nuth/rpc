@@ -20,7 +20,7 @@
 
 #include <bitprim/rpc/messages/mining/getmininginfo.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
-#include <bitcoin/bitcoin/bitcoin_cash_support.hpp>
+#include <bitcoin/bitcoin/multi_crypto_support.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {

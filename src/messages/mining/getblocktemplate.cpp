@@ -19,7 +19,7 @@
 */
 
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
-#include <bitcoin/bitcoin/bitcoin_cash_support.hpp>
+#include <bitcoin/bitcoin/multi_crypto_support.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
