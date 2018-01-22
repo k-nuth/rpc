@@ -99,7 +99,8 @@ bool getaddresstxids (nlohmann::json& json_object, int& error, std::string& erro
 }
 nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules)
 {
-    nlohmann::json container, result;
+    nlohmann::json container;
+    nlohmann::json result = nlohmann::json::array();
     container["id"] = json_in["id"];
 
     int error = 0;

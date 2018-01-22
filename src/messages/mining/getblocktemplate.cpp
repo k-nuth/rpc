@@ -61,8 +61,9 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     size_t last_height;
     chain.get_last_height(last_height);
     libbitcoin::message::header::ptr header;
-    getblockheader(last_height, header, chain);
-
+    if (getblockheader(last_height, header, chain) != libbitcoin::error::success){
+        return false;
+    }
     auto time_now = get_clock_now();
     json_object["curtime"] = time_now;
     json_object["mintime"] = chain.chain_state()->median_time_past() + 1;

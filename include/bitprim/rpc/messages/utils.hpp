@@ -27,7 +27,7 @@ namespace bitprim {
 
     double bits_to_difficulty (const uint32_t & bits);
 
-    void getblockheader(size_t i,libbitcoin::message::header::ptr& header, libbitcoin::blockchain::block_chain const& chain);
+    libbitcoin::code getblockheader(size_t i,libbitcoin::message::header::ptr& header, libbitcoin::blockchain::block_chain const& chain);
 
     libbitcoin::chain::history::list expand(libbitcoin::chain::history_compact::list& compact);
 
