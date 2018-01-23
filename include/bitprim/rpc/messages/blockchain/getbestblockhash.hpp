@@ -24,10 +24,46 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
+#include <bitprim/rpc/messages/utils.hpp>
+#include <boost/thread/latch.hpp>
+
 namespace bitprim {
 
-    bool getbestblockhash (nlohmann::json& json_object, int& error, std::string& error_code, libbitcoin::blockchain::block_chain const& chain);
-    nlohmann::json process_getbestblockhash(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules = false);
+    template <typename Blockchain>
+    bool getbestblockhash(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
+    {
+        size_t top_height;
+        libbitcoin::message::header::ptr top;
+        chain.get_last_height(top_height);
+        if (getblockheader(top_height, top, chain) != libbitcoin::error::success) {
+            return false;
+        }
+        json_object = libbitcoin::encode_hash(top->hash());
+        return true;
+
+    }
+
+    template <typename Blockchain>
+    nlohmann::json process_getbestblockhash(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
+    {
+        nlohmann::json container, result;
+        container["id"] = json_in["id"];
+
+        int error = 0;
+        std::string error_code;
+
+        if (getbestblockhash(result, error, error_code, chain))
+        {
+            container["result"] = result;
+            container["error"];
+        }
+        else {
+            container["error"]["code"] = error;
+            container["error"]["message"] = error_code;
+        }
+
+        return container;
+    }
 
 }
 

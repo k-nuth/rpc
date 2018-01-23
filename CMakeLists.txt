@@ -46,6 +46,7 @@ option(ENABLE_POSITION_INDEPENDENT_CODE "Enable POSITION_INDEPENDENT_CODE proper
 #------------------------------------------------------------------------------
 option(WITH_TESTS "Compile with unit tests." ON)
 
+
 # # Implement --with-litecoin.
 # #------------------------------------------------------------------------------
 # option(WITH_LITECOIN "Compile with Litecoin support." OFF)
@@ -190,30 +191,7 @@ if (ENABLE_SHARED)
 endif()
 
 add_library(bitprim-rpc ${MODE}
-    src/messages/blockchain/getrawtransaction.cpp
-    src/messages/blockchain/getaddressbalance.cpp
-    src/messages/blockchain/getspentinfo.cpp
-    src/messages/blockchain/getaddresstxids.cpp
-    src/messages/blockchain/getaddressdeltas.cpp
-    src/messages/blockchain/getaddressutxos.cpp
-    src/messages/blockchain/getblockhashes.cpp
-    src/messages/blockchain/getbestblockhash.cpp
-    src/messages/blockchain/getblock.cpp
-    src/messages/blockchain/getblockhash.cpp
-    src/messages/blockchain/getblockchaininfo.cpp
-    src/messages/blockchain/getblockheader.cpp
-    src/messages/blockchain/getblockcount.cpp
-    src/messages/blockchain/getdifficulty.cpp
-    src/messages/blockchain/getchaintips.cpp
-    src/messages/blockchain/getaddressmempool.cpp
-    src/messages/mining/getblocktemplate.cpp
-    src/messages/mining/submitblock.cpp
-    src/messages/mining/getmininginfo.cpp
-    src/messages/wallet/sendrawtransaction.cpp
-    src/messages/util/getinfo.cpp
-    src/messages/util/validateaddress.cpp
     src/messages/utils.cpp
-    src/messages.cpp
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
     src/manager.cpp
@@ -268,21 +246,40 @@ endif()
 # local: test/bitprim_rpc_test
 #------------------------------------------------------------------------------
 if (WITH_TESTS)
+
+  add_custom_target(tests ALL
+      COMMAND ${CMAKE_CTEST_COMMAND} -C Debug --output-on-failure -R "test.+"
+      COMMENT "Build and run all the unit tests.")
+
   add_executable(bitprim_rpc_test
-          test/utility.hpp
+          test/rpc.cpp
   )
 
   target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
-  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-  _add_tests(bitprim_rpc_test
-          configuration_tests
-          node_tests
-          header_queue_tests
-          performance_tests
-          reservation_tests
-          reservations_tests
-          settings_tests)
+  # _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+
+  add_test(NAME bitprim_rpc_test COMMAND bitprim_rpc_test)
+
+  add_dependencies(tests bitprim_rpc_test)
+
+
+
+#  add_executable(bitprim_rpc_test
+#          test/rpc.cpp
+#  )
+
+#  target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
+#  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+
+#  _add_tests(bitprim_rpc_test
+#          configuration_tests
+#          node_tests
+#          header_queue_tests
+#          performance_tests
+#          reservation_tests
+#          reservations_tests
+#          settings_tests)
 endif()
 
 

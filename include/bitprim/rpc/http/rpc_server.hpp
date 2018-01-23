@@ -31,6 +31,10 @@
 #include <zmq.h>
 #include <unordered_set>
 
+#include <string>
+#include <unordered_map>
+
+
 namespace bitprim { namespace rpc {
 
 class rpc_server {
@@ -47,6 +51,7 @@ public:
 
 private:        
     void configure_server();
+
     bool use_testnet_rules_;
     bool stopped_;      
     //int port_;
@@ -54,6 +59,7 @@ private:
     // If the subscribe methods are removed from here
     // the chain_ can be const
     libbitcoin::blockchain::block_chain & chain_;
+    signature_map<libbitcoin::blockchain::block_chain> signature_map_;
     std::unordered_set<std::string> rpc_allowed_ips_;
 };
 

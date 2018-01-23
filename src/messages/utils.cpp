@@ -19,65 +19,21 @@
 */
 
 #include <bitprim/rpc/messages/utils.hpp>
-#include <boost/thread/latch.hpp>
 
 namespace bitprim {
 
-double bits_to_difficulty (const uint32_t & bits){
-    double diff = 1.0;
-    int shift = (bits >> 24) & 0xff;
-    diff = (double)0x0000ffff / (double)(bits & 0x00ffffff);
-    while (shift < 29) {
-        diff *= 256.0;
-        ++shift;
-    }
-    while (shift > 29) {
-        diff /= 256.0;
-        --shift;
-    }
-    return diff;
-}
-
-libbitcoin::code getblockheader(size_t i,libbitcoin::message::header::ptr& header, libbitcoin::blockchain::block_chain const& chain){
-    libbitcoin::code result;
-    boost::latch latch(2);
-
-    chain.fetch_block_header(i, [&](const libbitcoin::code &ec, libbitcoin::message::header::ptr h, size_t height) {
-        result = ec;
-        if (ec == libbitcoin::error::success) {
-            header = h;
+    double bits_to_difficulty(const uint32_t & bits) {
+        double diff = 1.0;
+        int shift = (bits >> 24) & 0xff;
+        diff = (double)0x0000ffff / (double)(bits & 0x00ffffff);
+        while (shift < 29) {
+            diff *= 256.0;
+            ++shift;
         }
-        latch.count_down();
-    });
-    latch.count_down_and_wait();
-
-    return result;
-}
-
-std::tuple<bool ,size_t, double> get_last_block_difficulty(libbitcoin::blockchain::block_chain const& chain){
-
-    double diff = 1.0;
-    size_t top_height;
-    libbitcoin::message::header::ptr top = nullptr;
-    bool success = false;
-    if(chain.get_last_height(top_height)){
-        auto ec = getblockheader(top_height, top, chain);
-        if(ec == libbitcoin::error::success && top != nullptr){
-            success = true;
-            auto bits = top->bits();
-            int shift = (bits >> 24) & 0xff;
-            diff = (double)0x0000ffff / (double)(bits & 0x00ffffff);
-            while (shift < 29) {
-                diff *= 256.0;
-                ++shift;
-            }
-            while (shift > 29) {
-                diff /= 256.0;
-                --shift;
-            }
+        while (shift > 29) {
+            diff /= 256.0;
+            --shift;
         }
+        return diff;
     }
-    return std::make_tuple(success, top_height, diff);
-}
-
 }

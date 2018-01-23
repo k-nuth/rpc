@@ -24,11 +24,52 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
+#include <boost/thread/latch.hpp>
+
 namespace bitprim {
 
-    bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<std::string>& payment_address);
-    bool getaddressmempool (nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, libbitcoin::blockchain::block_chain const& chain);
-    nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, libbitcoin::blockchain::block_chain const& chain, bool use_testnet_rules = false);
+    //TODO 
+    bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<std::string>& payment_address)
+    {
+        return true;
+    }
+
+    template <typename Blockchain>
+    bool getaddressmempool(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, Blockchain const& chain)
+    {
+        json_object = nlohmann::json::array();
+        return true;
+    }
+
+    template <typename Blockchain>
+    nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
+    {
+        nlohmann::json container, result;
+        container["id"] = json_in["id"];
+
+        int error = 0;
+        std::string error_code;
+
+        std::vector<std::string> payment_addresses;
+        if (!json_in_getaddressmempool(json_in, payment_addresses))
+        {
+            //load error code
+            //return
+        }
+
+        if (getaddressmempool(result, error, error_code, payment_addresses, chain))
+        {
+            container["result"] = result;
+            container["error"];
+        }
+        else {
+            container["error"]["code"] = error;
+            container["error"]["message"] = error_code;
+        }
+
+        return container;
+    }
+
 
 }
 
