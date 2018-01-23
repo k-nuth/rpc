@@ -25,7 +25,7 @@
 #include <bitprim/rpc/messages/messages.hpp>
 
 #include <boost/thread/latch.hpp>
-#include <bitcoin/bitcoin/bitcoin_cash_support.hpp>
+#include <bitcoin/bitcoin/multi_crypto_support.hpp>
 #include <bitcoin/bitcoin/error.hpp>
 
 namespace bitprim {
