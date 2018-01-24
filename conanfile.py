@@ -48,7 +48,7 @@ class BitprimRPCConan(ConanFile):
     package_files = "build/lbitprim-rpc.a"
     build_policy = "missing"
 
-    requires = (("bitprim-conan-boost/1.64.0@bitprim/stable"),
+    requires = (("bitprim-conan-boost/1.66.0@bitprim/stable"),
                 ("libzmq/4.2.2@bitprim/stable"),
                 ("bitprim-blockchain/0.7@bitprim/testing"))
 
