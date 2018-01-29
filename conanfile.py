@@ -32,16 +32,17 @@ class BitprimRPCConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     options = {"shared": [True, False],
-               "fPIC": [True, False]
+               "fPIC": [True, False],
+               "with_tests": [True, False],
     }
     # "with_litecoin": [True, False]
 
     default_options = "shared=False", \
-        "fPIC=True"
+        "fPIC=True", \
+        "with_tests=False"
 
     # "with_litecoin=False"
-
-    with_tests = False
+    # with_tests = False
 
     generators = "cmake"
     exports_sources = "src/*", "CMakeLists.txt", "cmake/*", "bitprim-rpcConfig.cmake.in", "include/*", "test/*"
@@ -52,6 +53,9 @@ class BitprimRPCConan(ConanFile):
                 ("libzmq/4.2.2@bitprim/stable"),
                 ("bitprim-blockchain/0.7@bitprim/testing"))
 
+    def package_id(self):
+        self.info.options.with_tests = "ANY"
+
     def build(self):
         cmake = CMake(self)
         
@@ -61,7 +65,8 @@ class BitprimRPCConan(ConanFile):
         cmake.definitions["ENABLE_SHARED"] = option_on_off(self.options.shared)
         cmake.definitions["ENABLE_POSITION_INDEPENDENT_CODE"] = option_on_off(self.options.fPIC)
 
-        cmake.definitions["WITH_TESTS"] = option_on_off(self.with_tests)
+        # cmake.definitions["WITH_TESTS"] = option_on_off(self.with_tests)
+        cmake.definitions["WITH_TESTS"] = option_on_off(self.options.with_tests)
 
         # cmake.definitions["WITH_LITECOIN"] = option_on_off(self.options.with_litecoin)
 
