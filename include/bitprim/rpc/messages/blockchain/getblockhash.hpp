@@ -30,67 +30,69 @@
 
 namespace bitprim {
 
-    bool json_in_getblockhash(nlohmann::json const& json_object, size_t& height) {
-        if (json_object["params"].size() == 0)
-            return false;
-        try {
-            height = json_object["params"][0].get<size_t>();
-        }
-        catch (const std::exception & e) {
-            return false;
-        }
-
-        return true;
+inline
+bool json_in_getblockhash(nlohmann::json const& json_object, size_t& height) {
+    if (json_object["params"].size() == 0)
+        return false;
+    try {
+        height = json_object["params"][0].get<size_t>();
+    }
+    catch (const std::exception & e) {
+        return false;
     }
 
-    template <typename Blockchain>
-    bool getblockhash(nlohmann::json& json_object, int& error, std::string& error_code, const size_t height, Blockchain const& chain)
-    {
-        libbitcoin::message::header::ptr header;
-        if (getblockheader(height, header, chain) != libbitcoin::error::success) {
-            error_code = "Block height out of range";
-            error = -8;
-            return false;
-        }
-        json_object = libbitcoin::encode_hash(header->hash());
-        return true;
+    return true;
+}
 
+template <typename Blockchain>
+bool getblockhash(nlohmann::json& json_object, int& error, std::string& error_code, const size_t height, Blockchain const& chain)
+{
+    libbitcoin::message::header::ptr header;
+    if (getblockheader(height, header, chain) != libbitcoin::error::success) {
+        error_code = "Block height out of range";
+        error = -8;
+        return false;
     }
+    json_object = libbitcoin::encode_hash(header->hash());
+    return true;
 
-    template <typename Blockchain>
-    nlohmann::json process_getblockhash(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
+}
+
+template <typename Blockchain>
+nlohmann::json process_getblockhash(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
+{
+    nlohmann::json container, result;
+    container["id"] = json_in["id"];
+
+    int error = 0;
+    std::string error_code;
+
+    size_t height;
+    if (!json_in_getblockhash(json_in, height)) //if false return error
     {
-        nlohmann::json container, result;
-        container["id"] = json_in["id"];
-
-        int error = 0;
-        std::string error_code;
-
-        size_t height;
-        if (!json_in_getblockhash(json_in, height)) //if false return error
-        {
-            container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
-            container["error"]["message"] = "getblockhash height\n"
-                "\nReturns hash of block in best-block-chain at height provided.\n"
-                "\nArguments:\n"
-                "1. height         (numeric, required) The height index\n"
-                "\nResult:\n"
-                "\"hash\"         (string) The block hash\n";
-            return container;
-        }
-
-        if (getblockhash(result, error, error_code, height, chain))
-        {
-            container["result"] = result;
-            container["error"];
-        }
-        else {
-            container["error"]["code"] = error;
-            container["error"]["message"] = error_code;
-        }
-
+        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["message"] = "getblockhash height\n"
+            "\nReturns hash of block in best-block-chain at height provided.\n"
+            "\nArguments:\n"
+            "1. height         (numeric, required) The height index\n"
+            "\nResult:\n"
+            "\"hash\"         (string) The block hash\n";
         return container;
     }
 
+    if (getblockhash(result, error, error_code, height, chain))
+    {
+        container["result"] = result;
+        container["error"];
+    }
+    else {
+        container["error"]["code"] = error;
+        container["error"]["message"] = error_code;
+    }
+
+    return container;
 }
-#endif
+
+} //namespace bitprim
+
+#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASH_HPP_

@@ -30,79 +30,79 @@
 
 namespace bitprim {
 
-   
-    bool json_in_submitblock(nlohmann::json const& json_object, std::string& block_hex_str) {
-        if (json_object["params"].size() == 0)
-            return false;
-        try {
-            block_hex_str = json_object["params"][0].get<std::string>();
-        }
-        catch (const std::exception & e) {
-            return false;
-        }
-        return true;
+inline
+bool json_in_submitblock(nlohmann::json const& json_object, std::string& block_hex_str) {
+    if (json_object["params"].size() == 0)
+        return false;
+    try {
+        block_hex_str = json_object["params"][0].get<std::string>();
+    }
+    catch (const std::exception & e) {
+        return false;
+    }
+    return true;
+}
+
+inline
+void handle_organize(const libbitcoin::code& ec) {
+    if (ec)
+        std::cout << "Failed to submit block" << std::endl;
+    else std::cout << "Block submited successfully" << std::endl;
+}
+
+template <typename Blockchain>
+bool submitblock(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& incoming_hex, bool use_testnet_rules, Blockchain& chain) {
+    const auto block = std::make_shared<bc::message::block>();
+    libbitcoin::data_chunk out;
+    libbitcoin::decode_base16(out, incoming_hex);
+    if (block->from_data(1, out)) {
+        chain.organize(block, [&](const libbitcoin::code & ec) {
+            if (ec) {
+                error = bitprim::RPC_VERIFY_ERROR;
+                error_code = "Failed to submit block.";
+            }
+        });
+    }
+    else {
+        error = bitprim::RPC_DESERIALIZATION_ERROR;
+        error_code = "Block decode failed";
     }
 
-    void handle_organize(const libbitcoin::code& ec) {
-        if (ec)
-            std::cout << "Failed to submit block" << std::endl;
-        else std::cout << "Block submited successfully" << std::endl;
-    }
+    if (error != 0)
+        return false;
+    return true;
+}
 
-    template <typename Blockchain>
-    bool submitblock(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& incoming_hex, bool use_testnet_rules, Blockchain& chain) {
-        const auto block = std::make_shared<bc::message::block>();
-        libbitcoin::data_chunk out;
-        libbitcoin::decode_base16(out, incoming_hex);
-        if (block->from_data(1, out)) {
-            chain.organize(block, [&](const libbitcoin::code & ec) {
-                if (ec) {
-                    error = bitprim::RPC_VERIFY_ERROR;
-                    error_code = "Failed to submit block.";
-                }
-            });
-        }
-        else {
-            error = bitprim::RPC_DESERIALIZATION_ERROR;
-            error_code = "Block decode failed";
-        }
+template <typename Blockchain>
+nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& chain, bool use_testnet_rules) {
+    nlohmann::json container, result;
+    container["id"] = json_in["id"];
 
-        if (error != 0)
-            return false;
-        return true;
-    }
+    int error = 0;
+    std::string error_code;
 
-    template <typename Blockchain>
-    nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& chain, bool use_testnet_rules)
+    std::string block_str;
+    if (!json_in_submitblock(json_in, block_str)) //if false return error
     {
-        nlohmann::json container, result;
-        container["id"] = json_in["id"];
-
-        int error = 0;
-        std::string error_code;
-
-        std::string block_str;
-        if (!json_in_submitblock(json_in, block_str)) //if false return error
-        {
-            container["result"];
-            container["error"]["code"] = bitprim::RPC_MISC_ERROR;
-            container["error"]["message"] = "submitblock \"hexdata\" ( \"jsonparametersobject\" )\n\nAttempts to submit new block to network.\nThe 'jsonparametersobject' parameter is currently ignored.\nSee https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n\nArguments\n1. \"hexdata\"    (string, required) the hex-encoded block data to submit\n2. \"jsonparametersobject\"     (string, optional) object of optional parameters\n    {\n      \"workid\" : \"id\"    (string, optional) if the server provided a workid, it MUST be included with submissions\n    }\n\nResult:\n\nExamples:\n> bitcoin-cli submitblock \"mydata\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"submitblock\", \"params\": [\"mydata\"] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/\n";
-            return container;
-        }
-
-        if (submitblock(result, error, error_code, block_str, use_testnet_rules, chain))
-        {
-            container["result"] = result;
-            container["error"];
-        }
-        else {
-            container["error"]["code"] = error;
-            container["error"]["message"] = error_code;
-        }
-
+        container["result"];
+        container["error"]["code"] = bitprim::RPC_MISC_ERROR;
+        container["error"]["message"] = "submitblock \"hexdata\" ( \"jsonparametersobject\" )\n\nAttempts to submit new block to network.\nThe 'jsonparametersobject' parameter is currently ignored.\nSee https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n\nArguments\n1. \"hexdata\"    (string, required) the hex-encoded block data to submit\n2. \"jsonparametersobject\"     (string, optional) object of optional parameters\n    {\n      \"workid\" : \"id\"    (string, optional) if the server provided a workid, it MUST be included with submissions\n    }\n\nResult:\n\nExamples:\n> bitcoin-cli submitblock \"mydata\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"submitblock\", \"params\": [\"mydata\"] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/\n";
         return container;
     }
 
+    if (submitblock(result, error, error_code, block_str, use_testnet_rules, chain))
+    {
+        container["result"] = result;
+        container["error"];
+    }
+    else {
+        container["error"]["code"] = error;
+        container["error"]["message"] = error_code;
+    }
+
+    return container;
 }
 
-#endif
+} //namespace bitprim
+
+#endif // BITPRIM_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
