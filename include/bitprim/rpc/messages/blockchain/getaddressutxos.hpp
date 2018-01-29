@@ -30,6 +30,7 @@
 
 namespace bitprim {
 
+inline
 bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std::string>& payment_address, bool& chain_info) {
     // Example:
     //  curl --user bitcoin:local321 --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "getaddressutxos", "params": [{"addresses": ["2N8Cdq7BcCCqb8KiA3HzYaGDLJ6tXmVjcZ1"], "chainInfo":true}] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/
