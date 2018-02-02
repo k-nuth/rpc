@@ -1,0 +1,119 @@
+[settings]
+    arch=x86_64
+    build_type=Release
+    compiler=gcc
+    compiler.libcxx=libstdc++
+    compiler.version=7
+    os=Linux
+
+[requires]
+    bitprim-rpc/0.7
+
+[options]
+
+
+[full_settings]
+    arch=x86_64
+    build_type=Release
+    compiler=gcc
+    compiler.libcxx=libstdc++
+    compiler.version=7
+    os=Linux
+
+[full_requires]
+    bitprim-blockchain/0.7@bitprim/testing:bc43b17fdda3fdd0bae0812503aebd681dfe9aa0
+    bitprim-conan-boost/1.66.0@bitprim/stable:a9a23dce7e453ee3f883170d7b7cb9bc15c706b1
+    bitprim-consensus/0.7@bitprim/testing:b935540223d351957f11950c4506fb8ac1c0d4fb
+    bitprim-core/0.7@bitprim/testing:80cb642b8bfda1cb2e63f479704568c114649627
+    bitprim-database/0.7@bitprim/testing:a7dacf68d1e0afec896b5c8ea6b6cdeeda1dc3bf
+    bitprim-rpc/0.7@bitprim/testing:912320eed4bbb76c618295ff3d70553dda6b3c4c
+    bzip2/1.0.6@bitprim/stable:d50a0d523d98c15bb147b18fa7d203887c38be8b
+    gmp/6.1.2@bitprim/stable:dbf8734f38cbc9f5f15ed1d55a6a8879224a4518
+    libzmq/4.2.2@bitprim/stable:0ab9fcf606068d4347207cc29edd400ceccbc944
+    secp256k1/0.3@bitprim/testing:04ec35da46fd31570bc694d501a7d071c82753ac
+    zlib/1.2.8@bitprim/stable:6ae331b72e7e265ca2a3d1d8246faf73aa030238
+
+[full_options]
+    bitprim-blockchain:fPIC=True
+    bitprim-blockchain:shared=False
+    bitprim-blockchain:with_consensus=True
+    bitprim-blockchain:with_litecoin=False
+    bitprim-blockchain:with_tests=True
+    bitprim-blockchain:with_tools=True
+    bitprim-conan-boost:fPIC=True
+    bitprim-conan-boost:header_only=False
+    bitprim-conan-boost:python=True
+    bitprim-conan-boost:shared=False
+    bitprim-conan-boost:without_atomic=False
+    bitprim-conan-boost:without_chrono=False
+    bitprim-conan-boost:without_container=True
+    bitprim-conan-boost:without_context=True
+    bitprim-conan-boost:without_coroutine=True
+    bitprim-conan-boost:without_date_time=False
+    bitprim-conan-boost:without_exception=False
+    bitprim-conan-boost:without_fiber=True
+    bitprim-conan-boost:without_filesystem=False
+    bitprim-conan-boost:without_graph=True
+    bitprim-conan-boost:without_graph_parallel=True
+    bitprim-conan-boost:without_iostreams=False
+    bitprim-conan-boost:without_locale=False
+    bitprim-conan-boost:without_log=False
+    bitprim-conan-boost:without_math=True
+    bitprim-conan-boost:without_mpi=True
+    bitprim-conan-boost:without_program_options=False
+    bitprim-conan-boost:without_random=False
+    bitprim-conan-boost:without_regex=False
+    bitprim-conan-boost:without_serialization=True
+    bitprim-conan-boost:without_signals=True
+    bitprim-conan-boost:without_stacktrace=True
+    bitprim-conan-boost:without_system=False
+    bitprim-conan-boost:without_test=False
+    bitprim-conan-boost:without_thread=False
+    bitprim-conan-boost:without_timer=False
+    bitprim-conan-boost:without_type_erasure=True
+    bitprim-conan-boost:without_wave=True
+    bitprim-consensus:fPIC=True
+    bitprim-consensus:shared=False
+    bitprim-core:fPIC=True
+    bitprim-core:shared=False
+    bitprim-core:with_examples=False
+    bitprim-core:with_icu=False
+    bitprim-core:with_litecoin=False
+    bitprim-core:with_png=False
+    bitprim-core:with_qrencode=False
+    bitprim-core:with_tests=False
+    bitprim-database:fPIC=True
+    bitprim-database:shared=False
+    bitprim-database:with_tests=False
+    bitprim-database:with_tools=False
+    bitprim-rpc:fPIC=True
+    bitprim-rpc:shared=False
+    bitprim-rpc:with_tests=False
+    bzip2:fPIC=True
+    bzip2:shared=False
+    gmp:disable-fft=False
+    gmp:disable_assembly=False
+    gmp:enable-assert=False
+    gmp:enable_cxx=True
+    gmp:enable_fat=False
+    gmp:microarchitecture=haswell
+    gmp:shared=False
+    libzmq:shared=False
+    secp256k1:enable_benchmark=False
+    secp256k1:enable_ecmult_static_precomputation=False
+    secp256k1:enable_endomorphism=False
+    secp256k1:enable_experimental=False
+    secp256k1:enable_module_ecdh=False
+    secp256k1:enable_module_recovery=True
+    secp256k1:enable_module_schnorr=False
+    secp256k1:enable_openssl_tests=False
+    secp256k1:enable_tests=False
+    secp256k1:fPIC=True
+    secp256k1:shared=False
+    zlib:shared=False
+
+[recipe_hash]
+
+
+[env]
+
