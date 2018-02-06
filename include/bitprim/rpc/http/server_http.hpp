@@ -303,8 +303,7 @@ namespace SimpleWeb {
                                                       unsigned long long content_length;
                                                       try {
                                                           content_length=stoull(it->second);
-                                                      }
-                                                      catch(const std::exception &e) {
+                                                      } catch (std::exception const&) {
                                                           if(on_error)
                                                               on_error(request, boost::system::error_code(boost::system::errc::protocol_error, boost::system::generic_category()));
                                                           return;

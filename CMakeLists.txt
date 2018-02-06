@@ -1,19 +1,29 @@
+#
+# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+#
+# This file is part of Bitprim.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 cmake_minimum_required(VERSION 3.4)
 
 # bitprim-rpc
 #==============================================================================
 project(bitprim-rpc
-        VERSION 0.6.0
+        VERSION 0.7.0
         LANGUAGES CXX C)
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  if (NOT NOT_USE_CPP11_ABI)
-    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
-  else()
-    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
-  endif()
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-macro-redefined")
-endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -46,6 +56,7 @@ option(ENABLE_POSITION_INDEPENDENT_CODE "Enable POSITION_INDEPENDENT_CODE proper
 #------------------------------------------------------------------------------
 option(WITH_TESTS "Compile with unit tests." ON)
 
+
 # # Implement --with-litecoin.
 # #------------------------------------------------------------------------------
 # option(WITH_LITECOIN "Compile with Litecoin support." OFF)
@@ -55,18 +66,15 @@ set(BITPRIM_BUILD_NUMBER "-" CACHE STRING "Specify the Bitprim Build Number.")
 # message(${BITPRIM_BUILD_NUMBER})
 
 
-# Conan infrastructure.
+# Conan infrastructure
 #==============================================================================
-# Only if enabled
-#------------------------------------------------------------------------------
-if (NOT NO_CONAN_AT_ALL)
-  if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-      include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-      conan_basic_setup()
-  else()
-      message(WARNING "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first")
-  endif()
+if (EXISTS ${CMAKE_SOURCE_DIR}/bitprimbuildinfo.cmake)
+    include(${CMAKE_SOURCE_DIR}/bitprimbuildinfo.cmake)
+else()
+    message( STATUS "bitprimbuildinfo doent exists")
 endif()
+
+
 
 # Check dependencies.
 #==============================================================================
@@ -97,10 +105,10 @@ endif()
 
 
 if (NOT USE_CONAN)
-  # Require bitprim-blockchain of at least version 0.6.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require bitprim-blockchain of at least version 0.7.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   if (NOT TARGET bitprim-blockchain)
-    find_package(bitprim-blockchain 0.6.0 REQUIRED)
+    find_package(bitprim-blockchain 0.7.0 REQUIRED)
   endif()
 
 endif()
@@ -190,30 +198,7 @@ if (ENABLE_SHARED)
 endif()
 
 add_library(bitprim-rpc ${MODE}
-    src/messages/blockchain/getrawtransaction.cpp
-    src/messages/blockchain/getaddressbalance.cpp
-    src/messages/blockchain/getspentinfo.cpp
-    src/messages/blockchain/getaddresstxids.cpp
-    src/messages/blockchain/getaddressdeltas.cpp
-    src/messages/blockchain/getaddressutxos.cpp
-    src/messages/blockchain/getblockhashes.cpp
-    src/messages/blockchain/getbestblockhash.cpp
-    src/messages/blockchain/getblock.cpp
-    src/messages/blockchain/getblockhash.cpp
-    src/messages/blockchain/getblockchaininfo.cpp
-    src/messages/blockchain/getblockheader.cpp
-    src/messages/blockchain/getblockcount.cpp
-    src/messages/blockchain/getdifficulty.cpp
-    src/messages/blockchain/getchaintips.cpp
-    src/messages/blockchain/getaddressmempool.cpp
-    src/messages/mining/getblocktemplate.cpp
-    src/messages/mining/submitblock.cpp
-    src/messages/mining/getmininginfo.cpp
-    src/messages/wallet/sendrawtransaction.cpp
-    src/messages/util/getinfo.cpp
-    src/messages/util/validateaddress.cpp
     src/messages/utils.cpp
-    src/messages.cpp
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
     src/manager.cpp
@@ -268,21 +253,40 @@ endif()
 # local: test/bitprim_rpc_test
 #------------------------------------------------------------------------------
 if (WITH_TESTS)
+
+  add_custom_target(tests ALL
+      COMMAND ${CMAKE_CTEST_COMMAND} -C Debug --output-on-failure -R "test.+"
+      COMMENT "Build and run all the unit tests.")
+
   add_executable(bitprim_rpc_test
-          test/utility.hpp
+          test/rpc.cpp
   )
 
   target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
-  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-  _add_tests(bitprim_rpc_test
-          configuration_tests
-          node_tests
-          header_queue_tests
-          performance_tests
-          reservation_tests
-          reservations_tests
-          settings_tests)
+  # _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+
+  add_test(NAME bitprim_rpc_test COMMAND bitprim_rpc_test)
+
+  add_dependencies(tests bitprim_rpc_test)
+
+
+
+#  add_executable(bitprim_rpc_test
+#          test/rpc.cpp
+#  )
+
+#  target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
+#  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+
+#  _add_tests(bitprim_rpc_test
+#          configuration_tests
+#          node_tests
+#          header_queue_tests
+#          performance_tests
+#          reservation_tests
+#          reservations_tests
+#          settings_tests)
 endif()
 
 
