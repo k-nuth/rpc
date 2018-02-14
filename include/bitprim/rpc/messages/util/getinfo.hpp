@@ -31,7 +31,7 @@
 namespace bitprim {
 
     template <typename Node>
-    bool getinfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Node node)
+    bool getinfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Node & node)
     {
 
 #define CLIENT_VERSION_MAJOR 0
@@ -77,7 +77,7 @@ namespace bitprim {
     }
 
     template <typename Node>
-    nlohmann::json process_getinfo(nlohmann::json const& json_in, Node node, bool use_testnet_rules)
+    nlohmann::json process_getinfo(nlohmann::json const& json_in, Node & node, bool use_testnet_rules)
     {
         nlohmann::json container, result;
         container["id"] = json_in["id"];
