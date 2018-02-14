@@ -36,6 +36,10 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
     if (json_object["params"].size() == 0)
         return false;
 
+    // TODO: if the payment_address are invalid return
+    //       error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+    //       error_code = "No information available for address";
+    // instead of calling getaddressmempool and returning an empty json
     try {
         auto temp = json_object["params"][0];
         if (temp.is_object()){
@@ -57,11 +61,7 @@ template <typename Blockchain>
 bool getaddressmempool(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, Blockchain const& chain, bool use_testnet_rules) {
     json_object = nlohmann::json::array();
     const auto res = chain.fetch_mempool_addrs(payment_addresses, use_testnet_rules);
-    if (res.size() == 0){
-        error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
-        error_code = "No information available for address";
-        return false;
-    }
+
     size_t i = 0;
     for (auto const& r : res) {
         json_object[i]["address"] = std::get<0>(r);

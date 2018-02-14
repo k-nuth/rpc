@@ -23,14 +23,15 @@
 
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <bitcoin/node/full_node.hpp>
 
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
 
-    template <typename Blockchain>
-    bool getinfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Blockchain const& chain)
+    template <typename Node>
+    bool getinfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Node node)
     {
 
 #define CLIENT_VERSION_MAJOR 0
@@ -47,7 +48,7 @@ namespace bitprim {
 
         json_object["protocolversion"] = 70013;
 
-        auto last_block_data = get_last_block_difficulty(chain);
+        auto last_block_data = get_last_block_difficulty(node->chain_bitprim());
 
         if (std::get<0>(last_block_data)) {
             json_object["blocks"] = std::get<1>(last_block_data);
@@ -56,7 +57,7 @@ namespace bitprim {
         json_object["timeoffset"] = 0;
 
         //TODO: get outbound + inbound connections from node
-        json_object["connections"] = 16;
+        json_object["connections"] = node->connection_count();
 
         json_object["proxy"] = "";
 
@@ -75,8 +76,8 @@ namespace bitprim {
 
     }
 
-    template <typename Blockchain>
-    nlohmann::json process_getinfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
+    template <typename Node>
+    nlohmann::json process_getinfo(nlohmann::json const& json_in, Node node, bool use_testnet_rules)
     {
         nlohmann::json container, result;
         container["id"] = json_in["id"];
@@ -84,7 +85,7 @@ namespace bitprim {
         int error = 0;
         std::string error_code;
 
-        if (getinfo(result, error, error_code, use_testnet_rules, chain))
+        if (getinfo(result, error, error_code, use_testnet_rules, node))
         {
             container["result"] = result;
             container["error"];

@@ -105,10 +105,11 @@ endif()
 
 
 if (NOT USE_CONAN)
+
   # Require bitprim-blockchain of at least version 0.7.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
-  if (NOT TARGET bitprim-blockchain)
-    find_package(bitprim-blockchain 0.7.0 REQUIRED)
+  if (NOT TARGET bitprim-node)
+    find_package(bitprim-node 0.7.0 REQUIRED)
   endif()
 
 endif()
@@ -226,7 +227,7 @@ if (NOT MSVC)
 endif()
 
 if (NOT USE_CONAN)
-    target_link_libraries(bitprim-rpc PUBLIC bitprim-blockchain)
+    target_link_libraries(bitprim-rpc PUBLIC bitprim-node)
 endif()
 
 if (NOT NO_CONAN_AT_ALL)
