@@ -222,7 +222,7 @@ public:
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
     ///// fetch_mempool_all()
-    using tx_mempool = std::tuple<libbitcoin::chain::transaction, uint64_t, uint64_t, std::string, size_t>;
+    using tx_mempool = std::tuple<libbitcoin::chain::transaction, uint64_t, uint64_t, std::string, size_t, bool>;
 
     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
     std::vector<tx_mempool> fetch_mempool_all(size_t max_bytes) const {
@@ -267,6 +267,10 @@ public:
     void fetch_txns(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::txns_fetch_handler handler) const {
 
     }
+
+    std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> fetch_mempool_addrs(std::vector<std::string> const& payment_addresses, bool use_testnet_rules) const {
+        return std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> ();
+    };
 
     ///// fetch stealth results.
     //void fetch_stealth(const binary& filter, size_t from_height,
@@ -325,6 +329,17 @@ public:
 
 };
 
+class full_node_dummy
+{
+public:
+    block_chain_dummy blockchain;
+    block_chain_dummy& chain_bitprim(){ ;
+        return blockchain;
+    };
+    size_t connection_count() const {
+        return 0;
+    };
+};
 
 TEST_CASE("[load_signature_map] validate map keys") {
 
@@ -337,7 +352,6 @@ TEST_CASE("[load_signature_map] validate map keys") {
     CHECK(map.count("getaddressdeltas") == 1);
     CHECK(map.count("getaddressutxos") == 1);
     CHECK(map.count("getblockhashes") == 1);
-    CHECK(map.count("getinfo") == 1);
     CHECK(map.count("getaddressmempool") == 1);
     CHECK(map.count("getbestblockhash") == 1);
     CHECK(map.count("getblock") == 1);
@@ -353,6 +367,7 @@ TEST_CASE("[load_signature_map] validate map keys") {
 
     CHECK(map.count("submitblock") == 0);
     CHECK(map.count("sendrawtransaction") == 0);
+    CHECK(map.count("getinfo") == 0);
 }
 
 TEST_CASE("[process_data] invalid key") {
@@ -373,9 +388,9 @@ TEST_CASE("[process_data] invalid key") {
     //libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
 
     //blk_t chain(threadpool, chain_settings, database_settings, true);
-    blk_t chain;
+    std::shared_ptr<full_node_dummy> node;
 
-    auto ret = bitprim::process_data(input, false, chain, map);
+    auto ret = bitprim::process_data(input, false, node, map);
     
     CHECK(ret == "null");
 }
@@ -393,9 +408,9 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
     input["id"] = 123;
     input["params"] = nullptr;
 
-    blk_t chain;
+    std::shared_ptr<full_node_dummy> node;
 
-    auto ret = bitprim::process_data(input, false, chain, map);
+    auto ret = bitprim::process_data(input, false, node, map);
     
     //MESSAGE(ret);
     
@@ -419,9 +434,9 @@ TEST_CASE("[process_data] submitblock ") {
     input["id"] = 123;
     input["params"] = nullptr;
 
-    blk_t chain;
+    std::shared_ptr<full_node_dummy> node;
 
-    auto ret = bitprim::process_data(input, false, chain, map);
+    auto ret = bitprim::process_data(input, false, node, map);
 
     //MESSAGE(ret);
 
