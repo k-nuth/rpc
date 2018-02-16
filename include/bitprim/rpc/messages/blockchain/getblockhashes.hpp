@@ -59,9 +59,17 @@ void update_mid(size_t top_height, size_t low_height, size_t& mid, libbitcoin::m
     getblockheader(mid, header, chain);
 }
 
+inline
+uint32_t get_clock() {
+    auto const now = std::chrono::high_resolution_clock::now();
+    return static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count());
+}
+
+
 template <typename Blockchain>
 bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_code, uint32_t time_high, uint32_t time_low, bool no_orphans, bool logical_times, Blockchain const& chain)
 {
+
     if (time_high < time_low)
     {
         error = RPC_INVALID_PARAMETER;
@@ -118,26 +126,26 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     uint32_t last_time_found = mid_header->timestamp();
     size_t last_height = mid;
 
+    libbitcoin::hash_digest last_hash = last_header_found->hash();
+
     std::deque<std::pair<libbitcoin::hash_digest, uint32_t>> hashes;
 
     while (last_time_found <= time_high && last_height <= top_height) {
-        hashes.push_back(std::make_pair(last_header_found->hash(), last_header_found->timestamp()));
+        hashes.push_back(std::make_pair(last_hash, last_time_found));
         last_height++;
-        getblockheader(last_height, last_header_found, chain);
-        last_time_found = last_header_found->timestamp();
+        getblockhash_time(last_height, last_hash, last_time_found, chain);
     }
 
     last_height = mid - 1;
-    getblockheader(last_height, last_header_found, chain);
-    last_time_found = last_header_found->timestamp();
-
-    while (last_time_found >= time_low && last_height >= 0) {
-        hashes.push_front(std::make_pair(last_header_found->hash(), last_header_found->timestamp()));
-        last_height--;
-        getblockheader(last_height, last_header_found, chain);
+    if(getblockheader(last_height, last_header_found, chain) == libbitcoin::error::success)
+    {
         last_time_found = last_header_found->timestamp();
+        while (last_time_found >= time_low && last_height > 0) {
+            hashes.push_front(std::make_pair(last_hash, last_time_found));
+            last_height--;
+            getblockhash_time(last_height, last_hash, last_time_found, chain);
+        }
     }
-
 
     int i = 0;
     if (!logical_times) {
