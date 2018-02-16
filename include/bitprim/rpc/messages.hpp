@@ -23,6 +23,7 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 #include <bitprim/rpc/messages/messages.hpp>
+#include <bitcoin/node/full_node.hpp>
 
 #include <boost/thread/latch.hpp>
 #include <bitcoin/bitcoin/multi_crypto_support.hpp>
@@ -48,7 +49,6 @@ signature_map<Blockchain> load_signature_map() {
         { "getaddressdeltas", process_getaddressdeltas },
         { "getaddressutxos", process_getaddressutxos },
         { "getblockhashes", process_getblockhashes },
-        { "getinfo", process_getinfo },
         { "getaddressmempool", process_getaddressmempool },
         { "getbestblockhash", process_getbestblockhash },
         { "getblock", process_getblock },
@@ -64,8 +64,8 @@ signature_map<Blockchain> load_signature_map() {
     };
 }
 
-template <typename Blockchain>
-nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, Blockchain& chain, signature_map<Blockchain> const& signature_map) {
+template <typename Node, typename Blockchain>
+nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules,  Node & node, signature_map<Blockchain> const& signature_map) {
     
     auto key = json_in["method"].get<std::string>();
 
@@ -75,22 +75,25 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     auto it = signature_map.find(key);
 
     if (it != signature_map.end()) {
-        return it->second(json_in, chain, use_testnet_rules);
+        return it->second(json_in, node->chain_bitprim(), use_testnet_rules);
     }
     
     if (key == "submitblock")
-        return process_submitblock(json_in, chain, use_testnet_rules);
+        return process_submitblock(json_in, node->chain_bitprim(), use_testnet_rules);
 
     if (key == "sendrawtransaction")
-        return process_sendrawtransaction(json_in, chain, use_testnet_rules);
+        return process_sendrawtransaction(json_in, node->chain_bitprim(), use_testnet_rules);
+
+    if (key == "getinfo")
+        return process_getinfo(json_in, node, use_testnet_rules);
     
     //std::cout << key << " Command Not yet implemented." << std::endl;
     return nlohmann::json(); //TODO: error!
 
 }
 
-template <typename Blockchain>
-std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Blockchain& chain, signature_map<Blockchain> const& signature_map) {
+template <typename Node, typename Blockchain>
+std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Node & node, signature_map<Blockchain> const& signature_map) {
     //std::cout << "method: " << json_object["method"].get<std::string>() << "\n";
     //Bitprim-mining process data
 
@@ -98,13 +101,13 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
         nlohmann::json res;
         size_t i = 0;
         for (const auto & method : json_object) {
-            res[i] = process_data_element(method, use_testnet_rules, chain, signature_map);
+            res[i] = process_data_element(method, use_testnet_rules, node, signature_map);
             ++i;
         }
         return res.dump();
     }
     else {
-        return process_data_element(json_object, use_testnet_rules, chain, signature_map).dump();
+        return process_data_element(json_object, use_testnet_rules, node, signature_map).dump();
     }
 }
 
