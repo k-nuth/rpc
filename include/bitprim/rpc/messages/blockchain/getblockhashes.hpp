@@ -59,13 +59,6 @@ void update_mid(size_t top_height, size_t low_height, size_t& mid, libbitcoin::m
     getblockheader(mid, header, chain);
 }
 
-inline
-uint32_t get_clock() {
-    auto const now = std::chrono::high_resolution_clock::now();
-    return static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count());
-}
-
-
 template <typename Blockchain>
 bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_code, uint32_t time_high, uint32_t time_low, bool no_orphans, bool logical_times, Blockchain const& chain)
 {
