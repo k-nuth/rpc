@@ -151,9 +151,13 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                             // TODO: check if it's working for multisig (see ExtractDestinations in bitcoind)
                             reqsig = static_cast<uint8_t>(out.script().operations()[0].code());
                         }
+
+                        auto out_addr = out.address(use_testnet_rules);
                         json_object["vout"][i]["scriptPubKey"]["reqSigs"] = (int)reqsig;
                         json_object["vout"][i]["scriptPubKey"]["type"] = type;
-                        json_object["vout"][i]["scriptPubKey"]["addresses"][0] = out.address(use_testnet_rules).encoded();
+                        if (out_addr){
+                            json_object["vout"][i]["scriptPubKey"]["addresses"][0] = out_addr.encoded();
+                        }
 
                         // SPENT INFO
                         nlohmann::json spent;
