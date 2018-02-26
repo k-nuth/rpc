@@ -27,7 +27,11 @@
 namespace bitprim { namespace rpc {
 class manager {
 public:
-    manager(bool use_testnet_rules, libbitcoin::blockchain::block_chain& chain, uint32_t rpc_port, uint32_t subscriber_port, const std::unordered_set<std::string> & rpc_allowed_ips);
+    manager(bool use_testnet_rules
+            , std::shared_ptr<libbitcoin::node::full_node> & node
+            , uint32_t rpc_port
+            , uint32_t subscriber_port
+            , const std::unordered_set<std::string> & rpc_allowed_ips);
    ~manager();
 
    void start();

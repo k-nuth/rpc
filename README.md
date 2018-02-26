@@ -5,7 +5,7 @@
 
 
 <!-- Links -->
-[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/bitprim/bitprim-rpc?svg=true&branch=master
+[badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/bitprim/bitprim-rpc?svg=true&branch=dev
 [badge.Gitter]: https://img.shields.io/badge/gitter-join%20chat-blue.svg
 [badge.Travis]: https://travis-ci.org/bitprim/bitprim-rpc.svg?branch=master
 [badge.version]: https://badge.fury.io/gh/bitprim%2Fbitprim-rpc.svg
