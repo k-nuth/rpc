@@ -55,8 +55,8 @@ bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, 
         {
 
             boost::latch latch(2);
-            chain.fetch_block_txs_size(hash, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, 
-                const libbitcoin::hash_list& txs, uint64_t serialized_size,size_t height) 
+            chain.fetch_block_txs_size(hash, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block,
+                size_t height, const libbitcoin::hash_list& txs, uint64_t serialized_size) 
             {
                 if (ec == libbitcoin::error::success) {
                         json_object["hash"] = block_hash;
