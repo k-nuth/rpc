@@ -56,9 +56,12 @@ bool json_in_getblockhashes(nlohmann::json const& json_object, uint32_t& time_hi
 template <typename Blockchain>
 bool update_mid(size_t top_height, size_t low_height, size_t& mid, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
     size_t temp_mid = (top_height + low_height) / 2;
-    if(temp_mid == mid)
+    if(temp_mid == mid) {
         return false;
-    else mid = temp_mid;
+    }
+    else {
+        mid = temp_mid;
+    }
     getblockheader(mid, header, chain);
     return true;
 }
@@ -67,8 +70,7 @@ template <typename Blockchain>
 bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_code, uint32_t time_high, uint32_t time_low, bool no_orphans, bool logical_times, Blockchain const& chain)
 {
     json_object = nlohmann::json::array();
-    if (time_high < time_low)
-    {
+    if (time_high < time_low) {
         error = RPC_INVALID_PARAMETER;
         error_code = "Parameter \"HIGH\" is smaller than \"LOW\"";
         return false;
@@ -78,10 +80,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     getblockheader(0, genesis, chain);
     uint32_t time_genesis = genesis->timestamp();
 
-    if (time_high < time_genesis)
-    {
-        error = RPC_INVALID_PARAMETER;
-        error_code = "Parameter \"HIGH\" is older than genesis timestamp.";
+    if (time_high < time_genesis) {
         return true;
     }
 
@@ -93,12 +92,8 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     getblockheader(top_height, top, chain);
     uint32_t time_top = top->timestamp();
 
-    if (time_top < time_low)
-    {
-        error = RPC_INVALID_PARAMETER;
-        error_code = "Parameter \"LOW\" is newer than top timestamp.";
+    if (time_top < time_low) {
         return true;
-
     }
 
     if (time_high > time_top) time_high = time_top;
@@ -120,7 +115,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
         valid_blocks = update_mid(top_height, low_height, mid, mid_header, chain);
     }
 
-    if(!valid_blocks){
+    if(!valid_blocks) {
         return true;
     }
 
@@ -139,8 +134,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     }
 
     last_height = mid - 1;
-    if(getblockheader(last_height, last_header_found, chain) == libbitcoin::error::success)
-    {
+    if(getblockheader(last_height, last_header_found, chain) == libbitcoin::error::success) {
         last_time_found = last_header_found->timestamp();
         while (last_time_found >= time_low && last_height >= 0) {
             hashes.push_front(std::make_pair(last_hash, last_time_found));
