@@ -101,10 +101,9 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                 [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
                     size_t height) {
                 if (ec == libbitcoin::error::success) {
-
                     json_object["hex"] = libbitcoin::encode_base16(tx_ptr->to_data(/*version is not used*/ 0));
                     json_object["txid"] = txid;
-                    json_object["hash"] = libbitcoin::encode_hash(tx_ptr->hash());
+                    json_object["hash"] = txid;
                     json_object["size"] = tx_ptr->serialized_size(/*version is not used*/ 0);
                     json_object["version"] = tx_ptr->version();
                     json_object["locktime"] = tx_ptr->locktime();
@@ -152,52 +151,53 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                             // TODO: check if it's working for multisig (see ExtractDestinations in bitcoind)
                             reqsig = static_cast<uint8_t>(out.script().operations()[0].code());
                         }
+
+                        auto out_addr = out.address(use_testnet_rules);
                         json_object["vout"][i]["scriptPubKey"]["reqSigs"] = (int)reqsig;
                         json_object["vout"][i]["scriptPubKey"]["type"] = type;
-                        json_object["vout"][i]["scriptPubKey"]["addresses"][0] = out.address(use_testnet_rules).encoded();
+                        if (out_addr){
+                            json_object["vout"][i]["scriptPubKey"]["addresses"][0] = out_addr.encoded();
+                        }
 
                         // SPENT INFO
                         nlohmann::json spent;
-                        int spent_error;
-                        std::string spent_error_code;
-                        getspentinfo(spent, spent_error, spent_error_code, libbitcoin::encode_hash(tx_ptr->hash()), i, chain);
-                        if (!spent.empty()) {
-                            json_object["vout"][i]["spentTxId"] = spent["txid"];
-                            json_object["vout"][i]["spentIndex"] = spent["index"];
-                            json_object["vout"][i]["spentHeight"] = spent["height"];
-                        }
+                        boost::latch latch2(2);
+                        chain.fetch_spend(libbitcoin::chain::output_point(tx_ptr->hash(), i), [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
+                            if (ec == libbitcoin::error::not_found) {
+                                // Output not spent
+                                json_object["vout"][i]["spentTxId"] = spent["txid"];
+                                json_object["vout"][i]["spentIndex"] = spent["index"];
+                                json_object["vout"][i]["spentHeight"] = spent["height"];
+
+                            }
+                            latch2.count_down();
+                        });
+                        latch2.count_down_and_wait();
                         ++i;
                     }
+
                     if (index != libbitcoin::database::transaction_database::unconfirmed) {
                         //confirmed txn
-                        boost::latch latch2(2);
-                        chain.fetch_block_header(height, [&](std::error_code const &ec,
-                            libbitcoin::message::header::ptr header,
-                            size_t) {
+                        boost::latch latch(2);
+                        chain.fetch_block_hash_timestamp(height, [&](const libbitcoin::code &ec, const libbitcoin::hash_digest& h, uint32_t time, size_t block_height) {
                             if (ec == libbitcoin::error::success) {
-                                json_object["blockhash"] = libbitcoin::encode_hash(header->hash());
+                                json_object["blockhash"] = libbitcoin::encode_hash(h);
                                 json_object["height"] = height;
-                                boost::latch latch3(2);
-                                chain.fetch_last_height(
-                                    [&](std::error_code const &ec, size_t last_height) {
-                                    json_object["confirmations"] = 1 + last_height - height;
-                                    latch3.count_down();
-                                });
-                                latch3.count_down_and_wait();
-                                json_object["time"] = header->timestamp();
-                                json_object["blocktime"] = header->timestamp();
-                                latch2.count_down();
+                                json_object["time"] = time;
+                                json_object["blocktime"] = time;
                             }
-                            else {
-                                // Mempool txn (It should not enter here, the unconfirmed index should avoid this code)
-                                json_object["height"] = -1;
-                                json_object["confirmations"] = 0;
-                                latch2.count_down();
-                            }
+                            latch.count_down();
                         });
-
-                        latch2.count_down_and_wait();
+                        latch.count_down_and_wait();
+                        boost::latch latch3(2);
+                        chain.fetch_last_height(
+                            [&](std::error_code const &ec, size_t last_height) {
+                            json_object["confirmations"] = 1 + last_height - height;
+                            latch3.count_down();
+                        });
+                        latch3.count_down_and_wait();
                     }
+
                     else {
                         //unconfirmed txn
                         json_object["height"] = -1;

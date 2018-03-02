@@ -53,19 +53,20 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
     if (libbitcoin::decode_hash(hash, block_hash)) {
 
         boost::latch latch(2);
-        chain.fetch_block(hash, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
+        chain.fetch_block_txs_size(hash, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, 
+            size_t height, const libbitcoin::hash_list& txs, uint64_t serialized_size) {
             if (ec == libbitcoin::error::success) {
                 if (!verbose) {
                     json_object = libbitcoin::encode_base16(block->header().to_data(0));
                 }
                 else {
-                    json_object["hash"] = libbitcoin::encode_hash(block->hash());
+                    json_object["hash"] = block_hash;
 
                     size_t top_height;
                     chain.get_last_height(top_height);
                     json_object["confirmations"] = top_height - height + 1;
 
-                    json_object["size"] = block->serialized_size(0);
+                    json_object["size"] = serialized_size;
                     json_object["height"] = height;
                     json_object["version"] = block->header().version();
                     // TODO: encode the version to base 16
@@ -87,16 +88,12 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
                         << block->proof();
                     json_object["chainwork"] = ss.str();
                     json_object["previousblockhash"] = libbitcoin::encode_hash(block->header().previous_block_hash());
+
                     json_object["nextblockhash"];
 
-                    boost::latch latch2(2);
-                    chain.fetch_block(height + 1, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block_2, size_t) {
-                        if (ec == libbitcoin::error::success) {
-                            json_object["nextblockhash"] = libbitcoin::encode_hash(block_2->header().hash());
-                        }
-                        latch2.count_down();
-                    });
-                    latch2.count_down_and_wait();
+                    libbitcoin::hash_digest nexthash;
+                    if(chain.get_block_hash(nexthash, height+1))
+                        json_object["nextblockhash"] = libbitcoin::encode_hash(nexthash);
                 }
             } else {
                 if (ec == libbitcoin::error::not_found) {

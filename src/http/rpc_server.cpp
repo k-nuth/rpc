@@ -43,7 +43,6 @@ void rpc_server::configure_server() {
     server_.resource["^/json$"]["POST"] = [this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
         //TODO: validate json parameters
         if (rpc_allowed_ips_.find(request->remote_endpoint_address) != rpc_allowed_ips_.end()){
-            std::cout << "datos del request "<< request->remote_endpoint_address << request->remote_endpoint_port << std::endl;
             try {
                 auto json_str = request->content.string();
                 if (json_str.size() > 0 && json_str.back() == '\n') {

@@ -33,13 +33,12 @@ namespace bitprim {
     bool getbestblockhash(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
     {
         size_t top_height;
-        libbitcoin::message::header::ptr top;
         chain.get_last_height(top_height);
-        if (getblockheader(top_height, top, chain) != libbitcoin::error::success) {
-            return false;
-        }
-        json_object = libbitcoin::encode_hash(top->hash());
-        return true;
+        libbitcoin::hash_digest hash;
+        if(chain.get_block_hash(hash, top_height)){
+            json_object = libbitcoin::encode_hash(hash);
+            return true;
+        } else return false;
 
     }
 
