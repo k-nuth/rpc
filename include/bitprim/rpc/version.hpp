@@ -25,9 +25,9 @@
  * For interpretation of the versioning scheme see: http://semver.org
  */
 
-#define BITPRIM_RPC_VERSION "0.7.0"
+#define BITPRIM_RPC_VERSION "0.8.0"
 #define BITPRIM_RPC_MAJOR_VERSION 0
-#define BITPRIM_RPC_MINOR_VERSION 7
+#define BITPRIM_RPC_MINOR_VERSION 8
 #define BITPRIM_RPC_PATCH_VERSION 0
 
 // #define STR_HELPER(x) #x
