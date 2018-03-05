@@ -54,8 +54,10 @@ public:
     ///// Get a determination of whether the block hash exists in the store.
     //bool get_block_exists(const hash_digest& block_hash) const;
 
-    ///// Get the hash of the block if it exists.
-    //bool get_block_hash(hash_digest& out_hash, size_t height) const;
+    /// Get the hash of the block if it exists.
+    bool get_block_hash(libbitcoin::hash_digest& out_hash, size_t height) const {
+        return true;
+    }
 
     ///// Get the work of the branch starting at the given height.
     //bool get_branch_work(uint256_t& out_work, const uint256_t& maximum,
@@ -178,6 +180,13 @@ public:
 
     }
 
+    void fetch_block_txs_size(const libbitcoin::hash_digest& hash, libbitcoin::blockchain::safe_chain::block_txs_size_fetch_handler handler) const {
+
+    }
+
+    void fetch_block_hash_timestamp(size_t height, libbitcoin::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {
+
+    }
 
     ///// fetch block header by hash.
     //void fetch_block_header(const hash_digest& hash,
