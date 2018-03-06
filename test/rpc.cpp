@@ -25,9 +25,7 @@
 // Unit Tests ----------------------------------------------------
 #ifdef DOCTEST_LIBRARY_INCLUDED
 
-
-class block_chain_dummy
-{
+class block_chain_dummy {
 public:
     ///// Relay transactions is network setting that is passed through to block
     ///// population as an optimization. This can be removed once there is an
@@ -133,8 +131,7 @@ public:
     //// ------------------------------------------------------------------------
 
     /// Get forks chain state relative to chain top.
-    libbitcoin::chain::chain_state::ptr chain_state() const
-    {
+    libbitcoin::chain::chain_state::ptr chain_state() const {
         return  libbitcoin::chain::chain_state::ptr();
     }
 
@@ -165,28 +162,18 @@ public:
 
     /// fetch a block by height.
     // virtual      // OLD previo a merge de Feb2017
-    void fetch_block(size_t height, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {
-
-    }
+    void fetch_block(size_t height, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch a block by hash.
-    void fetch_block(const libbitcoin::hash_digest& hash, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {
-
-    }
+    void fetch_block(const libbitcoin::hash_digest& hash, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch block header by height.
     // virtual      // OLD previo a merge de Feb2017 
-    void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const {
+    void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const {}
 
-    }
+    void fetch_block_txs_size(libbitcoin::hash_digest const& hash, libbitcoin::blockchain::safe_chain::block_txs_size_fetch_handler handler) const {}
 
-    void fetch_block_txs_size(const libbitcoin::hash_digest& hash, libbitcoin::blockchain::safe_chain::block_txs_size_fetch_handler handler) const {
-
-    }
-
-    void fetch_block_hash_timestamp(size_t height, libbitcoin::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {
-
-    }
+    void fetch_block_hash_timestamp(size_t height, libbitcoin::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {}
 
     ///// fetch block header by hash.
     //void fetch_block_header(const hash_digest& hash,
@@ -215,14 +202,10 @@ public:
     //	block_height_fetch_handler handler) const;
 
     /// fetch height of latest block.
-    void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const {
-
-    }
+    void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const {}
 
     /// fetch transaction by hash.
-    void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const {
-
-    }
+    void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const {}
 
     ///// Generate fees for mining
     //std::pair<bool, uint64_t> total_input_value(libbitcoin::chain::transaction const& tx) const;
@@ -263,23 +246,17 @@ public:
     ////-------------------------------------------------------------------------
 
     ///// fetch the inpoint (spender) of an outpoint.
-    void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const {
-
-    }
+    void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const {}
 
     /// fetch outputs, values and spends for an address_hash.
-    void fetch_history(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::history_fetch_handler handler) const {
-
-    }
+    void fetch_history(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::history_fetch_handler handler) const {}
 
     /// Fetch all the txns used by the wallet
-    void fetch_txns(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::txns_fetch_handler handler) const {
-
-    }
+    void fetch_txns(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::txns_fetch_handler handler) const {}
 
     std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> fetch_mempool_addrs(std::vector<std::string> const& payment_addresses, bool use_testnet_rules) const {
         return std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> ();
-    };
+    }
 
     ///// fetch stealth results.
     //void fetch_stealth(const binary& filter, size_t from_height,
@@ -321,14 +298,10 @@ public:
     ////-------------------------------------------------------------------------
 
     ///// Organize a block into the block pool if valid and sufficient.
-    void organize(libbitcoin::block_const_ptr block, libbitcoin::blockchain::safe_chain::result_handler handler) {
-
-    }
+    void organize(libbitcoin::block_const_ptr block, libbitcoin::blockchain::safe_chain::result_handler handler) {}
 
     ///// Store a transaction to the pool if valid.
-    void organize(libbitcoin::transaction_const_ptr tx, libbitcoin::blockchain::safe_chain::result_handler handler) {
-
-    }
+    void organize(libbitcoin::transaction_const_ptr tx, libbitcoin::blockchain::safe_chain::result_handler handler) {}
 
     //// Properties.
     ////-------------------------------------------------------------------------
@@ -338,16 +311,17 @@ public:
 
 };
 
-class full_node_dummy
-{
+class full_node_dummy {
 public:
-    block_chain_dummy blockchain;
-    block_chain_dummy& chain_bitprim(){ ;
-        return blockchain;
-    };
+    block_chain_dummy blockchain_;
+
+    block_chain_dummy& chain_bitprim() {
+        return blockchain_;
+    }
+
     size_t connection_count() const {
         return 0;
-    };
+    }
 };
 
 TEST_CASE("[load_signature_map] validate map keys") {

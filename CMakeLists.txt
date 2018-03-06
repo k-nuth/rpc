@@ -203,7 +203,6 @@ add_library(bitprim-rpc ${MODE}
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
     src/manager.cpp
-    src/testing-main.cpp
 )
 
 if (ENABLE_POSITION_INDEPENDENT_CODE) 
@@ -292,7 +291,7 @@ endif()
 
 
 add_executable(rpc.bn
-        src/testing-main.cpp)
+        test/testing-main.cpp)
 target_link_libraries(rpc.bn bitprim-rpc)
 set_target_properties(
         rpc.bn PROPERTIES
