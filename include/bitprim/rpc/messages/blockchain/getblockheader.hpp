@@ -54,7 +54,7 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
 
         boost::latch latch(2);
         chain.fetch_header_txs_size(hash, [&](const libbitcoin::code &ec, libbitcoin::header_const_ptr header, 
-            size_t height, const libbitcoin::hash_list& txs, uint64_t serialized_size) {
+            size_t height, const std::shared_ptr<libbitcoin::hash_list> txs, uint64_t serialized_size) {
             if (ec == libbitcoin::error::success) {
                 if (!verbose) {
                     json_object = libbitcoin::encode_base16(header->to_data(0));
