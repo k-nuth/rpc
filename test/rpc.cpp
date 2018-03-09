@@ -171,7 +171,7 @@ public:
     // virtual      // OLD previo a merge de Feb2017 
     void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const {}
 
-    void fetch_block_txs_size(libbitcoin::hash_digest const& hash, libbitcoin::blockchain::safe_chain::block_txs_size_fetch_handler handler) const {}
+    void fetch_header_txs_size(libbitcoin::hash_digest const& hash, libbitcoin::blockchain::safe_chain::header_txs_size_fetch_handler handler) const {}
 
     void fetch_block_hash_timestamp(size_t height, libbitcoin::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {}
 
