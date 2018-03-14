@@ -40,8 +40,8 @@ namespace bitprim {
         }
 
         //TODO: check size and weight on mainnet, testnet is sending 0s
-        json_object["currentblocksize"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());
-        json_object["currentblockweight"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());
+        json_object["currentblocksize"] = libbitcoin::get_max_block_size();
+        json_object["currentblockweight"] = libbitcoin::get_max_block_size();
         json_object["currentblocktx"] = 0;
 
         json_object["difficulty"] = std::get<2>(last_block_data);

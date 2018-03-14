@@ -56,6 +56,10 @@ option(ENABLE_POSITION_INDEPENDENT_CODE "Enable POSITION_INDEPENDENT_CODE proper
 #------------------------------------------------------------------------------
 option(WITH_TESTS "Compile with unit tests." ON)
 
+# Implement --with-console and declare WITH_CONSOLE.
+#------------------------------------------------------------------------------
+option(WITH_CONSOLE "Compile console application." ON)
+
 
 # # Implement --with-litecoin.
 # #------------------------------------------------------------------------------
@@ -290,14 +294,17 @@ if (WITH_TESTS)
 endif()
 
 
-add_executable(rpc.bn
-        test/testing-main.cpp)
-target_link_libraries(rpc.bn bitprim-rpc)
-set_target_properties(
-        rpc.bn PROPERTIES
-        FOLDER "rpc"
-        OUTPUT_NAME rpc)
+if (WITH_CONSOLE)
 
+  add_executable(rpc.bn
+          src/testing-main.cpp)
+  target_link_libraries(rpc.bn bitprim-rpc)
+  set_target_properties(
+          rpc.bn PROPERTIES
+          FOLDER "rpc"
+          OUTPUT_NAME rpc)
+
+endif (WITH_CONSOLE)
 
 
 # Install

@@ -35,4 +35,6 @@ cmake-build-release/
 CMakeSettings.json
 
 .vscode/
-_test_package/build/
+test_package/build/
+
+CMakeFiles/
