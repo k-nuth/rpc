@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-rpc
 #==============================================================================
 project(bitprim-rpc
-        VERSION 0.7.0
+        VERSION 0.8.0
         LANGUAGES CXX C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -55,6 +55,10 @@ option(ENABLE_POSITION_INDEPENDENT_CODE "Enable POSITION_INDEPENDENT_CODE proper
 # Implement --with-tests and declare WITH_TESTS.
 #------------------------------------------------------------------------------
 option(WITH_TESTS "Compile with unit tests." ON)
+
+# Implement --with-console and declare WITH_CONSOLE.
+#------------------------------------------------------------------------------
+option(WITH_CONSOLE "Compile console application." ON)
 
 
 # # Implement --with-litecoin.
@@ -106,10 +110,10 @@ endif()
 
 if (NOT USE_CONAN)
 
-  # Require bitprim-blockchain of at least version 0.7.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require bitprim-blockchain of at least version 0.8.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0.7.0 REQUIRED)
+    find_package(bitprim-node 0.8.0 REQUIRED)
   endif()
 
 endif()
@@ -203,7 +207,6 @@ add_library(bitprim-rpc ${MODE}
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
     src/manager.cpp
-    src/testing-main.cpp
 )
 
 if (ENABLE_POSITION_INDEPENDENT_CODE) 
@@ -291,14 +294,17 @@ if (WITH_TESTS)
 endif()
 
 
-add_executable(rpc.bn
-        src/testing-main.cpp)
-target_link_libraries(rpc.bn bitprim-rpc)
-set_target_properties(
-        rpc.bn PROPERTIES
-        FOLDER "rpc"
-        OUTPUT_NAME rpc)
+if (WITH_CONSOLE)
 
+  add_executable(rpc.bn
+          src/testing-main.cpp)
+  target_link_libraries(rpc.bn bitprim-rpc)
+  set_target_properties(
+          rpc.bn PROPERTIES
+          FOLDER "rpc"
+          OUTPUT_NAME rpc)
+
+endif (WITH_CONSOLE)
 
 
 # Install

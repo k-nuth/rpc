@@ -31,6 +31,23 @@ namespace bitprim {
     //libbitcoin::chain::history::list expand(libbitcoin::chain::history_compact::list& compact);
 
 
+
+    template <typename Blockchain>
+    libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, uint32_t& out_time,Blockchain const& chain) {
+        libbitcoin::code result;
+        boost::latch latch(2);
+        chain.fetch_block_hash_timestamp(i, [&](const libbitcoin::code &ec, const libbitcoin::hash_digest& h, uint32_t time, size_t height) {
+            result = ec;
+            if (ec == libbitcoin::error::success) {
+                out_hash = h;
+                out_time= time;
+            }
+            latch.count_down();
+        });
+        latch.count_down_and_wait();
+        return result;
+    }
+
     template <typename Blockchain>
     libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
         libbitcoin::code result;

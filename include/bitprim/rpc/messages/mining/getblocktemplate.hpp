@@ -55,6 +55,7 @@ uint64_t get_block_reward(uint32_t height) {
 
 template <typename Blockchain>
 bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, size_t max_bytes, std::chrono::nanoseconds timeout, Blockchain const& chain) {
+
     json_object["capabilities"] = std::vector<std::string>{ "proposal" };
     json_object["version"] = 536870912;                          //TODO: hardcoded value
     json_object["rules"] = std::vector<std::string>{ "csv" }; //, "!segwit"};  //TODO!
@@ -68,6 +69,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     size_t last_height;
     chain.get_last_height(last_height);
+
     libbitcoin::message::header::ptr header;
     if (getblockheader(last_height, header, chain) != libbitcoin::error::success) {
         return false;
@@ -85,9 +87,9 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["previousblockhash"] = libbitcoin::encode_hash(header->hash());
 
-    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops(libbitcoin::is_bitcoin_cash()); //OLD max_block_sigops; //TODO: this value is hardcoded using bitcoind pcap
-    json_object["sizelimit"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash()); //OLD max_block_size;   //TODO: this value is hardcoded using bitcoind pcap
-    json_object["weightlimit"] = libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash());//                    //TODO: this value is hardcoded using bitcoind pcap
+    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops(); //OLD max_block_sigops; //TODO: this value is hardcoded using bitcoind pcap
+    json_object["sizelimit"] = libbitcoin::get_max_block_size(); //OLD max_block_size;   //TODO: this value is hardcoded using bitcoind pcap
+    json_object["weightlimit"] = libbitcoin::get_max_block_size();//                    //TODO: this value is hardcoded using bitcoind pcap
 
     auto now = std::chrono::high_resolution_clock::now();
 
@@ -107,6 +109,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
         auto const& tx_mem = tx_cache[i];
         auto const& tx = std::get<0>(tx_mem);
         const auto tx_data = tx.to_data();
+    
         transactions_json[i]["data"] = libbitcoin::encode_base16(tx_data);
         transactions_json[i]["txid"] = libbitcoin::encode_hash(tx.hash());
         transactions_json[i]["hash"] = libbitcoin::encode_hash(tx.hash());
@@ -133,29 +136,28 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     target_str.copy(final_target, 64);
     final_target[64] = '\0';
     json_object["target"] = final_target;
-
     json_object["mutable"] = std::vector<std::string>{ "time", "transactions", "prevblock" };
     json_object["noncerange"] = "00000000ffffffff";
 
-    uint8_t rbits[8];
+    uint8_t rbits[9];
     sprintf((char*)rbits, "%08x", bits);
     json_object["bits"] = std::string((char*)rbits, 8);
-
     json_object["height"] = height;
+
     return true;
 }
 
 
 template <typename Blockchain>
-nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
-{
+nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules) {
+
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
     int error = 0;
     std::string error_code;
 
-    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size(libbitcoin::is_bitcoin_cash()) - 20000, std::chrono::seconds(30), chain)) {
+    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size() - 20000, std::chrono::seconds(30), chain)) {
         container["result"] = result;
         container["error"];
     } else {

@@ -22,11 +22,11 @@
 #include <bitcoin/blockchain.hpp>
 #include <bitprim/rpc/zmq/zmq_helper.hpp>
 
-int main (){
+int main () {
     libbitcoin::threadpool t(0);
     const libbitcoin::blockchain::settings s;
     const libbitcoin::database::settings d;
-    libbitcoin::blockchain::block_chain chain (t,s,d);
+    libbitcoin::blockchain::block_chain chain(t, s, d);
 
     bitprim::rpc::zmq zmq_object(5556, chain);
 

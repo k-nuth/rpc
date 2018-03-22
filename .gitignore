@@ -36,3 +36,5 @@ CMakeSettings.json
 
 .vscode/
 test_package/build/
+
+CMakeFiles/
