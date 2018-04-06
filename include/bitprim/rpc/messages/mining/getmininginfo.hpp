@@ -39,7 +39,10 @@ namespace bitprim {
             json_object["blocks"] = std::get<1>(last_block_data);
         }
 
+
         //TODO: check size and weight on mainnet, testnet is sending 0s
+        //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
+
         json_object["currentblocksize"] = libbitcoin::get_max_block_size();
         json_object["currentblockweight"] = libbitcoin::get_max_block_size();
         json_object["currentblocktx"] = 0;
