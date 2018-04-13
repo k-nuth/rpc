@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-rpc
 #==============================================================================
 project(bitprim-rpc
-        VERSION 0.9.0
+        VERSION 0.9.1
         LANGUAGES CXX C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -110,10 +110,10 @@ endif()
 
 if (NOT USE_CONAN)
 
-  # Require bitprim-blockchain of at least version 0.9.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require bitprim-blockchain of at least version 0.9.1 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0.9.0 REQUIRED)
+    find_package(bitprim-node 0.9.1 REQUIRED)
   endif()
 
 endif()
