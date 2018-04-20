@@ -58,13 +58,15 @@ class BitprimRPCConan(ConanFile):
                "fPIC": [True, False],
                "with_tests": [True, False],
                "with_console": [True, False],
+               "currency": ['BCH', 'BTC', 'LTC']
     }
     # "with_litecoin": [True, False]
 
     default_options = "shared=False", \
         "fPIC=True", \
         "with_tests=False",  \
-        "with_console=False"
+        "with_console=False", \
+        "currency=BCH"
 
     # "with_litecoin=False"
     # with_tests = False
@@ -129,6 +131,7 @@ class BitprimRPCConan(ConanFile):
 
         cmake.definitions["WITH_TESTS"] = option_on_off(self.options.with_tests)
         cmake.definitions["WITH_CONSOLE"] = option_on_off(self.options.with_console)
+        cmake.definitions["CURRENCY"] = self.options.currency
         # cmake.definitions["WITH_LITECOIN"] = option_on_off(self.options.with_litecoin)
 
         if self.settings.compiler != "Visual Studio":
@@ -178,3 +181,4 @@ class BitprimRPCConan(ConanFile):
     def package_info(self):
         self.cpp_info.includedirs = ['include']
         self.cpp_info.libs = ["bitprim-rpc"]
+
