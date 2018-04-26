@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.4)
 # bitprim-rpc
 #==============================================================================
 project(bitprim-rpc
-        VERSION 0.9.0
+        VERSION 0.9.1
         LANGUAGES CXX C)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -60,6 +60,19 @@ option(WITH_TESTS "Compile with unit tests." ON)
 #------------------------------------------------------------------------------
 option(WITH_CONSOLE "Compile console application." ON)
 
+set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
+
+if (${CURRENCY} STREQUAL "BCH")
+  add_definitions(-DBITPRIM_CURRENCY_BCH)
+elseif (${CURRENCY} STREQUAL "BTC")
+  add_definitions(-DBITPRIM_CURRENCY_BTC)
+elseif (${CURRENCY} STREQUAL "LTC")
+  add_definitions(-DBITPRIM_CURRENCY_LTC)
+else()
+  message(FATAL_ERROR "Invalid Cryptocurrency: ${CURRENCY}")
+endif()
+
+message(STATUS "Bitprim: Cryptocurrency: ${CURRENCY}")
 
 # # Implement --with-litecoin.
 # #------------------------------------------------------------------------------
@@ -110,10 +123,10 @@ endif()
 
 if (NOT USE_CONAN)
 
-  # Require bitprim-blockchain of at least version 0.9.0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require bitprim-blockchain of at least version 0.9.1 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0.9.0 REQUIRED)
+    find_package(bitprim-node 0.9.1 REQUIRED)
   endif()
 
 endif()
