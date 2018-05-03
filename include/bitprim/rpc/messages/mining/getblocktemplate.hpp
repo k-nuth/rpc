@@ -87,11 +87,10 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["previousblockhash"] = libbitcoin::encode_hash(header->hash());
 
-    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops(); //OLD max_block_sigops; //TODO: this value is hardcoded using bitcoind pcap
-
+    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops();
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
-    json_object["sizelimit"] = libbitcoin::get_max_block_size(); //OLD max_block_size;   //TODO: this value is hardcoded using bitcoind pcap
-    json_object["weightlimit"] = libbitcoin::get_max_block_size();//                    //TODO: this value is hardcoded using bitcoind pcap
+    json_object["sizelimit"] = libbitcoin::get_max_block_size();
+    json_object["weightlimit"] = libbitcoin::get_max_block_size();
 
     auto now = std::chrono::high_resolution_clock::now();
 
@@ -100,7 +99,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     {
         first_time = false;
         old_height = last_height;
-        tx_cache = chain.fetch_mempool_all(max_bytes);
+        tx_cache = chain.get_gbt_tx_list();
         cache_timestamp = std::chrono::high_resolution_clock::now();
     }
 
