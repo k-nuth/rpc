@@ -47,9 +47,9 @@ uint32_t get_clock_now() {
 
 /*constexpr*/
 inline
-uint64_t get_block_reward(uint32_t height) {
+uint64_t get_block_reward(uint32_t height, bool retarget=true) {
     auto subsidy = libbitcoin::initial_block_subsidy_satoshi();
-    subsidy >>= (height / libbitcoin::subsidy_interval);
+    subsidy >>= (height / libbitcoin::subsidy_interval(retarget));
     return subsidy;
 }
 

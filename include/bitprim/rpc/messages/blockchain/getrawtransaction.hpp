@@ -93,11 +93,19 @@ bool json_in_getrawtransaction(nlohmann::json const& json_object, std::string& t
 template <typename Blockchain>
 bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, Blockchain const& chain, bool use_testnet_rules) {
     libbitcoin::hash_digest hash;
+
+    bool witness;
+#ifdef BITPRIM_CURRENCY_BCH
+    witness = false;
+#else
+    witness = true;
+#endif
+
     if (libbitcoin::decode_hash(hash, txid)) {
 
         if (verbose) {
             boost::latch latch(2);
-            chain.fetch_transaction(hash, false,
+            chain.fetch_transaction(hash, false, witness,
                 [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
                     size_t height) {
                 if (ec == libbitcoin::error::success) {
@@ -120,7 +128,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                             json_object["vin"][vin]["scriptSig"]["hex"] = libbitcoin::encode_base16(in.script().to_data(0));
 
                             boost::latch latch_address(2);
-                            chain.fetch_transaction(in.previous_output().hash(), false,
+                            chain.fetch_transaction(in.previous_output().hash(), false, witness,
                                 [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
                                     size_t height) {
                                 if (ec == libbitcoin::error::success) {
@@ -215,7 +223,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
         else {
             // No verbose
             boost::latch latch(2);
-            chain.fetch_transaction(hash, false,
+            chain.fetch_transaction(hash, false, witness, 
                 [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
                     size_t height) {
                 if (ec == libbitcoin::error::success) {

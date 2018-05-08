@@ -49,6 +49,12 @@ bool json_in_getblock(nlohmann::json const& json_object, std::string & hash, boo
 
 template <typename Blockchain>
 bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, const std::string & block_hash, bool verbose, Blockchain const& chain) {
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
+
     libbitcoin::hash_digest hash;
     if (libbitcoin::decode_hash(hash, block_hash)) {
         if(verbose)
@@ -118,7 +124,7 @@ bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, 
             latch.count_down_and_wait();
     } else {
         boost::latch latch(2);
-        chain.fetch_block(hash, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
+        chain.fetch_block(hash, witness, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
             if (ec == libbitcoin::error::success) {
                 json_object = libbitcoin::encode_base16(block->to_data(0));
             } else {
