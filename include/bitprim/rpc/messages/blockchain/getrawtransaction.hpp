@@ -94,11 +94,10 @@ template <typename Blockchain>
 bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, Blockchain const& chain, bool use_testnet_rules) {
     libbitcoin::hash_digest hash;
 
-    bool witness;
 #ifdef BITPRIM_CURRENCY_BCH
-    witness = false;
+    bool witness = false;
 #else
-    witness = true;
+    bool witness = true;
 #endif
 
     if (libbitcoin::decode_hash(hash, txid)) {

@@ -106,11 +106,18 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     nlohmann::json transactions_json = nlohmann::json::array();
 
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
+
+
     uint64_t fees = 0;
     for (size_t i = 0; i < tx_cache.size(); ++i) {
         auto const& tx_mem = tx_cache[i];
         auto const& tx = std::get<0>(tx_mem);
-        const auto tx_data = tx.to_data();
+        const auto tx_data = tx.to_data(true, witness, false);
     
         transactions_json[i]["data"] = libbitcoin::encode_base16(tx_data);
         transactions_json[i]["txid"] = libbitcoin::encode_hash(tx.hash());

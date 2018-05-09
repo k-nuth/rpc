@@ -74,11 +74,10 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
 template <typename Blockchain>
 bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, size_t const& start_height, size_t const& end_height, const bool include_chain_info, Blockchain const& chain)
 {
-    bool witness;
 #ifdef BITPRIM_CURRENCY_BCH
-    witness = false;
+    bool witness = false;
 #else
-    witness = true;
+    bool witness = true;
 #endif
 
     int i = 0;
