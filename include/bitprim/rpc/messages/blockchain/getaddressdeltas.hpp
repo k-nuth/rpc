@@ -74,6 +74,12 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
 template <typename Blockchain>
 bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, size_t const& start_height, size_t const& end_height, const bool include_chain_info, Blockchain const& chain)
 {
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
+
     int i = 0;
     for (const auto & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
@@ -89,7 +95,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                             //It's an output
                             boost::latch latch2(2);
                             //Fetch txn to get the blockindex and height
-                            chain.fetch_transaction(history.point.hash(), false,
+                            chain.fetch_transaction(history.point.hash(), false, witness,
                                 [&](const libbitcoin::code &ec,
                                     libbitcoin::transaction_const_ptr tx_ptr, size_t index,
                                     size_t height) {
@@ -119,7 +125,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                                 libbitcoin::chain::input_point input) {
                                 if (ec == libbitcoin::error::success) {
                                     boost::latch latch4(2);
-                                    chain.fetch_transaction(input.hash(), false,
+                                    chain.fetch_transaction(input.hash(), false, witness,
                                         [&](const libbitcoin::code &ec,
                                             libbitcoin::transaction_const_ptr tx_ptr,
                                             size_t index,

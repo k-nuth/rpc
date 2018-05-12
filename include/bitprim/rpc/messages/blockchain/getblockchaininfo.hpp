@@ -31,6 +31,12 @@ namespace bitprim {
     template <typename Blockchain>
     bool getblockchaininfo(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
     {
+
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
         json_object["chain"] = "main";
 
         size_t top_height;
@@ -38,7 +44,7 @@ namespace bitprim {
         chain.get_last_height(top_height);
 
         boost::latch latch(2);
-        chain.fetch_block(top_height, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
+        chain.fetch_block(top_height, witness, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
             if (ec == libbitcoin::error::success) {
                 json_object["blocks"] = height;
                 json_object["headers"] = height;

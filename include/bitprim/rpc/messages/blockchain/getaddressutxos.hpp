@@ -64,9 +64,14 @@ bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std:
 
 template <typename Blockchain>
 bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, const bool chain_info, Blockchain const& chain) {
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
+
     boost::latch latch(2);
     nlohmann::json utxos;
-
     int i = 0;
     for (const auto & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
@@ -89,7 +94,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
                                     utxos[i]["height"] = history.height;
                                     // We need to fetch the txn to get the script
                                     boost::latch latch3(2);
-                                    chain.fetch_transaction(history.point.hash(), false,
+                                    chain.fetch_transaction(history.point.hash(), false, witness,
                                         [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
                                             size_t height) {
                                         if (ec == libbitcoin::error::success) {
@@ -137,7 +142,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
         latch2.count_down_and_wait();
 
         boost::latch latch3(2);
-        chain.fetch_block(height, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t) {
+        chain.fetch_block(height, witness, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t) {
             if (ec == libbitcoin::error::success) {
                 json_object["height"] = height;
                 json_object["hash"] = libbitcoin::encode_hash(block->hash());

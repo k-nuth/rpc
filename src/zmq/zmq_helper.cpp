@@ -173,7 +173,7 @@ bool zmq::send_raw_transaction_handler(libbitcoin::code ec, libbitcoin::transact
 
     if (incoming) {
         const char *MSG_RAWTX = "rawtx";
-        auto const temp = incoming->to_data(1);
+        auto const temp = incoming->to_data(1, false);
         return send_message(MSG_RAWTX, &(*temp.begin()), temp.size());
     }
 

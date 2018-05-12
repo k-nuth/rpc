@@ -59,8 +59,14 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
 
 template <typename Blockchain>
 bool getaddressmempool(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, Blockchain const& chain, bool use_testnet_rules) {
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
+
     json_object = nlohmann::json::array();
-    const auto res = chain.fetch_mempool_addrs(payment_addresses, use_testnet_rules);
+    const auto res = chain.fetch_mempool_addrs(payment_addresses, use_testnet_rules, witness);
 
     size_t i = 0;
     for (auto const& r : res) {
