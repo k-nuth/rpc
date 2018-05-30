@@ -70,7 +70,7 @@ bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error
         if (address)
         {
             boost::latch latch(2);
-            chain.fetch_txns(address, INT_MAX, start_height,
+            chain.fetch_confirmed_transactions(address, INT_MAX, start_height,
                 [&](const libbitcoin::code &ec, const std::vector<libbitcoin::hash_digest>& history_list) {
                 if (ec == libbitcoin::error::success) {
                     // TODO: remove this if the new code pass the tests
