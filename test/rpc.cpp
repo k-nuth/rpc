@@ -252,10 +252,10 @@ public:
     void fetch_history(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::history_fetch_handler handler) const {}
 
     /// Fetch all the txns used by the wallet
-    void fetch_txns(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::txns_fetch_handler handler) const {}
+    void fetch_confirmed_transactions(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::confirmed_transactions_fetch_handler handler) const {}
 
-    std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> fetch_mempool_addrs(std::vector<std::string> const& payment_addresses, bool use_testnet_rules, bool witness) const {
-        return std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> ();
+    std::vector<libbitcoin::blockchain::mempool_transaction_summary> get_mempool_transactions(std::vector<std::string> const& payment_addresses, bool use_testnet_rules, bool witness) const {
+        return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
     }
 
     ///// fetch stealth results.
