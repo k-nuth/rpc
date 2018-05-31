@@ -162,10 +162,10 @@ public:
 
     /// fetch a block by height.
     // virtual      // OLD previo a merge de Feb2017
-    void fetch_block(size_t height, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
+    void fetch_block(size_t height, bool witness, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch a block by hash.
-    void fetch_block(const libbitcoin::hash_digest& hash, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
+    void fetch_block(const libbitcoin::hash_digest& hash, bool witness, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch block header by height.
     // virtual      // OLD previo a merge de Feb2017 
@@ -205,7 +205,7 @@ public:
     void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const {}
 
     /// fetch transaction by hash.
-    void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const {}
+    void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, bool witness, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const {}
 
     ///// Generate fees for mining
     //std::pair<bool, uint64_t> total_input_value(libbitcoin::chain::transaction const& tx) const;
@@ -254,7 +254,7 @@ public:
     /// Fetch all the txns used by the wallet
     void fetch_txns(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::txns_fetch_handler handler) const {}
 
-    std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> fetch_mempool_addrs(std::vector<std::string> const& payment_addresses, bool use_testnet_rules) const {
+    std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> fetch_mempool_addrs(std::vector<std::string> const& payment_addresses, bool use_testnet_rules, bool witness) const {
         return std::vector<std::tuple<std::string, std::string, size_t, std::string, uint64_t, std::string, std::string>> ();
     }
 
