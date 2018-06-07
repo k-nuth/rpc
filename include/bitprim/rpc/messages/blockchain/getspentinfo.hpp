@@ -50,6 +50,12 @@ bool json_in_getspentinfo(nlohmann::json const& json_object, std::string& tx_id,
 template <typename Blockchain>
 bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, size_t const& index, Blockchain const& chain)
 {
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
+
     libbitcoin::hash_digest hash;
     if (libbitcoin::decode_hash(hash, txid)) {
         libbitcoin::chain::output_point point(hash, index);
@@ -61,7 +67,7 @@ bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_co
                 json_object["index"] = input.index();
                 {
                     boost::latch latch2(2);
-                    chain.fetch_transaction(input.hash(), false,
+                    chain.fetch_transaction(input.hash(), false, witness,
                         [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
                             size_t height) {
                         if (ec == libbitcoin::error::success) {

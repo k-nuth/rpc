@@ -59,19 +59,25 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
 
 template <typename Blockchain>
 bool getaddressmempool(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, Blockchain const& chain, bool use_testnet_rules) {
+#ifdef BITPRIM_CURRENCY_BCH
+    bool witness = false;
+#else
+    bool witness = true;
+#endif
+
     json_object = nlohmann::json::array();
-    const auto res = chain.fetch_mempool_addrs(payment_addresses, use_testnet_rules);
+    const auto res = chain.get_mempool_transactions(payment_addresses, use_testnet_rules, witness);
 
     size_t i = 0;
     for (auto const& r : res) {
-        json_object[i]["address"] = std::get<0>(r);
-        json_object[i]["txid"] = std::get<1>(r);
-        json_object[i]["index"] = std::get<2>(r);
-        json_object[i]["satoshis"] = std::get<3>(r);
-        json_object[i]["timestamp"] = std::get<4>(r);
-        if (std::get<5>(r) != ""){
-            json_object[i]["prevtxid"] = std::get<5>(r);
-            json_object[i]["prevout"] = std::get<6>(r);
+        json_object[i]["address"] = r.address();
+        json_object[i]["txid"] = r.hash();
+        json_object[i]["index"] = r.index();
+        json_object[i]["satoshis"] = r.satoshis();
+        json_object[i]["timestamp"] = r.timestamp();
+        if (r.previous_output_hash() != ""){
+            json_object[i]["prevtxid"] = r.previous_output_hash();
+            json_object[i]["prevout"] = r.previous_output_index();
         }
         ++i;
     }
