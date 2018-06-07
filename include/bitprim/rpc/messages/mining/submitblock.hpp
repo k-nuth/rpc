@@ -70,6 +70,8 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
 
     if (error != 0)
         return false;
+
+    chain.remove_mined_txs_from_mempool(block);
     return true;
 }
 
