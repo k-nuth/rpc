@@ -79,7 +79,7 @@ class BitprimRPCConan(ConanFile):
 
     requires = (("boost/1.66.0@bitprim/stable"),
                 ("libzmq/4.2.2@bitprim/stable"),
-                ("bitprim-node/0.11.0@bitprim/%s" % get_channel()))
+                ("bitprim-node/0.10.1@bitprim/%s" % get_channel()))
 
     @property
     def msvc_mt_build(self):
