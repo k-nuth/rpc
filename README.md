@@ -3,7 +3,6 @@
 > Bitprim RPC (HTTP+JSON) API
 
 
-
 <!-- Links -->
 [badge.Appveyor]: https://ci.appveyor.com/api/projects/status/github/bitprim/bitprim-rpc?svg=true&branch=dev
 [badge.Gitter]: https://img.shields.io/badge/gitter-join%20chat-blue.svg
