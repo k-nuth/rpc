@@ -64,7 +64,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     static bool first_time = true;
     static size_t old_height = 0;
-    static std::vector<libbitcoin::blockchain::block_chain::tx_mempool> tx_cache;
+    static std::vector<libbitcoin::blockchain::block_chain::tx_benefit> tx_cache;
     static std::chrono::time_point<std::chrono::high_resolution_clock> cache_timestamp = std::chrono::high_resolution_clock::now();
 
     size_t last_height;
@@ -111,21 +111,17 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     bool witness = true;
 #endif
 
-
     uint64_t fees = 0;
     for (size_t i = 0; i < tx_cache.size(); ++i) {
         auto const& tx_mem = tx_cache[i];
-        auto const& tx = std::get<0>(tx_mem);
-        const auto tx_data = tx.to_data(true, witness, false);
-    
-        transactions_json[i]["data"] = libbitcoin::encode_base16(tx_data);
-        transactions_json[i]["txid"] = libbitcoin::encode_hash(tx.hash());
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx.hash());
+        transactions_json[i]["data"] = libbitcoin::encode_base16(std::get<5>(tx_mem));
+        transactions_json[i]["txid"] = libbitcoin::encode_hash(std::get<0>(tx_mem));
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(std::get<0>(tx_mem));
         transactions_json[i]["depends"] = nlohmann::json::array(); //TODO CARGAR DEPS
-        transactions_json[i]["fee"] = std::get<1>(tx_mem);
+        transactions_json[i]["fee"] = std::get<4>(tx_mem);
         transactions_json[i]["sigops"] = std::get<2>(tx_mem);
-        transactions_json[i]["weight"] = tx_data.size();
-        fees += std::get<1>(tx_mem);
+        transactions_json[i]["weight"] = std::get<3>(tx_mem);//tx_data.size();
+        fees += std::get<4>(tx_mem);
     }
 
     json_object["transactions"] = transactions_json;
