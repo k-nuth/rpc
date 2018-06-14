@@ -110,18 +110,22 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 #else
     bool witness = true;
 #endif
-
+//    using tx_benefit = std::tuple<double /*benefit*/, size_t /*tx_sigops*/, size_t /*tx_size*/, size_t /*tx_fees*/, libbitcoin::data_chunk /*tx_hex*/, libbitcoin::hash_digest /*tx_hash */> ;
     uint64_t fees = 0;
     for (size_t i = 0; i < tx_cache.size(); ++i) {
         auto const& tx_mem = tx_cache[i];
-        transactions_json[i]["data"] = libbitcoin::encode_base16(std::get<5>(tx_mem));
-        transactions_json[i]["txid"] = libbitcoin::encode_hash(std::get<0>(tx_mem));
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(std::get<0>(tx_mem));
+        transactions_json[i]["data"] = libbitcoin::encode_base16(std::get<4>(tx_mem));
+        transactions_json[i]["txid"] = libbitcoin::encode_hash(std::get<5>(tx_mem));
+#ifdef BITPRIM_CURRENCY_BCH
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(std::get<5>(tx_mem));
+#else
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(std::get<6>(tx_mem));
+#endif
         transactions_json[i]["depends"] = nlohmann::json::array(); //TODO CARGAR DEPS
-        transactions_json[i]["fee"] = std::get<4>(tx_mem);
-        transactions_json[i]["sigops"] = std::get<2>(tx_mem);
-        transactions_json[i]["weight"] = std::get<3>(tx_mem);//tx_data.size();
-        fees += std::get<4>(tx_mem);
+        transactions_json[i]["fee"] = std::get<3>(tx_mem);
+        transactions_json[i]["sigops"] = std::get<1>(tx_mem);
+        transactions_json[i]["weight"] = std::get<2>(tx_mem);//tx_data.size();
+        fees += std::get<3>(tx_mem);
     }
 
     json_object["transactions"] = transactions_json;
@@ -163,7 +167,7 @@ nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, Blockchai
 
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
     //TODO(fernando): hardcoded 20000
-    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size() - 20000, std::chrono::seconds(30), chain)) {
+    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size() - 20000, std::chrono::seconds(5), chain)) {
         container["result"] = result;
         container["error"];
     } else {

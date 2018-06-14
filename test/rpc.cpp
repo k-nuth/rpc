@@ -213,12 +213,18 @@ public:
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
-    ///// fetch_mempool_all()
-    using tx_mempool = std::tuple<libbitcoin::chain::transaction, uint64_t, uint64_t, std::string, size_t, bool>;
-
+#ifdef BITPRIM_CURRENCY_BCH
+    using tx_benefit = std::tuple<double /*benefit*/, size_t /*tx_sigops*/, size_t /*tx_size*/, size_t /*tx_fees*/, libbitcoin::data_chunk /*tx_hex*/, libbitcoin::hash_digest /*tx_id */> ;
+#else
+    using tx_benefit = std::tuple<double /*benefit*/, size_t /*tx_sigops*/, size_t /*tx_size*/, size_t /*tx_fees*/, libbitcoin::data_chunk /*tx_hex*/, libbitcoin::hash_digest /*tx_id */, libbitcoin::hash_digest /*tx_hash */> ;
+#endif
     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
-    std::vector<tx_mempool> fetch_mempool_all(size_t max_bytes) const {
-        return std::vector<tx_mempool>();
+    std::vector<tx_benefit> get_gbt_tx_list() const {
+        return std::vector<tx_benefit>();
+    }
+
+    bool remove_mined_txs_from_mempool(libbitcoin::block_const_ptr blk) {
+        return true;
     }
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;
