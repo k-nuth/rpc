@@ -25,10 +25,10 @@
  * For interpretation of the versioning scheme see: http://semver.org
  */
 
-#define BITPRIM_RPC_VERSION "0.11.0"
+#define BITPRIM_RPC_VERSION "0.10.2"
 #define BITPRIM_RPC_MAJOR_VERSION 0
-#define BITPRIM_RPC_MINOR_VERSION 11
-#define BITPRIM_RPC_PATCH_VERSION 0
+#define BITPRIM_RPC_MINOR_VERSION 10
+#define BITPRIM_RPC_PATCH_VERSION 2
 
 // #define STR_HELPER(x) #x
 // #define STR(x) STR_HELPER(x)
