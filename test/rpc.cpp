@@ -213,17 +213,12 @@ public:
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
-#ifdef BITPRIM_CURRENCY_BCH
-    using tx_benefit = std::tuple<double /*benefit*/, size_t /*tx_sigops*/, size_t /*tx_size*/, size_t /*tx_fees*/, libbitcoin::data_chunk /*tx_hex*/, libbitcoin::hash_digest /*tx_id */> ;
-#else
-    using tx_benefit = std::tuple<double /*benefit*/, size_t /*tx_sigops*/, size_t /*tx_size*/, size_t /*tx_fees*/, libbitcoin::data_chunk /*tx_hex*/, libbitcoin::hash_digest /*tx_id */, libbitcoin::hash_digest /*tx_hash */> ;
-#endif
     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
-    std::vector<tx_benefit> get_gbt_tx_list() const {
-        return std::vector<tx_benefit>();
+    std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
+        return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
     }
 
-    bool remove_mined_txs_from_mempool(libbitcoin::block_const_ptr blk) {
+    bool remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
         return true;
     }
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
