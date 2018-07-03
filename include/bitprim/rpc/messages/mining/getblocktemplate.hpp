@@ -114,18 +114,18 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     uint64_t fees = 0;
     for (size_t i = 0; i < tx_cache.size(); ++i) {
         auto const& tx_mem = tx_cache[i];
-        transactions_json[i]["data"] = libbitcoin::encode_base16(std::get<4>(tx_mem));
-        transactions_json[i]["txid"] = libbitcoin::encode_hash(std::get<5>(tx_mem));
+        transactions_json[i]["data"] = libbitcoin::encode_base16(tx_mem.tx_hex);
+        transactions_json[i]["txid"] = libbitcoin::encode_hash(tx_mem.tx_id);
 #ifdef BITPRIM_CURRENCY_BCH
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(std::get<5>(tx_mem));
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.tx_id);
 #else
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(std::get<6>(tx_mem));
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.tx_hash);
 #endif
         transactions_json[i]["depends"] = nlohmann::json::array(); //TODO CARGAR DEPS
-        transactions_json[i]["fee"] = std::get<3>(tx_mem);
-        transactions_json[i]["sigops"] = std::get<1>(tx_mem);
-        transactions_json[i]["weight"] = std::get<2>(tx_mem);//tx_data.size();
-        fees += std::get<3>(tx_mem);
+        transactions_json[i]["fee"] = tx_mem.tx_fees;
+        transactions_json[i]["sigops"] = tx_mem.tx_sigops;
+        transactions_json[i]["weight"] = tx_mem.tx_size;//tx_data.size();
+        fees += tx_mem.tx_fees;
     }
 
     json_object["transactions"] = transactions_json;
