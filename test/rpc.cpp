@@ -221,6 +221,10 @@ public:
     bool remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
         return true;
     }
+
+    bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
+        return true;
+    }
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> validate_tx_2(chain::transaction const& tx, size_t height) const;
