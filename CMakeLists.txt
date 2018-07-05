@@ -371,11 +371,11 @@ export(EXPORT bitprim-rpc
         FILE "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcTargets.cmake")
 export(PACKAGE bitprim-rpc)
 
-# if (UNIX)
-#   set(_config_package_location "lib/cmake")
-# elseif (WIN32)
-#   set(_config_package_location "cmake")
-# endif()
+if (UNIX)
+  set(_config_package_location "lib/cmake")
+elseif (WIN32)
+  set(_config_package_location "cmake")
+endif()
 
 install(EXPORT bitprim-rpc
         FILE bitprim-rpcTargets.cmake
