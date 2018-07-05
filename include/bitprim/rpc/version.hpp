@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 Bitprim developers (see AUTHORS)
+ * Copyright (c) 2017-2018 Bitprim Inc.
  *
  * This file is part of Bitprim.
  *
@@ -20,26 +20,10 @@
 #ifndef BITPRIM_RPC_VERSION_HPP_
 #define BITPRIM_RPC_VERSION_HPP_
 
-/**
- * The semantic version of this repository as: [major].[minor].[patch]
- * For interpretation of the versioning scheme see: http://semver.org
- */
-
-#define BITPRIM_RPC_VERSION "0.11.0"
-#define BITPRIM_RPC_MAJOR_VERSION 0
-#define BITPRIM_RPC_MINOR_VERSION 11
-#define BITPRIM_RPC_PATCH_VERSION 0
-
-// #define STR_HELPER(x) #x
-// #define STR(x) STR_HELPER(x)
-// #define BITPRIM_RPC_VERSION STR(BITPRIM_RPC_MAJOR_VERSION) "." STR(BITPRIM_RPC_MINOR_VERSION) "." STR(BITPRIM_RPC_PATCH_VERSION)
-// #undef STR
-// #undef STR_HELPER
-
-#ifdef BITPRIM_BUILD_NUMBER
-#define BITPRIM_RPC_VERSION BITPRIM_BUILD_NUMBER
+#ifdef BITPRIM_PROJECT_VERSION
+#define BITPRIM_RPC_VERSION BITPRIM_PROJECT_VERSION
 #else
-#define BITPRIM_RPC_VERSION "v0.0.0"
+#define BITPRIM_RPC_VERSION "0.0.0"
 #endif
 
 namespace bitprim { namespace rpc {
