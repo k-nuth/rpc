@@ -357,6 +357,7 @@ set(_bitprim_headers
         bitprim/rpc/messages/mining/getmininginfo.hpp
         bitprim/rpc/messages/wallet/sendrawtransaction.hpp
         bitprim/rpc/messages/util/getinfo.hpp
+        bitprim/rpc/messages/util/getnetworkinfo.hpp
         bitprim/rpc/messages/util/validateaddress.hpp
         bitprim/rpc/messages/utils.hpp
         bitprim/rpc/messages/error_codes.hpp

@@ -318,6 +318,8 @@ public:
 
 class full_node_dummy {
 public:
+    libbitcoin::network::settings p2p_settings;
+
     block_chain_dummy blockchain_;
 
     block_chain_dummy& chain_bitprim() {
@@ -326,6 +328,10 @@ public:
 
     size_t connection_count() const {
         return 0;
+    }
+
+    const libbitcoin::network::settings& network_settings() const {
+        return p2p_settings;
     }
 };
 
