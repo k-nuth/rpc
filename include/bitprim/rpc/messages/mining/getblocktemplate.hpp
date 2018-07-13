@@ -105,7 +105,7 @@ std::vector<uint8_t> create_default_witness_commitment(std::vector<libbitcoin::h
 
 
 template <typename Blockchain>
-bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, size_t max_bytes, std::chrono::nanoseconds timeout, Blockchain const& chain) {
+bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, std::chrono::nanoseconds timeout, Blockchain const& chain) {
 
     json_object["capabilities"] = std::vector<std::string>{ "proposal" };
     json_object["version"] = 536870912;                          //TODO: hardcoded value
@@ -190,7 +190,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
         transactions_json[i]["depends"] = nlohmann::json::array(); //TODO CARGAR DEPS
         transactions_json[i]["fee"] = tx_mem.tx_fees;
         transactions_json[i]["sigops"] = tx_mem.tx_sigops;
-        transactions_json[i]["weight"] = tx_mem.tx_size;//tx_data.size();
+        transactions_json[i]["weight"] = tx_mem.tx_size;
         fees += tx_mem.tx_fees;
 
     }
@@ -200,7 +200,6 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
         json_object["default_witness_commitment"] = libbitcoin::encode_base16(create_default_witness_commitment(witness_gen));
     }
 #endif
-
 
     json_object["transactions"] = transactions_json;
 
@@ -240,8 +239,7 @@ nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, Blockchai
     std::string error_code;
 
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
-    //TODO(fernando): hardcoded 20000
-    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size() - 20000, std::chrono::seconds(5), chain)) {
+    if (getblocktemplate(result, error, error_code, std::chrono::seconds(5), chain)) {
         container["result"] = result;
         container["error"];
     } else {
