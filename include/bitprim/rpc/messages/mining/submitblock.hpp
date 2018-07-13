@@ -73,7 +73,7 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
 #endif
        chain.organize(block, [&](const libbitcoin::code & ec) {
             if (ec) {
-                error = bitprim::RPC_VERIFY_ERROR;
+                error = ec.value();
                 error_code = "Failed to submit block.";
             }
         });
@@ -83,8 +83,14 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
         error_code = "Block decode failed";
     }
 
-    if (error != 0)
+    if (error != 0){
+    LOG_WARNING("rpc")
+            << "Failed to Submit Block [Error code: " << error << "]";
         return false;
+    }
+
+    LOG_INFO("rpc")
+        << "Block submitted successfully [" << libbitcoin::encode_hash(block->hash()) << "]" ;
 
     chain.remove_mined_txs_from_chosen_list(block);
     return true;
