@@ -171,7 +171,8 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     bool witness = false;
 #else
     bool witness = true;
-    std::vector<libbitcoin::hash_digest> witness_gen(tx_cache.size());
+    std::vector<libbitcoin::hash_digest> witness_gen{};
+    witness_gen.reserve(tx_cache.size());
 #endif
     uint64_t fees = 0;
     for (size_t i = 0; i < tx_cache.size(); ++i) {
@@ -183,7 +184,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 #else
         transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.tx_hash);
         if(witness){
-            witness_gen.insert(witness_gen.begin(), tx_mem.tx_hash);
+            witness_gen.insert(witness_gen.end(), tx_mem.tx_hash);
         }
 #endif
         transactions_json[i]["depends"] = nlohmann::json::array(); //TODO CARGAR DEPS

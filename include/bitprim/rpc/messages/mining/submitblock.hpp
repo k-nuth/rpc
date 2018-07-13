@@ -71,13 +71,12 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
         if(!block->transactions()[0].is_segregated())
             setcoinbasereserved(block);
 #endif
-/*        chain.organize(block, [&](const libbitcoin::code & ec) {
+       chain.organize(block, [&](const libbitcoin::code & ec) {
             if (ec) {
                 error = bitprim::RPC_VERIFY_ERROR;
                 error_code = "Failed to submit block.";
             }
         });
-        */
     }
     else {
         error = bitprim::RPC_DESERIALIZATION_ERROR;
