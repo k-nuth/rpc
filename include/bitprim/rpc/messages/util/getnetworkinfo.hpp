@@ -32,23 +32,15 @@ namespace bitprim {
 template <typename Node>
 bool getnetworkinfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Node & node)
 {
+    json_object["version"] = 001100;
 
-    static const int CLIENT_VERSION =
-        1000000 * LIBBITCOIN_MAJOR_VERSION
-        + 10000 * LIBBITCOIN_MINOR_VERSION
-        + 100 * LIBBITCOIN_PATCH_VERSION;
+    json_object["subversion"] = "/Bitprim:"+ std::string(BITPRIM_CORE_VERSION);
 
-    json_object["version"] = CLIENT_VERSION;
-
-    //TODO 
-    json_object["subversion"] = "/Bitprim:"+ std::string(LIBBITCOIN_VERSION);
-
-    //TODO set protocol
     json_object["protocolversion"] = node->network_settings().protocol_maximum;
 
-    //TODO set protocol
-    json_object["localservices"] = "000000000000040d";
-    json_object["localrelay"] = true;
+    //TODO fix format
+    json_object["localservices"] = std::to_string(node->network_settings().services);
+    json_object["localrelay"] = node->node_settings().refresh_transactions;
     json_object["networkactive"] = true;
 
     json_object["timeoffset"] = 0;
@@ -71,7 +63,6 @@ bool getnetworkinfo(nlohmann::json& json_object, int& error, std::string& error_
     json_object["warnings"] = "";
 
     return true;
-
 }
 
 template <typename Node>

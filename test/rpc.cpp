@@ -318,7 +318,8 @@ public:
 
 class full_node_dummy {
 public:
-    libbitcoin::network::settings p2p_settings;
+    libbitcoin::network::settings p2p_settings_;
+    libbitcoin::node::settings node_settings_;
 
     block_chain_dummy blockchain_;
 
@@ -331,7 +332,12 @@ public:
     }
 
     const libbitcoin::network::settings& network_settings() const {
-        return p2p_settings;
+        return p2p_settings_;
+    }
+
+
+    const libbitcoin::node::settings& node_settings() const {
+        return node_settings_;
     }
 };
 
