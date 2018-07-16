@@ -213,12 +213,17 @@ public:
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
-    ///// fetch_mempool_all()
-    using tx_mempool = std::tuple<libbitcoin::chain::transaction, uint64_t, uint64_t, std::string, size_t, bool>;
-
     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
-    std::vector<tx_mempool> fetch_mempool_all(size_t max_bytes) const {
-        return std::vector<tx_mempool>();
+    std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
+        return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
+    }
+
+    bool remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
+        return true;
+    }
+
+    bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
+        return true;
     }
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;
@@ -313,6 +318,9 @@ public:
 
 class full_node_dummy {
 public:
+    libbitcoin::network::settings p2p_settings_;
+    libbitcoin::node::settings node_settings_;
+
     block_chain_dummy blockchain_;
 
     block_chain_dummy& chain_bitprim() {
@@ -321,6 +329,15 @@ public:
 
     size_t connection_count() const {
         return 0;
+    }
+
+    const libbitcoin::network::settings& network_settings() const {
+        return p2p_settings_;
+    }
+
+
+    const libbitcoin::node::settings& node_settings() const {
+        return node_settings_;
     }
 };
 
