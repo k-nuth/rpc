@@ -50,15 +50,30 @@ void handle_organize(const libbitcoin::code& ec) {
     else std::cout << "Block submited successfully" << std::endl;
 }
 
+static
+void setcoinbasereserved(std::shared_ptr<bc::message::block> block){
+    libbitcoin::data_chunk stack_s(32);
+    for(auto& data : stack_s){
+        data = (uint8_t)0;
+    }
+    libbitcoin::data_stack stack{};
+    stack.insert(stack.begin(), stack_s);
+    block->transactions()[0].inputs()[0].set_witness(libbitcoin::chain::witness(stack));
+}
+
 template <typename Blockchain>
 bool submitblock(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& incoming_hex, bool use_testnet_rules, Blockchain& chain) {
     const auto block = std::make_shared<bc::message::block>();
     libbitcoin::data_chunk out;
     libbitcoin::decode_base16(out, incoming_hex);
     if (block->from_data(1, out)) {
-        chain.organize(block, [&](const libbitcoin::code & ec) {
+#ifndef BITPRIM_CURRENCY_BCH
+        if(!block->transactions()[0].is_segregated())
+            setcoinbasereserved(block);
+#endif
+       chain.organize(block, [&](const libbitcoin::code & ec) {
             if (ec) {
-                error = bitprim::RPC_VERIFY_ERROR;
+                error = ec.value();
                 error_code = "Failed to submit block.";
             }
         });
@@ -68,8 +83,16 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
         error_code = "Block decode failed";
     }
 
-    if (error != 0)
+    if (error != 0){
+    LOG_WARNING("rpc")
+            << "Failed to Submit Block [Error code: " << error << "]";
         return false;
+    }
+
+    LOG_INFO("rpc")
+        << "Block submitted successfully [" << libbitcoin::encode_hash(block->hash()) << "]" ;
+
+    chain.remove_mined_txs_from_chosen_list(block);
     return true;
 }
 

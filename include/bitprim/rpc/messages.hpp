@@ -86,7 +86,10 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
     if (key == "getinfo")
         return process_getinfo(json_in, node, use_testnet_rules);
-    
+
+    if (key == "getnetworkinfo")
+        return process_getnetworkinfo(json_in, node, use_testnet_rules);
+
     //std::cout << key << " Command Not yet implemented." << std::endl;
     return nlohmann::json(); //TODO: error!
 

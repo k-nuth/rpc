@@ -43,5 +43,6 @@
 #include <bitprim/rpc/messages/wallet/sendrawtransaction.hpp>
 #include <bitprim/rpc/messages/util/getinfo.hpp>
 #include <bitprim/rpc/messages/util/validateaddress.hpp>
+#include <bitprim/rpc/messages/util/getnetworkinfo.hpp>
 
 #endif

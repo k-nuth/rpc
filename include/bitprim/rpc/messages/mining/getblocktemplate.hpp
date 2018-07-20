@@ -53,18 +53,73 @@ uint64_t get_block_reward(uint32_t height, bool retarget=true) {
     return subsidy;
 }
 
+static
+libbitcoin::hash_digest generate_merkle_root(std::vector<libbitcoin::hash_digest>& merkle)
+{
+    if (merkle.empty())
+        return libbitcoin::null_hash;
+
+    libbitcoin::hash_list update;
+    merkle.insert(merkle.begin(),libbitcoin::hash_digest{});
+
+    // Initial capacity is half of the original list (clear doesn't reset).
+    update.reserve((merkle.size() + 1) / 2);
+
+    while (merkle.size() > 1)
+    {
+        // If number of hashes is odd, duplicate last hash in the list.
+        if (merkle.size() % 2 != 0)
+            merkle.push_back(merkle.back());
+
+        for (auto it = merkle.begin(); it != merkle.end(); it += 2)
+            update.push_back(libbitcoin::bitcoin_hash(libbitcoin::build_chunk({ it[0], it[1] })));
+
+        std::swap(merkle, update);
+        update.clear();
+    }
+
+    // There is now only one item in the list.
+    return merkle.front();
+}
+
+static
+std::vector<uint8_t> create_default_witness_commitment(std::vector<libbitcoin::hash_digest>& merkle){
+    libbitcoin::byte_array<6> scriptPubKey;
+    scriptPubKey[0] = 0x6a;
+    scriptPubKey[1] = 0x24;
+    scriptPubKey[2] = 0xaa;
+    scriptPubKey[3] = 0x21;
+    scriptPubKey[4] = 0xa9;
+    scriptPubKey[5] = 0xed;
+
+    std::vector<uint8_t> bytes{};
+    bytes.reserve(38);
+    auto hash = libbitcoin::bitcoin_hash(libbitcoin::build_chunk({ generate_merkle_root(merkle), libbitcoin::hash_digest{} }));//libbitcoin::encode_base16(generate_merkle_root(witness_gen));
+    bytes.insert(bytes.begin(), hash.begin(), hash.end());
+    bytes.insert(bytes.begin(), scriptPubKey.begin(), scriptPubKey.end());
+    return bytes;
+}
+
+
+
+
+
 template <typename Blockchain>
-bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, size_t max_bytes, std::chrono::nanoseconds timeout, Blockchain const& chain) {
+bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, std::chrono::nanoseconds timeout, Blockchain const& chain) {
 
     json_object["capabilities"] = std::vector<std::string>{ "proposal" };
     json_object["version"] = 536870912;                          //TODO: hardcoded value
-    json_object["rules"] = std::vector<std::string>{ "csv" }; //, "!segwit"};  //TODO!
+#ifdef BITPRIM_CURRENCY_BCH
+    json_object["rules"] = std::vector<std::string>{ "csv" };
+#else
+    json_object["rules"] = std::vector<std::string>{ "csv", "segwit" };
+#endif
     json_object["vbavailable"] = nlohmann::json::object();
     json_object["vbrequired"] = 0;
 
     static bool first_time = true;
     static size_t old_height = 0;
-    static std::vector<libbitcoin::blockchain::block_chain::tx_mempool> tx_cache;
+    static std::vector<libbitcoin::blockchain::block_chain::tx_benefit> tx_cache;
     static std::chrono::time_point<std::chrono::high_resolution_clock> cache_timestamp = std::chrono::high_resolution_clock::now();
 
     size_t last_height;
@@ -87,11 +142,17 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["previousblockhash"] = libbitcoin::encode_hash(header->hash());
 
-    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops(); //OLD max_block_sigops; //TODO: this value is hardcoded using bitcoind pcap
-
+#ifdef BITPRIM_CURRENCY_BCH
+    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops();
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
-    json_object["sizelimit"] = libbitcoin::get_max_block_size(); //OLD max_block_size;   //TODO: this value is hardcoded using bitcoind pcap
-    json_object["weightlimit"] = libbitcoin::get_max_block_size();//                    //TODO: this value is hardcoded using bitcoind pcap
+    json_object["sizelimit"] = libbitcoin::get_max_block_size();
+    json_object["weightlimit"] = libbitcoin::get_max_block_size();
+#else
+    json_object["sigoplimit"] = libbitcoin::max_fast_sigops;
+    //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
+    json_object["sizelimit"] = libbitcoin::max_block_weight;
+    json_object["weightlimit"] = libbitcoin::max_block_weight;
+#endif
 
     auto now = std::chrono::high_resolution_clock::now();
 
@@ -100,7 +161,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     {
         first_time = false;
         old_height = last_height;
-        tx_cache = chain.fetch_mempool_all(max_bytes);
+        tx_cache = chain.get_gbt_tx_list();
         cache_timestamp = std::chrono::high_resolution_clock::now();
     }
 
@@ -110,24 +171,35 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     bool witness = false;
 #else
     bool witness = true;
+    std::vector<libbitcoin::hash_digest> witness_gen{};
+    witness_gen.reserve(tx_cache.size());
 #endif
-
-
     uint64_t fees = 0;
     for (size_t i = 0; i < tx_cache.size(); ++i) {
         auto const& tx_mem = tx_cache[i];
-        auto const& tx = std::get<0>(tx_mem);
-        const auto tx_data = tx.to_data(true, witness, false);
-    
-        transactions_json[i]["data"] = libbitcoin::encode_base16(tx_data);
-        transactions_json[i]["txid"] = libbitcoin::encode_hash(tx.hash());
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx.hash());
+        transactions_json[i]["data"] = libbitcoin::encode_base16(tx_mem.tx_hex);
+        transactions_json[i]["txid"] = libbitcoin::encode_hash(tx_mem.tx_id);
+#ifdef BITPRIM_CURRENCY_BCH
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.tx_id);
+#else
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.tx_hash);
+        if(witness){
+            witness_gen.insert(witness_gen.end(), tx_mem.tx_hash);
+        }
+#endif
         transactions_json[i]["depends"] = nlohmann::json::array(); //TODO CARGAR DEPS
-        transactions_json[i]["fee"] = std::get<1>(tx_mem);
-        transactions_json[i]["sigops"] = std::get<2>(tx_mem);
-        transactions_json[i]["weight"] = tx_data.size();
-        fees += std::get<1>(tx_mem);
+        transactions_json[i]["fee"] = tx_mem.tx_fees;
+        transactions_json[i]["sigops"] = tx_mem.tx_sigops;
+        transactions_json[i]["weight"] = tx_mem.tx_size;
+        fees += tx_mem.tx_fees;
+
     }
+#ifndef BITPRIM_CURRENCY_BCH
+    if(witness)
+    {
+        json_object["default_witness_commitment"] = libbitcoin::encode_base16(create_default_witness_commitment(witness_gen));
+    }
+#endif
 
     json_object["transactions"] = transactions_json;
 
@@ -167,8 +239,7 @@ nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, Blockchai
     std::string error_code;
 
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
-    //TODO(fernando): hardcoded 20000
-    if (getblocktemplate(result, error, error_code, libbitcoin::get_max_block_size() - 20000, std::chrono::seconds(30), chain)) {
+    if (getblocktemplate(result, error, error_code, std::chrono::seconds(5), chain)) {
         container["result"] = result;
         container["error"];
     } else {
