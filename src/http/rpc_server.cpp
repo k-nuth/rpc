@@ -33,6 +33,7 @@ rpc_server::rpc_server(bool use_testnet_rules
     , node_(node)
     , rpc_allowed_ips_(rpc_allowed_ips)
     , signature_map_(load_signature_map<libbitcoin::blockchain::block_chain>())
+    , signature_map_no_params_(load_signature_map_no_params<libbitcoin::blockchain::block_chain>())
 {
     server_.config.port = rpc_port;
     configure_server();
@@ -50,7 +51,7 @@ void rpc_server::configure_server() {
                 }
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
-                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_);
+                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
                 result = result + "\u000a";
 
                 *response << "HTTP/1.1 200 OK\r\n"
@@ -82,7 +83,7 @@ void rpc_server::configure_server() {
 
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
-                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_);
+                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
                 result = result + "\u000a";
 
     //            TODO: add date to response

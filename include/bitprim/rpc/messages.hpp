@@ -50,53 +50,117 @@ signature_map<Blockchain> load_signature_map() {
         { "getaddressutxos", process_getaddressutxos },
         { "getblockhashes", process_getblockhashes },
         { "getaddressmempool", process_getaddressmempool },
-        { "getbestblockhash", process_getbestblockhash },
         { "getblock", process_getblock },
         { "getblockhash", process_getblockhash },
+        { "getblockheader", process_getblockhash },
+        { "validateaddress", process_validateaddress },
+        { "getblocktemplate", process_getblocktemplate }
+    };
+}
+
+template <typename Blockchain>
+signature_map<Blockchain> load_signature_map_no_params() {
+
+    return signature_map<Blockchain>  {
+        { "getbestblockhash", process_getbestblockhash },
         { "getblockchaininfo", process_getblockchaininfo },
-        { "getblockheader", process_getblockheader },
         { "getblockcount", process_getblockcount },
         { "getdifficulty", process_getdifficulty },
         { "getchaintips", process_getchaintips },
-        { "validateaddress", process_validateaddress },
-        { "getblocktemplate", process_getblocktemplate },
         { "getmininginfo", process_getmininginfo }
     };
 }
 
 template <typename Node, typename Blockchain>
-nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules,  Node & node, signature_map<Blockchain> const& signature_map) {
+nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules,  Node & node, signature_map<Blockchain> const& signature_, signature_map<Blockchain> const& no_params_map) {
     
-    auto key = json_in["method"].get<std::string>();
+    if (json_in.find("method") != json_in.end()) {
+        auto key = json_in["method"].get<std::string>();
 
-    //std::cout << "Processing json " << key << std::endl;
-    //std::cout << "Detail json " << json_in << std::endl;
+        //std::cout << "Processing json " << key << std::endl;
+        //std::cout << "Detail json " << json_in << std::endl;
 
-    auto it = signature_map.find(key);
+        auto it = signature_.find(key);
+        if (it != signature_.end()) {
+            if(json_in.find("params") != json_in.end()){
+                return it->second(json_in, node->chain_bitprim(), use_testnet_rules);
+            } else {
+                nlohmann::json container;
+                container["result"];
+                container["error"]["code"] = 0;
+                container["error"]["message"] = "Please enter `params`";
+                return container;
+            }
+        }
 
-    if (it != signature_map.end()) {
-        return it->second(json_in, node->chain_bitprim(), use_testnet_rules);
+        auto it_n = no_params_map.find(key);
+        if ( it_n != no_params_map.end()) {
+            return  it_n->second(json_in, node->chain_bitprim(), use_testnet_rules);
+        }
+#ifdef WITH_KEOKEN
+        if (key == "initkeoken")
+            return process_initkeoken(json_in, node, use_testnet_rules);
+
+        if (key == "getassets")
+            return process_getassets(json_in, node, use_testnet_rules);
+
+        if (key == "getallassets")
+            return process_getallassets(json_in, node, use_testnet_rules);
+#endif
+        if (key == "getinfo")
+            return process_getinfo(json_in, node, use_testnet_rules);
+
+        if (key == "getnetworkinfo")
+            return process_getnetworkinfo(json_in, node, use_testnet_rules);
+
+        if(json_in.find("params") != json_in.end()) {
+            if (key == "submitblock")
+                return process_submitblock(json_in, node->chain_bitprim(), use_testnet_rules);
+
+            if (key == "sendrawtransaction")
+                return process_sendrawtransaction(json_in, node->chain_bitprim(), use_testnet_rules);
+
+            if (key == "createtransaction")
+                return process_createtransaction(json_in, node->chain_bitprim(), use_testnet_rules);
+
+            if (key == "createsignature")
+                return process_createsignature(json_in, node->chain_bitprim(), use_testnet_rules);
+
+            if (key == "setsignature")
+                return process_setsignature(json_in, node->chain_bitprim(), use_testnet_rules);
+#ifdef WITH_KEOKEN
+            if (key == "createasset")
+                return process_createasset(json_in, node->chain_bitprim(), use_testnet_rules);
+
+            if (key == "sendtoken")
+                return process_sendtoken(json_in, node->chain_bitprim(), use_testnet_rules);
+
+            if (key == "getassetsbyaddress")
+                return process_getassetsbyaddress(json_in, node, use_testnet_rules);
+#endif
+            nlohmann::json container;
+            container["result"];
+            container["error"]["code"] = bitprim::RPC_INVALID_REQUEST;
+            container["error"]["message"] = "Invalid or incomplete command";
+            return container;
+        } else {
+            nlohmann::json container;
+            container["result"];
+            container["error"]["code"] = bitprim::RPC_INVALID_REQUEST;
+            container["error"]["message"] = "Invalid or incomplete command";
+            return container;
+        }
+
+
+        
     }
-    
-    if (key == "submitblock")
-        return process_submitblock(json_in, node->chain_bitprim(), use_testnet_rules);
-
-    if (key == "sendrawtransaction")
-        return process_sendrawtransaction(json_in, node->chain_bitprim(), use_testnet_rules);
-
-    if (key == "getinfo")
-        return process_getinfo(json_in, node, use_testnet_rules);
-
-    if (key == "getnetworkinfo")
-        return process_getnetworkinfo(json_in, node, use_testnet_rules);
-
     //std::cout << key << " Command Not yet implemented." << std::endl;
     return nlohmann::json(); //TODO: error!
 
 }
 
 template <typename Node, typename Blockchain>
-std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Node & node, signature_map<Blockchain> const& signature_map) {
+std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Node & node, signature_map<Blockchain> const& signature_, signature_map<Blockchain> const& no_params_map) {
     //std::cout << "method: " << json_object["method"].get<std::string>() << "\n";
     //Bitprim-mining process data
 
@@ -104,13 +168,13 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
         nlohmann::json res;
         size_t i = 0;
         for (const auto & method : json_object) {
-            res[i] = process_data_element(method, use_testnet_rules, node, signature_map);
+            res[i] = process_data_element(method, use_testnet_rules, node, signature_, no_params_map);
             ++i;
         }
         return res.dump();
     }
     else {
-        return process_data_element(json_object, use_testnet_rules, node, signature_map).dump();
+        return process_data_element(json_object, use_testnet_rules, node, signature_, no_params_map).dump();
     }
 }
 

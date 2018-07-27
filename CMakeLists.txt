@@ -69,6 +69,14 @@ message( STATUS "Bitprim: Compiling for ${MICROARCHITECTURE}")
 # add_definitions(-DBITPRIM_MICROARCHITECTURE=${MICROARCHITECTURE})
 # add_definitions(-DBITPRIM_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
 
+# Implement --with-keoken and declare WITH_KEOKEN.
+#------------------------------------------------------------------------------
+option(WITH_KEOKEN "Keoken enabled." OFF)
+if (WITH_KEOKEN)
+  message(STATUS "Bitprim: Keoken enabled")
+  add_definitions(-DWITH_KEOKEN)
+endif()
+
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 

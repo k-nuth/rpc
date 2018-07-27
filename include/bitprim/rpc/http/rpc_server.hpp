@@ -65,6 +65,7 @@ private:
     // the chain_ can be const
     std::shared_ptr<libbitcoin::node::full_node> & node_;
     signature_map<libbitcoin::blockchain::block_chain> signature_map_;
+    signature_map<libbitcoin::blockchain::block_chain> signature_map_no_params_;
     std::unordered_set<std::string> rpc_allowed_ips_;
 };
 

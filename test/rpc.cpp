@@ -320,7 +320,9 @@ class full_node_dummy {
 public:
     libbitcoin::network::settings p2p_settings_;
     libbitcoin::node::settings node_settings_;
-
+#ifdef WITH_KEOKEN
+    bitprim::keoken::manager keoken_manager_;
+#endif    
     block_chain_dummy blockchain_;
 
     block_chain_dummy& chain_bitprim() {
@@ -339,6 +341,13 @@ public:
     const libbitcoin::node::settings& node_settings() const {
         return node_settings_;
     }
+
+#ifdef WITH_KEOKEN
+    bitprim::keoken::manager& keoken_manager() {
+        return keoken_manager_;
+    }
+#endif    
+
 };
 
 TEST_CASE("[load_signature_map] validate map keys") {
@@ -346,24 +355,25 @@ TEST_CASE("[load_signature_map] validate map keys") {
     auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
 
     CHECK(map.count("getrawtransaction") == 1);
-    CHECK(map.count("getspentinfo") == 1);
     CHECK(map.count("getaddressbalance") == 1);
+    CHECK(map.count("getspentinfo") == 1);
     CHECK(map.count("getaddresstxids") == 1);
     CHECK(map.count("getaddressdeltas") == 1);
     CHECK(map.count("getaddressutxos") == 1);
     CHECK(map.count("getblockhashes") == 1);
     CHECK(map.count("getaddressmempool") == 1);
-    CHECK(map.count("getbestblockhash") == 1);
     CHECK(map.count("getblock") == 1);
     CHECK(map.count("getblockhash") == 1);
-    CHECK(map.count("getblockchaininfo") == 1);
     CHECK(map.count("getblockheader") == 1);
-    CHECK(map.count("getblockcount") == 1);
-    CHECK(map.count("getdifficulty") == 1);
-    CHECK(map.count("getchaintips") == 1);
     CHECK(map.count("validateaddress") == 1);
     CHECK(map.count("getblocktemplate") == 1);
-    CHECK(map.count("getmininginfo") == 1);
+
+    CHECK(map.count("getbestblockhash") == 0);
+    CHECK(map.count("getblockchaininfo") == 0);
+    CHECK(map.count("getblockcount") == 0);
+    CHECK(map.count("getdifficulty") == 0);
+    CHECK(map.count("getchaintips") == 0);
+    CHECK(map.count("getmininginfo") == 0);
 
     CHECK(map.count("submitblock") == 0);
     CHECK(map.count("sendrawtransaction") == 0);
@@ -376,7 +386,7 @@ TEST_CASE("[process_data] invalid key") {
     using blk_t = block_chain_dummy;
 
     auto map = bitprim::load_signature_map<blk_t>();
-
+    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
     nlohmann::json input;
 
     input["method"] = "invalid_key";
@@ -390,9 +400,10 @@ TEST_CASE("[process_data] invalid key") {
     //blk_t chain(threadpool, chain_settings, database_settings, true);
     std::shared_ptr<full_node_dummy> node;
 
-    auto ret = bitprim::process_data(input, false, node, map);
-    
-    CHECK(ret == "null");
+    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+
+    nlohmann::json output = nlohmann::json::parse(ret);
+    CHECK((int)output["error"]["code"] == bitprim::RPC_INVALID_REQUEST);
 }
 
 
@@ -401,7 +412,7 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
     using blk_t = block_chain_dummy;
 
     auto map = bitprim::load_signature_map<blk_t>();
-
+    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
     nlohmann::json input;
 
     input["method"] = "getrawtransaction";
@@ -410,7 +421,7 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
 
     std::shared_ptr<full_node_dummy> node;
 
-    auto ret = bitprim::process_data(input, false, node, map);
+    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
     
     //MESSAGE(ret);
     
@@ -427,6 +438,7 @@ TEST_CASE("[process_data] submitblock ") {
     using blk_t = block_chain_dummy;
 
     auto map = bitprim::load_signature_map<blk_t>();
+    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
 
     nlohmann::json input;
 
@@ -436,7 +448,7 @@ TEST_CASE("[process_data] submitblock ") {
 
     std::shared_ptr<full_node_dummy> node;
 
-    auto ret = bitprim::process_data(input, false, node, map);
+    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
 
     //MESSAGE(ret);
 
