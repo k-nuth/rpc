@@ -320,7 +320,7 @@ class full_node_dummy {
 public:
     libbitcoin::network::settings p2p_settings_;
     libbitcoin::node::settings node_settings_;
-
+    bitprim::keoken::manager keoken_manager_;
     block_chain_dummy blockchain_;
 
     block_chain_dummy& chain_bitprim() {
@@ -339,6 +339,11 @@ public:
     const libbitcoin::node::settings& node_settings() const {
         return node_settings_;
     }
+
+    bitprim::keoken::manager& keoken_manager() {
+        return keoken_manager_;
+    }
+
 };
 
 TEST_CASE("[load_signature_map] validate map keys") {

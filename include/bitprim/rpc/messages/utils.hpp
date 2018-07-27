@@ -91,6 +91,27 @@ namespace bitprim {
         }
         return std::make_tuple(success, top_height, diff);
     }
+
+inline
+libbitcoin::ec_secret create_secret_from_seed(std::string const& seed_str) {
+    libbitcoin::data_chunk seed;
+    libbitcoin::decode_base16(seed, seed_str);
+    libbitcoin::wallet::hd_private const key(seed);
+    // Secret key
+    libbitcoin::ec_secret secret_key(key.secret());
+    return secret_key;
+}
+
+inline
+libbitcoin::wallet::ec_public secret_to_compressed_public(libbitcoin::ec_secret const& secret_key) {
+  //Public key
+  libbitcoin::ec_compressed point;
+  libbitcoin::secret_to_public(point, secret_key);
+  libbitcoin::wallet::ec_public public_key(point, true /*compress*/);
+
+  return public_key;
+}
+
 }
 
 #endif

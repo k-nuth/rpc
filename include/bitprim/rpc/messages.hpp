@@ -84,6 +84,33 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     if (key == "sendrawtransaction")
         return process_sendrawtransaction(json_in, node->chain_bitprim(), use_testnet_rules);
 
+    if (key == "createtransaction")
+        return process_createtransaction(json_in, node->chain_bitprim(), use_testnet_rules);
+
+    if (key == "createsignature")
+        return process_createsignature(json_in, node->chain_bitprim(), use_testnet_rules);
+
+    if (key == "setsignature")
+        return process_setsignature(json_in, node->chain_bitprim(), use_testnet_rules);
+
+    if (key == "createasset")
+        return process_createasset(json_in, node->chain_bitprim(), use_testnet_rules);
+
+    if (key == "sendtoken")
+        return process_sendtoken(json_in, node->chain_bitprim(), use_testnet_rules);
+
+    if (key == "initkeoken")
+        return process_initkeoken(json_in, node, use_testnet_rules);
+
+    if (key == "getassets")
+        return process_getassets(json_in, node, use_testnet_rules);
+
+    if (key == "getassetsbyaddress")
+        return process_getassetsbyaddress(json_in, node, use_testnet_rules);
+
+    if (key == "getallassets")
+        return process_getallassets(json_in, node, use_testnet_rules);
+
     if (key == "getinfo")
         return process_getinfo(json_in, node, use_testnet_rules);
 

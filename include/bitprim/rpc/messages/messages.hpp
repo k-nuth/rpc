@@ -44,5 +44,14 @@
 #include <bitprim/rpc/messages/util/getinfo.hpp>
 #include <bitprim/rpc/messages/util/validateaddress.hpp>
 #include <bitprim/rpc/messages/util/getnetworkinfo.hpp>
+#include <bitprim/rpc/messages/wallet/createtransaction.hpp>
+#include <bitprim/rpc/messages/wallet/createsignature.hpp>
+#include <bitprim/rpc/messages/wallet/setsignature.hpp>
+#include <bitprim/rpc/messages/keoken/createasset.hpp>
+#include <bitprim/rpc/messages/keoken/sendtoken.hpp>
+#include <bitprim/rpc/messages/keoken/initkeoken.hpp>
+#include <bitprim/rpc/messages/keoken/getassets.hpp>
+#include <bitprim/rpc/messages/keoken/getassetsbyaddress.hpp>
+#include <bitprim/rpc/messages/keoken/getallassets.hpp>
 
 #endif
