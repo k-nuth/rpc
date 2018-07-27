@@ -59,7 +59,7 @@ nlohmann::json process_getallassets(nlohmann::json const& json_in, Node& node, b
     int error = 0;
     std::string error_code;
 
-    if (getassets(result, use_testnet_rules, node))
+    if (getallassets(result, use_testnet_rules, node))
     {
         container["result"] = result;
         container["error"];

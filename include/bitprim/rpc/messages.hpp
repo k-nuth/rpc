@@ -92,7 +92,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
     if (key == "setsignature")
         return process_setsignature(json_in, node->chain_bitprim(), use_testnet_rules);
-
+#ifdef WITH_KEOKEN
     if (key == "createasset")
         return process_createasset(json_in, node->chain_bitprim(), use_testnet_rules);
 
@@ -110,7 +110,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
     if (key == "getallassets")
         return process_getallassets(json_in, node, use_testnet_rules);
-
+#endif
     if (key == "getinfo")
         return process_getinfo(json_in, node, use_testnet_rules);
 
