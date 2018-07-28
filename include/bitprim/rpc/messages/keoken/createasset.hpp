@@ -43,17 +43,17 @@ bool json_in_createasset(nlohmann::json const& json_object,
         return false;
     try {
         libbitcoin::hash_digest hash_to_spend;
-        for (auto const& o : json_object["origin"]) {
+        for (auto const& o : json_object["params"]["origin"]) {
           libbitcoin::decode_hash(hash_to_spend, o["output_hash"]);
           outputs_to_spend.push_back({hash_to_spend, o["output_index"]});
         }
 
-        std::string wallet = json_object["asset_owner"];
+        std::string wallet = json_object["params"]["asset_owner"];
         libbitcoin::wallet::payment_address read(wallet);
         asset_owner = read;
-        utxo_satoshis = json_object["utxo_satoshis"];
-        asset_name = json_object["asset_name"];
-        asset_amount = json_object["asset_amount"];
+        utxo_satoshis = json_object["params"]["utxo_satoshis"];
+        asset_name = json_object["params"]["asset_name"];
+        asset_amount = json_object["params"]["asset_amount"];
     
     }
     catch (const std::exception & e) {
@@ -93,7 +93,7 @@ nlohmann::json process_createasset(nlohmann::json const& json_in, Blockchain& ch
     {
         container["result"];
         container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
-        container["error"]["message"] = "";
+        container["error"]["message"] = "Parse error.";
         return container;
     }
 

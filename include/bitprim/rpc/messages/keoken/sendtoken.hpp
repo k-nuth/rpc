@@ -47,23 +47,23 @@ bool json_in_sendtoken(nlohmann::json const& json_object,
         return false;
     try {
         libbitcoin::hash_digest hash_to_spend;
-        for (auto const& o : json_object["origin"]) {
+        for (auto const& o : json_object["params"]["origin"]) {
           libbitcoin::decode_hash(hash_to_spend, o["output_hash"]);
           outputs_to_spend.push_back({hash_to_spend, o["output_index"]});
         }
 
-        std::string wallet = json_object["asset_owner"];
+        std::string wallet = json_object["params"]["asset_owner"];
         libbitcoin::wallet::payment_address read(wallet);
         asset_owner = read;
-        utxo_satoshis = json_object["utxo_satoshis"];
+        utxo_satoshis = json_object["params"]["utxo_satoshis"];
 
-        std::string wallet_receiver = json_object["token_receiver"];
+        std::string wallet_receiver = json_object["params"]["token_receiver"];
         libbitcoin::wallet::payment_address read_receiver(wallet);
         token_receiver = read_receiver;
-        dust = json_object["dust"];
+        dust = json_object["params"]["dust"];
 
-        asset_id = json_object["asset_id"];
-        asset_amount = json_object["asset_amount"];
+        asset_id = json_object["params"]["asset_id"];
+        asset_amount = json_object["params"]["asset_amount"];
     
     }
     catch (const std::exception & e) {
@@ -107,7 +107,7 @@ nlohmann::json process_sendtoken(nlohmann::json const& json_in, Blockchain& chai
     {
         container["result"];
         container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
-        container["error"]["message"] = "";
+        container["error"]["message"] = "Parse error.";
         return container;
     }
 

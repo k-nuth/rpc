@@ -42,19 +42,19 @@ bool json_in_create_signature(nlohmann::json const& json_object,
         return false;
     try {
         // Priv key
-        private_key = bitprim::create_secret_from_seed(json_object["seed"]);
+        private_key = bitprim::create_secret_from_seed(json_object["params"]["seed"]);
         // Script
         libbitcoin::data_chunk raw_script;
-        libbitcoin::decode_base16(raw_script, json_object["script"]);
+        libbitcoin::decode_base16(raw_script, json_object["params"]["script"]);
         output_script.from_data(raw_script, false);
         // TX
         libbitcoin::data_chunk raw_data;
-        libbitcoin::decode_base16(raw_data, json_object["tx"]);
+        libbitcoin::decode_base16(raw_data, json_object["params"]["tx"]);
         tx.from_data(raw_data);
         // Amount
-        amount = json_object["amount"];
+        amount = json_object["params"]["amount"];
         // Index
-        index = json_object["index"];
+        index = json_object["params"]["index"];
     }
     catch (const std::exception & e) {
         return false;

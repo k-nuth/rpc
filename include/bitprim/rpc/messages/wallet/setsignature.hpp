@@ -43,14 +43,14 @@ bool json_in_set_signature(nlohmann::json const& json_object,
         return false;
     try {
         // Priv key
-        private_key = bitprim::create_secret_from_seed(json_object["seed"]);
-        json_signature = json_object["signature"];
+        private_key = bitprim::create_secret_from_seed(json_object["params"]["seed"]);
+        json_signature = json_object["params"]["signature"];
         // TX
         libbitcoin::data_chunk raw_data;
-        libbitcoin::decode_base16(raw_data, json_object["tx"]);
+        libbitcoin::decode_base16(raw_data, json_object["params"]["tx"]);
         tx.from_data(raw_data);
         // Index
-        index = json_object["index"];
+        index = json_object["params"]["index"];
     }
     catch (const std::exception & e) {
         return false;

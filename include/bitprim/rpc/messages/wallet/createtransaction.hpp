@@ -42,18 +42,18 @@ bool json_in_createtransaction(nlohmann::json const& json_object,
         return false;
     try {
       libbitcoin::hash_digest hash_to_spend;
-      for (auto const& o : json_object["origin"]) {
+      for (auto const& o : json_object["params"]["origin"]) {
         libbitcoin::decode_hash(hash_to_spend, o["output_hash"]);
         outputs_to_spend.push_back({hash_to_spend, o["output_index"]});
       }
 
-      for (auto const& d : json_object["dests"]) {
+      for (auto const& d : json_object["params"]["dests"]) {
         // Implicit json to string conversion
         std::string addr = d["addr"];
         outputs.push_back({libbitcoin::wallet::payment_address(addr), d["amount"]});
       }
 
-      for (auto const& extra:json_object["extra_outputs"]){
+      for (auto const& extra : json_object["params"]["extra_outputs"]){
         libbitcoin::data_chunk script_string;
         libbitcoin::decode_base16(script_string, extra["script"]);
         libbitcoin::chain::script script;
