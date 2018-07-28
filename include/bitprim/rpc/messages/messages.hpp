@@ -47,6 +47,7 @@
 #include <bitprim/rpc/messages/wallet/createtransaction.hpp>
 #include <bitprim/rpc/messages/wallet/createsignature.hpp>
 #include <bitprim/rpc/messages/wallet/setsignature.hpp>
+#include <bitprim/rpc/messages/wallet/newwallet.hpp>
 
 #ifdef WITH_KEOKEN
 #include <bitprim/rpc/messages/keoken/createasset.hpp>

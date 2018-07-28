@@ -128,6 +128,9 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
             if (key == "setsignature")
                 return process_setsignature(json_in, node->chain_bitprim(), use_testnet_rules);
+
+            if (key == "newwallet")
+                return process_newwallet(json_in, node->chain_bitprim(), use_testnet_rules);
 #ifdef WITH_KEOKEN
             if (key == "createasset")
                 return process_createasset(json_in, node->chain_bitprim(), use_testnet_rules);
