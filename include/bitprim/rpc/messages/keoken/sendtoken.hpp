@@ -58,7 +58,7 @@ bool json_in_sendtoken(nlohmann::json const& json_object,
         utxo_satoshis = json_object["params"]["utxo_satoshis"];
 
         std::string wallet_receiver = json_object["params"]["token_receiver"];
-        libbitcoin::wallet::payment_address read_receiver(wallet);
+        libbitcoin::wallet::payment_address read_receiver(wallet_receiver);
         token_receiver = read_receiver;
         dust = json_object["params"]["dust"];
 
