@@ -18,6 +18,7 @@
  */
 
 #include <bitprim/rpc/messages.hpp>
+#include <bitprim/keoken/state_dto.hpp>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -316,12 +317,30 @@ public:
 
 };
 
+class keoken_manager_dummy {
+public:
+    void initialize_from_blockchain(){};
+
+    std::vector<bitprim::keoken::get_assets_data> get_assets_by_address(bc::wallet::payment_address const& addr) const {
+        return {};
+    };
+
+    std::vector<bitprim::keoken::get_assets_data> get_assets() const {
+        return {};
+    };
+
+    std::vector<bitprim::keoken::get_all_asset_addresses_data> get_all_asset_addresses() const {
+        return {};    
+    };
+
+};
+
 class full_node_dummy {
 public:
     libbitcoin::network::settings p2p_settings_;
     libbitcoin::node::settings node_settings_;
 #ifdef WITH_KEOKEN
-    bitprim::keoken::manager keoken_manager_;
+    keoken_manager_dummy keoken_manager_;
 #endif    
     block_chain_dummy blockchain_;
 
@@ -343,7 +362,7 @@ public:
     }
 
 #ifdef WITH_KEOKEN
-    bitprim::keoken::manager& keoken_manager() {
+    keoken_manager_dummy& keoken_manager() {
         return keoken_manager_;
     }
 #endif    
@@ -458,6 +477,74 @@ TEST_CASE("[process_data] submitblock ") {
     CHECK((int)output["error"]["code"] == bitprim::RPC_MISC_ERROR);
 }
 
+
+#ifdef WITH_KEOKEN
+
+TEST_CASE("[process_data] create asset ") {
+
+    using blk_t = block_chain_dummy;
+
+    auto map = bitprim::load_signature_map<blk_t>();
+    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+
+    nlohmann::json input, params, origin;
+
+    input["method"] = "createasset";
+    input["id"] = 123;
+    input["params"]["origin"][0]["output_hash"] = std::string("980de6ce12c29698d54323c6b0f358e1a9ae867598b840ee0094b9df22b07393");
+    input["params"]["origin"][0]["output_index"] = 1;
+    input["params"]["utxo_satoshis"] = 21647102398;
+    input["params"]["asset_name"] = "testcoin";
+    input["params"]["asset_amount"] = 1;
+    input["params"]["asset_owner"] = "mwx2YDHgpdfHUmCpFjEi9LarXf7EkQN6YG";
+    input["params"]["utxo_satoshis"] = 21647102398;
+
+
+    std::shared_ptr<full_node_dummy> node;
+
+    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+
+    nlohmann::json output = nlohmann::json::parse(ret);
+
+    CHECK(output["id"] == input["id"]);
+    CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff02ee89440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac00000000000000001c6a0400004b50150000000074657374636f696e00000000000000000100000000");
+}
+
+
+TEST_CASE("[process_data] send token ") {
+
+    using blk_t = block_chain_dummy;
+
+    auto map = bitprim::load_signature_map<blk_t>();
+    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+
+    nlohmann::json input, params, origin;
+
+    input["method"] = "sendtoken";
+    input["id"] = 123;
+    input["params"]["origin"][0]["output_hash"] = std::string("980de6ce12c29698d54323c6b0f358e1a9ae867598b840ee0094b9df22b07393");
+    input["params"]["origin"][0]["output_index"] = 1;
+    input["params"]["utxo_satoshis"] = 21647102398;
+    input["params"]["asset_id"] = 1;
+    input["params"]["asset_amount"] = 1;
+    input["params"]["asset_owner"] = "mwx2YDHgpdfHUmCpFjEi9LarXf7EkQN6YG";
+    input["params"]["token_receiver"] = "ms9qrYaJ468QCwgX6v7ittgX3vBk3mg6PM";
+    input["params"]["dust"] = 20000;
+    input["params"]["utxo_satoshis"] = 21647102398;
+
+
+    std::shared_ptr<full_node_dummy> node;
+
+    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+
+    nlohmann::json output = nlohmann::json::parse(ret);
+
+    CHECK(output["id"] == input["id"]);
+    CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff03204e0000000000001976a9147fa36605e302ed00aeca0da8e2743772df11290188acce3b440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac0000000000000000176a0400004b50100000000100000001000000000000000100000000");
+}
+
+
+#endif
 
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
