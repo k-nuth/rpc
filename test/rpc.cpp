@@ -219,8 +219,7 @@ public:
         return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
     }
 
-    bool remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
-        return true;
+    void remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
     }
 
     bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
