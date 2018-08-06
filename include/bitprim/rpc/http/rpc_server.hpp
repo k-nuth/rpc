@@ -21,13 +21,6 @@
 #ifndef BITPRIM_RPC_SERVER_HPP_
 #define	BITPRIM_RPC_SERVER_HPP_
 
-
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-
-#include <zmq.h>
-
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 #include <bitcoin/network/p2p.hpp>
 #include <bitcoin/node/full_node.hpp>
@@ -40,6 +33,13 @@
 #include <bitprim/keoken/manager.hpp>
 #include <bitprim/keoken/state.hpp>
 #endif
+
+//Note: do not change the order of the following headers (compilation error in Windows)
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+
+#include <zmq.h>
 
 
 namespace bitprim { namespace rpc {
