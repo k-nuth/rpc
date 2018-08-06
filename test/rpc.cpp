@@ -360,11 +360,11 @@ public:
         return node_settings_;
     }
 
-#ifdef WITH_KEOKEN
-    keoken_manager_dummy& keoken_manager() {
-        return keoken_manager_;
-    }
-#endif    
+// #ifdef WITH_KEOKEN
+//     keoken_manager_dummy& keoken_manager() {
+//         return keoken_manager_;
+//     }
+// #endif    
 
 };
 
@@ -416,9 +416,15 @@ TEST_CASE("[process_data] invalid key") {
     //libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
 
     //blk_t chain(threadpool, chain_settings, database_settings, true);
-    std::shared_ptr<full_node_dummy> node;
+    full_node_dummy node;
 
+#ifdef WITH_KEOKEN
+    keoken_manager_dummy manager;
+    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+#else
     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+#endif    
+
 
     nlohmann::json output = nlohmann::json::parse(ret);
     CHECK((int)output["error"]["code"] == bitprim::RPC_INVALID_REQUEST);
@@ -437,10 +443,15 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
     input["id"] = 123;
     input["params"] = nullptr;
 
-    std::shared_ptr<full_node_dummy> node;
+    full_node_dummy node;
 
+#ifdef WITH_KEOKEN
+    keoken_manager_dummy manager;
+    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+#else
     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
-    
+#endif    
+
     //MESSAGE(ret);
     
     nlohmann::json output = nlohmann::json::parse(ret);
@@ -464,9 +475,15 @@ TEST_CASE("[process_data] submitblock ") {
     input["id"] = 123;
     input["params"] = nullptr;
 
-    std::shared_ptr<full_node_dummy> node;
+    full_node_dummy node;
 
+
+#ifdef WITH_KEOKEN
+    keoken_manager_dummy manager;
+    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+#else
     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+#endif    
 
     //MESSAGE(ret);
 
@@ -499,9 +516,14 @@ TEST_CASE("[process_data] create asset ") {
     input["params"]["utxo_satoshis"] = 21647102398;
 
 
-    std::shared_ptr<full_node_dummy> node;
+    full_node_dummy node;
 
+#ifdef WITH_KEOKEN
+    keoken_manager_dummy manager;
+    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+#else
     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+#endif    
 
     nlohmann::json output = nlohmann::json::parse(ret);
 
@@ -532,9 +554,14 @@ TEST_CASE("[process_data] send token ") {
     input["params"]["utxo_satoshis"] = 21647102398;
 
 
-    std::shared_ptr<full_node_dummy> node;
+    full_node_dummy node;
 
+#ifdef WITH_KEOKEN
+    keoken_manager_dummy manager;
+    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+#else
     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+#endif    
 
     nlohmann::json output = nlohmann::json::parse(ret);
 

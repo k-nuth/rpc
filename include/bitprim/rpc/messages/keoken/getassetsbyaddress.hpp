@@ -28,7 +28,7 @@
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-#include <bitcoin/node/full_node.hpp>
+// #include <bitcoin/node/full_node.hpp>
 
 
 namespace bitprim {
@@ -48,12 +48,12 @@ bool json_in_getassetsbyaddress(nlohmann::json const& json_object,
     return true;
 }
 
-template <typename Node>
-bool getassetsbyaddress(nlohmann::json& json_object,  int& error, std::string& error_code, std::string& asset_owner,bool use_testnet_rules, Node& node)
+template <typename KeokenManager>
+bool getassetsbyaddress(nlohmann::json& json_object,  int& error, std::string& error_code, std::string& asset_owner,bool use_testnet_rules, KeokenManager const& keoken_manager)
 {
     libbitcoin::wallet::payment_address wallet (asset_owner);
     if(wallet){
-        auto assets_list = node->keoken_manager().get_assets_by_address({asset_owner});
+        auto assets_list = keoken_manager.get_assets_by_address({asset_owner});
         size_t i = 0;
         for(auto const& asset : assets_list) {
             json_object[i]["asset_id"] = asset.asset_id;
@@ -70,8 +70,8 @@ bool getassetsbyaddress(nlohmann::json& json_object,  int& error, std::string& e
     return true;
 }
 
-template <typename Node>
-nlohmann::json process_getassetsbyaddress(nlohmann::json const& json_in, Node& node, bool use_testnet_rules)
+template <typename KeokenManager>
+nlohmann::json process_getassetsbyaddress(nlohmann::json const& json_in, KeokenManager const& keoken_manager, bool use_testnet_rules)
 {
     nlohmann::json container;
     nlohmann::json result = nlohmann::json::array();
@@ -88,7 +88,7 @@ nlohmann::json process_getassetsbyaddress(nlohmann::json const& json_in, Node& n
         return container;
     }
 
-    if (getassetsbyaddress(result, error, error_code, asset_owner, use_testnet_rules, node))
+    if (getassetsbyaddress(result, error, error_code, asset_owner, use_testnet_rules, keoken_manager))
     {
         container["result"] = result;
         container["error"];

@@ -56,5 +56,6 @@
 #include <bitprim/rpc/messages/keoken/getassets.hpp>
 #include <bitprim/rpc/messages/keoken/getassetsbyaddress.hpp>
 #include <bitprim/rpc/messages/keoken/getallassets.hpp>
-#endif
-#endif
+#endif //WITH_KEOKEN
+
+#endif //BITPRIM_RPC_MESSAGES_MESSAGES_HPP_

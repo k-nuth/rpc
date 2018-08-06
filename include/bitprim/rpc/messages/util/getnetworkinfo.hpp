@@ -36,18 +36,18 @@ bool getnetworkinfo(nlohmann::json& json_object, int& error, std::string& error_
 
     json_object["subversion"] = "/Bitprim:"+ std::string(BITPRIM_CORE_VERSION);
 
-    json_object["protocolversion"] = node->network_settings().protocol_maximum;
+    json_object["protocolversion"] = node.network_settings().protocol_maximum;
 
     //TODO fix format
-    json_object["localservices"] = std::to_string(node->network_settings().services);
-    json_object["localrelay"] = node->node_settings().refresh_transactions;
+    json_object["localservices"] = std::to_string(node.network_settings().services);
+    json_object["localrelay"] = node.node_settings().refresh_transactions;
     json_object["networkactive"] = true;
 
     json_object["timeoffset"] = 0;
 
-    json_object["connections"] = node->connection_count();
-    auto ip = node->network_settings().self;
-    auto port = node->network_settings().inbound_port;
+    json_object["connections"] = node.connection_count();
+    auto ip = node.network_settings().self;
+    auto port = node.network_settings().inbound_port;
 
     json_object["networks"][0]["name"] = "ipv4";
     json_object["networks"][0]["limited"] = false;

@@ -21,24 +21,23 @@
 #ifndef BITPRIM_RPC_MESSAGES_GETALLASSETS_HPP_
 #define BITPRIM_RPC_MESSAGES_GETALLASSETS_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
-
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-#include <bitcoin/node/full_node.hpp>
+#include <bitcoin/blockchain/interface/block_chain.hpp>
 
+#include <bitprim/rpc/json/json.hpp>
+#include <bitprim/rpc/messages/error_codes.hpp>
+#include <bitprim/rpc/messages/utils.hpp>
+
+// #include <bitcoin/node/full_node.hpp>
 
 namespace bitprim {
 
-template <typename Node>
-bool getallassets(nlohmann::json& json_object, bool use_testnet_rules, Node& node)
-{
-    auto assets_list = node->keoken_manager().get_all_asset_addresses();
+template <typename KeokenManager>
+bool getallassets(nlohmann::json& json_object, bool use_testnet_rules, KeokenManager const& keoken_manager) {
+    auto assets_list = keoken_manager.get_all_asset_addresses();
     size_t i = 0;
-    for(auto const& asset : assets_list) {
+    for (auto const& asset : assets_list) {
         json_object[i]["asset_id"] = asset.asset_id;
         json_object[i]["asset_name"] = asset.asset_name;
         json_object[i]["asset_creator"] = asset.asset_creator.encoded();
@@ -50,21 +49,18 @@ bool getallassets(nlohmann::json& json_object, bool use_testnet_rules, Node& nod
     return true;
 }
 
-template <typename Node>
-nlohmann::json process_getallassets(nlohmann::json const& json_in, Node& node, bool use_testnet_rules)
-{
+template <typename KeokenManager>
+nlohmann::json process_getallassets(nlohmann::json const& json_in, KeokenManager const& keoken_manager, bool use_testnet_rules) {
     nlohmann::json container, result;
     container["id"] = json_in["id"];
 
     int error = 0;
     std::string error_code;
 
-    if (getallassets(result, use_testnet_rules, node))
-    {
+    if (getallassets(result, use_testnet_rules, keoken_manager)) {
         container["result"] = result;
         container["error"];
-    }
-    else {
+    } else {
         container["error"]["code"] = error;
         container["error"]["message"] = error_code;
     }

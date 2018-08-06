@@ -25,12 +25,18 @@
 namespace bitprim { namespace rpc {
 
 rpc_server::rpc_server(bool use_testnet_rules
-        , std::shared_ptr<libbitcoin::node::full_node> & node
+        , libbitcoin::node::full_node& node
         , uint32_t rpc_port
-        , const std::unordered_set<std::string> & rpc_allowed_ips)
+#ifdef WITH_KEOKEN
+        , size_t keoken_genesis_height
+#endif
+        , std::unordered_set<std::string> const& rpc_allowed_ips)
     : use_testnet_rules_(use_testnet_rules)
     , stopped_(true)
     , node_(node)
+#ifdef WITH_KEOKEN
+    , keoken_manager_(node.chain_bitprim(), keoken_genesis_height)
+#endif
     , rpc_allowed_ips_(rpc_allowed_ips)
     , signature_map_(load_signature_map<libbitcoin::blockchain::block_chain>())
     , signature_map_no_params_(load_signature_map_no_params<libbitcoin::blockchain::block_chain>())
@@ -51,7 +57,11 @@ void rpc_server::configure_server() {
                 }
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
+#ifdef WITH_KEOKEN
+                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
+#else
                 auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
+#endif
                 result = result + "\u000a";
 
                 *response << "HTTP/1.1 200 OK\r\n"
@@ -83,7 +93,12 @@ void rpc_server::configure_server() {
 
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
+#ifdef WITH_KEOKEN
+                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
+#else
                 auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
+#endif
+
                 result = result + "\u000a";
 
     //            TODO: add date to response

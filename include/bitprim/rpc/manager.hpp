@@ -25,13 +25,17 @@
 #include <bitprim/rpc/zmq/zmq_helper.hpp>
 
 namespace bitprim { namespace rpc {
+
 class manager {
 public:
     manager(bool use_testnet_rules
-            , std::shared_ptr<libbitcoin::node::full_node> & node
+            , libbitcoin::node::full_node& node
             , uint32_t rpc_port
             , uint32_t subscriber_port
-            , const std::unordered_set<std::string> & rpc_allowed_ips);
+#ifdef WITH_KEOKEN
+            , size_t keoken_genesis_height
+#endif
+            , std::unordered_set<std::string> const& rpc_allowed_ips);
    ~manager();
 
    void start();

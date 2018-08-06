@@ -48,7 +48,7 @@ namespace bitprim {
 
         json_object["protocolversion"] = 70013;
 
-        auto last_block_data = get_last_block_difficulty(node->chain_bitprim());
+        auto last_block_data = get_last_block_difficulty(node.chain_bitprim());
 
         if (std::get<0>(last_block_data)) {
             json_object["blocks"] = std::get<1>(last_block_data);
@@ -57,7 +57,7 @@ namespace bitprim {
         json_object["timeoffset"] = 0;
 
         //TODO: get outbound + inbound connections from node
-        json_object["connections"] = node->connection_count();
+        json_object["connections"] = node.connection_count();
 
         json_object["proxy"] = "";
 
