@@ -336,8 +336,9 @@ public:
 
 class full_node_dummy {
 public:
-    libbitcoin::network::settings p2p_settings_;
-    libbitcoin::node::settings node_settings_;
+    // libbitcoin::network::settings p2p_settings_;
+    // libbitcoin::node::settings node_settings_;
+
 #ifdef WITH_KEOKEN
     keoken_manager_dummy keoken_manager_;
 #endif    
@@ -352,12 +353,12 @@ public:
     }
 
     const libbitcoin::network::settings& network_settings() const {
-        return p2p_settings_;
+        return libbitcoin::network::settings{};
     }
 
 
     const libbitcoin::node::settings& node_settings() const {
-        return node_settings_;
+        return libbitcoin::node::settings{};
     }
 
 // #ifdef WITH_KEOKEN
