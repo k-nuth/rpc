@@ -38,9 +38,17 @@
 #include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
 #include <bitprim/rpc/messages/blockchain/getaddressmempool.hpp>
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
+
+#ifndef BITPRIM_READ_ONLY
 #include <bitprim/rpc/messages/mining/submitblock.hpp>
+#endif // BITPRIM_READ_ONLY
+
 #include <bitprim/rpc/messages/mining/getmininginfo.hpp>
+
+#ifndef BITPRIM_READ_ONLY
 #include <bitprim/rpc/messages/wallet/sendrawtransaction.hpp>
+#endif // BITPRIM_READ_ONLY
+
 #include <bitprim/rpc/messages/util/getinfo.hpp>
 #include <bitprim/rpc/messages/util/validateaddress.hpp>
 #include <bitprim/rpc/messages/util/getnetworkinfo.hpp>

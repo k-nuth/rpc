@@ -77,6 +77,16 @@ if (WITH_KEOKEN)
   add_definitions(-DWITH_KEOKEN)
 endif()
 
+# Implement --read-only and declare READ_ONLY.
+#------------------------------------------------------------------------------
+option(READ_ONLY "Read-only blockchain." OFF)
+if (READ_ONLY)
+  message(STATUS "Bitprim: Read-only blockchain")
+  add_definitions(-DBITPRIM_READ_ONLY)
+else()
+  message(STATUS "Bitprim: Writable blockchain")
+endif()
+
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
@@ -357,15 +367,25 @@ set(_bitprim_headers
         bitprim/rpc/messages/blockchain/getchaintips.hpp
         bitprim/rpc/messages/blockchain/getaddressmempool.hpp
         bitprim/rpc/messages/mining/getblocktemplate.hpp
-        bitprim/rpc/messages/mining/submitblock.hpp
         bitprim/rpc/messages/mining/getmininginfo.hpp
-        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
         bitprim/rpc/messages/util/getinfo.hpp
         bitprim/rpc/messages/util/getnetworkinfo.hpp
         bitprim/rpc/messages/util/validateaddress.hpp
         bitprim/rpc/messages/utils.hpp
         bitprim/rpc/messages/error_codes.hpp
 )
+
+
+if (NOT READ_ONLY)
+  set(_bitprim_headers
+      {$_bitprim_headers}
+      bitprim/rpc/messages/mining/submitblock.hpp
+      bitprim/rpc/messages/wallet/sendrawtransaction.hpp
+      )
+endif (READ_ONLY)
+
+
+
 
 foreach (_header ${_bitprim_headers})
   get_filename_component(_directory "${_header}" DIRECTORY)

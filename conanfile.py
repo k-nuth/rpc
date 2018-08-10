@@ -41,7 +41,8 @@ class BitprimRPCConan(BitprimConanFile):
                "microarchitecture": "ANY", #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
                "fix_march": [True, False],
                "verbose": [True, False],
-               "keoken": [True, False]
+               "keoken": [True, False],
+               "readonly": [True, False],
     }
 
     default_options = "shared=False", \
@@ -52,7 +53,8 @@ class BitprimRPCConan(BitprimConanFile):
         "microarchitecture=_DUMMY_",  \
         "fix_march=False", \
         "verbose=False", \
-        "keoken=False"
+        "keoken=False", \
+        "readonly=False"
 
 
     generators = "cmake"
@@ -122,6 +124,7 @@ class BitprimRPCConan(BitprimConanFile):
         cmake.definitions["WITH_TESTS"] = option_on_off(self.options.with_tests)
         cmake.definitions["WITH_CONSOLE"] = option_on_off(self.options.with_console)
 
+        cmake.definitions["READ_ONLY"] = option_on_off(self.options.readonly)
         cmake.definitions["CURRENCY"] = self.options.currency
         cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
         if self.settings.compiler != "Visual Studio":

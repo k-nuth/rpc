@@ -134,11 +134,14 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return process_getnetworkinfo(json_in, node, use_testnet_rules);
 
         if (json_in.find("params") != json_in.end()) {
+
+#ifndef BITPRIM_READ_ONLY
             if (key == "submitblock")
                 return process_submitblock(json_in, node.chain_bitprim(), use_testnet_rules);
 
             if (key == "sendrawtransaction")
                 return process_sendrawtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
+#endif // BITPRIM_READ_ONLY
 
             if (key == "createtransaction")
                 return process_createtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
