@@ -68,8 +68,8 @@ class BitprimRPCConan(BitprimConanFile):
     def requirements(self):
         self.requires("boost/1.66.0@bitprim/stable")
         self.requires("libzmq/4.2.2@bitprim/stable")
-        # self.requires("bitprim-node/0.X@%s/%s" % (self.user, self.channel))
-        self.bitprim_requires(["bitprim-node/0.X@%s/%s"])
+        self.requires("bitprim-node/0.X@%s/%s" % (self.user, self.channel))
+        # self.bitprim_requires(["bitprim-node/0.X@%s/%s"])
 
     def config_options(self):
         if self.settings.arch != "x86_64":
