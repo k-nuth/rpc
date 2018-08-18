@@ -353,20 +353,22 @@ public:
     }
 
     const libbitcoin::network::settings& network_settings() const {
-        return libbitcoin::network::settings{};
+        return network_settings_;
     }
 
-
     const libbitcoin::node::settings& node_settings() const {
-        return libbitcoin::node::settings{};
+        return node_settings_;
     }
 
 // #ifdef WITH_KEOKEN
 //     keoken_manager_dummy& keoken_manager() {
 //         return keoken_manager_;
 //     }
-// #endif    
+// #endif   
 
+private:
+    libbitcoin::network::settings network_settings_;
+    libbitcoin::node::settings node_settings_;
 };
 
 TEST_CASE("[load_signature_map] validate map keys") {
