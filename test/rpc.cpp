@@ -391,7 +391,7 @@ TEST_CASE("[load_signature_map] validate map keys") {
     CHECK(map.count("getblockheader") == 1);
     CHECK(map.count("validateaddress") == 1);
 
-#ifdef WITH_MINING    
+#ifdef WITH_MINING
     CHECK(map.count("getblocktemplate") == 1);
 #endif // WITH_MINING
 
@@ -474,7 +474,7 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
 }
 
 
-
+#ifdef WITH_MINING
 TEST_CASE("[process_data] submitblock ") {
 
     using blk_t = block_chain_dummy;
@@ -505,7 +505,7 @@ TEST_CASE("[process_data] submitblock ") {
     CHECK(output["id"] == input["id"]);
     CHECK((int)output["error"]["code"] == bitprim::RPC_MISC_ERROR);
 }
-
+#endif // WITH_MINING
 
 #ifdef WITH_KEOKEN
 
