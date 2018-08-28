@@ -37,10 +37,14 @@
 #include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
 #include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
 #include <bitprim/rpc/messages/blockchain/getaddressmempool.hpp>
+
+#ifdef WITH_MINING
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
 #include <bitprim/rpc/messages/mining/submitblock.hpp>
-#include <bitprim/rpc/messages/mining/getmininginfo.hpp>
 #include <bitprim/rpc/messages/wallet/sendrawtransaction.hpp>
+#endif // WITH_MINING
+
+#include <bitprim/rpc/messages/mining/getmininginfo.hpp>
 #include <bitprim/rpc/messages/util/getinfo.hpp>
 #include <bitprim/rpc/messages/util/validateaddress.hpp>
 #include <bitprim/rpc/messages/util/getnetworkinfo.hpp>

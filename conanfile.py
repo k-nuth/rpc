@@ -41,7 +41,8 @@ class BitprimRPCConan(BitprimConanFile):
                "microarchitecture": "ANY", #["x86_64", "haswell", "ivybridge", "sandybridge", "bulldozer", ...]
                "fix_march": [True, False],
                "verbose": [True, False],
-               "keoken": [True, False]
+               "keoken": [True, False],
+               "mining": [True, False]
     }
 
     default_options = "shared=False", \
@@ -52,7 +53,8 @@ class BitprimRPCConan(BitprimConanFile):
         "microarchitecture=_DUMMY_",  \
         "fix_march=False", \
         "verbose=False", \
-        "keoken=False"
+        "keoken=False", \
+        "mining=False"
 
 
     generators = "cmake"
@@ -98,8 +100,10 @@ class BitprimRPCConan(BitprimConanFile):
         else:
             self.options["*"].keoken = self.options.keoken
 
+        self.options["*"].mining = self.options.mining
         self.options["*"].currency = self.options.currency
         self.output.info("Compiling for currency: %s" % (self.options.currency,))
+        self.output.info("Compiling with mining optimizations: %s" % (self.options.mining,))
 
     def package_id(self):
         self.info.options.with_tests = "ANY"
@@ -125,6 +129,8 @@ class BitprimRPCConan(BitprimConanFile):
 
         cmake.definitions["CURRENCY"] = self.options.currency
         cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
+        cmake.definitions["WITH_MINING"] = option_on_off(self.options.mining)
+        
         if self.settings.compiler != "Visual Studio":
             # cmake.definitions["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"

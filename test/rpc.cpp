@@ -214,6 +214,7 @@ public:
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
+#ifdef WITH_MINING
     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
     std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
         return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
@@ -225,6 +226,8 @@ public:
     bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
         return true;
     }
+#endif // WITH_MINING
+
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> validate_tx_2(chain::transaction const& tx, size_t height) const;
@@ -387,7 +390,10 @@ TEST_CASE("[load_signature_map] validate map keys") {
     CHECK(map.count("getblockhash") == 1);
     CHECK(map.count("getblockheader") == 1);
     CHECK(map.count("validateaddress") == 1);
+
+#ifdef WITH_MINING    
     CHECK(map.count("getblocktemplate") == 1);
+#endif // WITH_MINING
 
     CHECK(map.count("getbestblockhash") == 0);
     CHECK(map.count("getblockchaininfo") == 0);
@@ -397,7 +403,11 @@ TEST_CASE("[load_signature_map] validate map keys") {
     CHECK(map.count("getmininginfo") == 0);
 
     CHECK(map.count("submitblock") == 0);
+
+#ifdef WITH_MINING    
     CHECK(map.count("sendrawtransaction") == 0);
+#endif // WITH_MINING
+
     CHECK(map.count("getinfo") == 0);
 }
 

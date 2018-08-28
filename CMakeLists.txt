@@ -77,6 +77,14 @@ if (WITH_KEOKEN)
   add_definitions(-DWITH_KEOKEN)
 endif()
 
+# Implement --with-mining and declare WITH_MINING.
+#------------------------------------------------------------------------------
+option(WITH_MINING "Mining enabled." OFF)
+if (WITH_MINING)
+  message(STATUS "Bitprim: MINING enabled")
+  add_definitions(-DWITH_MINING)
+endif()
+
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
@@ -356,16 +364,23 @@ set(_bitprim_headers
         bitprim/rpc/messages/blockchain/getdifficulty.hpp
         bitprim/rpc/messages/blockchain/getchaintips.hpp
         bitprim/rpc/messages/blockchain/getaddressmempool.hpp
-        bitprim/rpc/messages/mining/getblocktemplate.hpp
-        bitprim/rpc/messages/mining/submitblock.hpp
+        
         bitprim/rpc/messages/mining/getmininginfo.hpp
-        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
         bitprim/rpc/messages/util/getinfo.hpp
         bitprim/rpc/messages/util/getnetworkinfo.hpp
         bitprim/rpc/messages/util/validateaddress.hpp
         bitprim/rpc/messages/utils.hpp
         bitprim/rpc/messages/error_codes.hpp
 )
+
+if (WITH_MINING)
+    set(_bitprim_headers
+        ${_bitprim_headers}
+        bitprim/rpc/messages/mining/getblocktemplate.hpp
+        bitprim/rpc/messages/mining/submitblock.hpp
+        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
+    )
+endif()
 
 foreach (_header ${_bitprim_headers})
   get_filename_component(_directory "${_header}" DIRECTORY)
