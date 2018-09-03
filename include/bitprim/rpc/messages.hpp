@@ -32,13 +32,13 @@
 
 #ifdef WITH_KEOKEN
 #include <bitprim/keoken/manager.hpp>
-#include <bitprim/keoken/state.hpp>
+#include <bitprim/keoken/memory_state.hpp>
 #endif
 
 namespace bitprim {
 
 // #ifdef WITH_KEOKEN
-//     using keoken_manager_t = bitprim::keoken::manager<bitprim::keoken::state>;
+//     using keoken_manager_t = bitprim::keoken::manager<bitprim::keoken::memory_state>;
 // #endif
 
 template <typename Blockchain>

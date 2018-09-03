@@ -31,7 +31,7 @@
 
 #ifdef WITH_KEOKEN
 #include <bitprim/keoken/manager.hpp>
-#include <bitprim/keoken/state.hpp>
+#include <bitprim/keoken/memory_state.hpp>
 #endif
 
 //Note: do not change the order of the following headers (compilation error in Windows)
@@ -48,7 +48,7 @@ class rpc_server {
     using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 public:
 #ifdef WITH_KEOKEN
-    using keoken_manager_t = bitprim::keoken::manager<bitprim::keoken::state>;
+    using keoken_manager_t = bitprim::keoken::manager<bitprim::keoken::memory_state>;
 #endif
 
     rpc_server(bool use_testnet_rules
