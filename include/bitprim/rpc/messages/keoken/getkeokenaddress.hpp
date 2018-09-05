@@ -68,7 +68,7 @@ bool json_in_getkeokenaddress(nlohmann::json const& json_object, std::string& pa
 }
 
 template <typename Blockchain>
-bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& payment_address, size_t& index_start, size_t& index_end, Blockchain const& chain)
+bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& payment_address, size_t& index_start, size_t& index_end, size_t keoken_start,Blockchain const& chain)
 {
 #ifdef BITPRIM_CURRENCY_BCH
     bool witness = false;
@@ -81,7 +81,7 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
     if (address)
     {
         boost::latch latch(2);
-        chain.fetch_keoken_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
+        chain.fetch_keoken_history(address, INT_MAX, keoken_start, [&](const libbitcoin::code &ec,
             std::shared_ptr <std::vector<libbitcoin::transaction_const_ptr>> keoken_txs) {
                 if (ec == libbitcoin::error::success) {
                     size_t i = 0;
@@ -112,7 +112,7 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
 }
 
 template <typename Blockchain>
-nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
+nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchain const& chain, size_t keoken_start,bool use_testnet_rules)
 {
     nlohmann::json container;
     nlohmann::json result = nlohmann::json::array();
@@ -132,7 +132,7 @@ nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchai
         return container;
     }
 
-    if (getkeokenaddress(result, error, error_code, payment_address, index_start, index_end, chain))
+    if (getkeokenaddress(result, error, error_code, payment_address, index_start, index_end, keoken_start, chain))
     {
         container["result"] = result;
         container["error"];
