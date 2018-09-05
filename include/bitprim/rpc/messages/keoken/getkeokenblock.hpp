@@ -53,20 +53,58 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
 #else
     bool witness = true;
 #endif
+    nlohmann::json transactions;
 
     libbitcoin::hash_digest hash;
     if (libbitcoin::decode_hash(hash, block_hash)) {
         boost::latch latch(2);
-        chain.fetch_block_keoken(hash, witness, [&](const libbitcoin::code &ec, std::vector <libbitcoin::transaction_const_ptr>& keoken_txs)
+        chain.fetch_block_keoken(hash, witness, [&](const libbitcoin::code &ec, libbitcoin::header_const_ptr header, size_t height, std::shared_ptr <std::vector <libbitcoin::transaction_const_ptr>> keoken_txs, uint64_t serialized_size)
         {
             if (ec == libbitcoin::error::success) {
                 //json_object["hash"] = block_hash;
 
+                json_object["hash"] = block_hash;
+
+                size_t top_height;
+                chain.get_last_height(top_height);
+                json_object["confirmations"] = top_height - height + 1;
+
+                json_object["size"] = serialized_size;
+                json_object["height"] = height;
+                json_object["version"] = header->version();
+                // TODO: encode the version to base 16
+                json_object["versionHex"] = header->version();
+                json_object["merkleroot"] = libbitcoin::encode_hash(header->merkle());
+                json_object["time"] = header->timestamp();
+                // TODO: get real median time
+                json_object["mediantime"] = header->timestamp();
+                json_object["nonce"] = header->nonce();
+                // TODO: encode bits to base 16
+                json_object["bits"] = header->bits();
+                json_object["difficulty"] = bits_to_difficulty(header->bits());
+                // TODO: validate that proof is chainwork
+                // Optimizate the encoded to base 16
+                std::stringstream ss;
+                ss << std::setfill('0')
+                   << std::nouppercase
+                   << std::hex
+                   << header->proof();
+                json_object["chainwork"] = ss.str();
+                json_object["previousblockhash"] = libbitcoin::encode_hash(header->previous_block_hash());
+
+                json_object["nextblockhash"];
+
+                libbitcoin::hash_digest nexthash;
+                if(chain.get_block_hash(nexthash, height+1))
+                  json_object["nextblockhash"] = libbitcoin::encode_hash(nexthash);
+
+
                 int i = 0;
-                for(auto& tx : keoken_txs){
-                    json_object[i] = decode_keoken(chain, tx);
+                for(auto& tx : (*keoken_txs)){
+                    transactions[i] = decode_keoken(chain, tx);
                     ++i;
                 }
+                json_object["transactions"] = transactions;
 
             }
             else {

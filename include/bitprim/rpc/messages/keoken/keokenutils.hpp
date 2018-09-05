@@ -46,6 +46,7 @@ nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_c
         if ( ! source) return {};
         container["version"] = version;
         container["type"] = type;
+        container["hash"] = libbitcoin::encode_hash((*tx_ptr).hash());
         switch (type) {
         case 0: {
             auto create = bitprim::keoken::message::create_asset::factory_from_data(source);
