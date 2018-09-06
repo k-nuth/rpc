@@ -88,9 +88,11 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
                     size_t limit = index_end > (*keoken_txs).size() ? (*keoken_txs).size() : index_end;
                     size_t j = 0;
                     for(size_t i = index_start; i < limit; ++i){
-                        json_object[j] = bitprim::decode_keoken(chain, (*keoken_txs)[i]);
+                        json_object["transactions"][j] = bitprim::decode_keoken(chain, (*keoken_txs)[i]);
                         ++j;
                     }
+
+                    json_object["count"] = (*keoken_txs).size();
                 }
                 else {
                     error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
@@ -114,8 +116,7 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
 template <typename Blockchain>
 nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchain const& chain, size_t keoken_start,bool use_testnet_rules)
 {
-    nlohmann::json container;
-    nlohmann::json result = nlohmann::json::array();
+    nlohmann::json container, result;
 
     container["id"] = json_in["id"];
 
