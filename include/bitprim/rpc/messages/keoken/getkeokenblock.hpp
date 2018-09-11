@@ -58,7 +58,7 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
     libbitcoin::hash_digest hash;
     if (libbitcoin::decode_hash(hash, block_hash)) {
         boost::latch latch(2);
-        chain.fetch_block_keoken(hash, witness, [&](const libbitcoin::code &ec, libbitcoin::header_const_ptr header, size_t height, std::shared_ptr <std::vector <libbitcoin::transaction_const_ptr>> keoken_txs, uint64_t serialized_size)
+        chain.fetch_block_keoken(hash, witness, [&](const libbitcoin::code &ec, libbitcoin::header_const_ptr header, size_t height, std::shared_ptr <std::vector <libbitcoin::transaction_const_ptr>> keoken_txs, uint64_t serialized_size, size_t transactions_total)
         {
             if (ec == libbitcoin::error::success) {
                 //json_object["hash"] = block_hash;
@@ -92,13 +92,13 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
                 json_object["chainwork"] = ss.str();
                 json_object["previousblockhash"] = libbitcoin::encode_hash(header->previous_block_hash());
 
-                json_object["nextblockhash"];
+                json_object["nextblockhash"] = "";
 
                 libbitcoin::hash_digest nexthash;
                 if(chain.get_block_hash(nexthash, height+1))
                   json_object["nextblockhash"] = libbitcoin::encode_hash(nexthash);
 
-
+                json_object["totaltransactions"] = transactions_total;
                 int i = 0;
                 for(auto& tx : (*keoken_txs)){
                     transactions[i] = decode_keoken(chain, tx);
