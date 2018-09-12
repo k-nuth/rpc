@@ -31,7 +31,7 @@
 namespace bitprim {
 
 template <typename Blockchain>
-nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_const_ptr tx_ptr) {
+nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_const_ptr tx_ptr, bool testnet = false) {
 
     nlohmann::json container;
 
@@ -52,14 +52,14 @@ nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_c
             auto create = bitprim::keoken::message::create_asset::factory_from_data(source);
             container["asset"] = create.name();
             container["amount"] =  create.amount();
-            container["owner"] = (bitprim::keoken::get_first_input_addr(chain, *tx_ptr)).encoded();
+            container["owner"] = (bitprim::keoken::get_first_input_addr(chain, *tx_ptr, testnet)).encoded();
             break;
         }
         case 1: {
             auto message = bitprim::keoken::message::send_tokens::factory_from_data(source);
             container["asset"] = message.asset_id();
             container["amount"] = message.amount();
-            auto addresses = bitprim::keoken::get_send_tokens_addrs(chain, *tx_ptr);
+            auto addresses = bitprim::keoken::get_send_tokens_addrs(chain, *tx_ptr, testnet);
             container["sender"] = (addresses.first).encoded();
             container["receiver"] = (addresses.second).encoded();
             break;
