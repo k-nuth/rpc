@@ -71,6 +71,77 @@ nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_c
     return container;
 }
 
+static
+libbitcoin::wallet::payment_address to_mainnet_addr (libbitcoin::wallet::payment_address const& input_addr) {
+    //Generate an address
+
+
+    uint8_t prefix;
+    if (input_addr.version() == libbitcoin::wallet::payment_address::testnet_p2sh) {
+        //It's p2sh testnet
+        prefix = libbitcoin::wallet::payment_address::mainnet_p2sh;
+    } else if (input_addr.version() == libbitcoin::wallet::payment_address::testnet_p2kh) {
+        //It's p2kh testnet
+        prefix = libbitcoin::wallet::payment_address::mainnet_p2kh;
+    } else {
+        // It's not testnet
+        return input_addr.encoded();
+    }
+
+    // The wallet is testnet
+    libbitcoin::wallet::payment_address new_wallet(input_addr.hash(), prefix);
+    return new_wallet;
+}
+
+static
+libbitcoin::wallet::payment_address to_testnet_addr (libbitcoin::wallet::payment_address const& input_addr) {
+    uint8_t testnet_prefix;
+    if (input_addr.version() == libbitcoin::wallet::payment_address::mainnet_p2sh) {
+        //It's p2sh mainnet
+        testnet_prefix = libbitcoin::wallet::payment_address::testnet_p2sh;
+    } else if (input_addr.version() == libbitcoin::wallet::payment_address::mainnet_p2kh) {
+        //It's p2kh mainnet
+        testnet_prefix = libbitcoin::wallet::payment_address::testnet_p2kh;
+    } else {
+        // It's not mainnet
+        return input_addr.encoded();
+    }
+
+    // The wallet is mainnet
+    libbitcoin::wallet::payment_address testnet_wallet(input_addr.hash(), testnet_prefix);
+    return testnet_wallet;
+}
+
+static
+libbitcoin::wallet::payment_address str_to_mainnet_addr (std::string const& input) {
+    //Generate an address
+    auto input_addr = libbitcoin::wallet::payment_address(input);
+    return to_mainnet_addr(input_addr);
+}
+
+static
+libbitcoin::wallet::payment_address str_to_testnet_addr (std::string const& input) {
+    //Generate an address
+    auto input_addr = libbitcoin::wallet::payment_address(input);
+    return to_testnet_addr(input_addr);
+}
+
+
+static
+libbitcoin::wallet::payment_address str_to_network_wallet(bool testnet, std::string const& input) {
+    if (!testnet)
+        return str_to_mainnet_addr(input);
+    else
+        return str_to_testnet_addr(input);
+}
+static
+libbitcoin::wallet::payment_address to_network_wallet(bool testnet, libbitcoin::wallet::payment_address const& input_addr) {
+    if (!testnet)
+        return to_mainnet_addr(input_addr);
+    else
+        return to_testnet_addr(input_addr);
+}
+
 }
 
 #endif

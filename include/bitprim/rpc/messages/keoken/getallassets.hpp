@@ -29,8 +29,7 @@
 #include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 
-// #include <bitcoin/node/full_node.hpp>
-
+#include <bitprim/rpc/messages/keoken/keokenutils.hpp>
 namespace bitprim {
 
 template <typename KeokenManager>
@@ -40,9 +39,9 @@ bool getallassets(nlohmann::json& json_object, bool use_testnet_rules, KeokenMan
     for (auto const& asset : assets_list) {
         json_object[i]["asset_id"] = asset.asset_id;
         json_object[i]["asset_name"] = asset.asset_name;
-        json_object[i]["asset_creator"] = asset.asset_creator.encoded();
+        json_object[i]["asset_creator"] =  to_network_wallet(use_testnet_rules, asset.asset_creator).encoded();
         json_object[i]["amount"] = asset.amount;
-        json_object[i]["asset_owner"] = asset.amount_owner.encoded();
+        json_object[i]["asset_owner"] = to_network_wallet(use_testnet_rules, asset.amount_owner).encoded();
         ++i;
     }
 
