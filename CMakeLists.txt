@@ -85,6 +85,14 @@ if (WITH_MINING)
   add_definitions(-DWITH_MINING)
 endif()
 
+# Implement --use-domain and declare USE_DOMAIN.
+#------------------------------------------------------------------------------
+option(USE_DOMAIN "Domain enabled." OFF)
+if (USE_DOMAIN)
+  message(STATUS "Bitprim: Using Domain enabled")
+  add_definitions(-DBITPRIM_USE_DOMAIN)
+endif()
+
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 

@@ -22,7 +22,13 @@
 
 #include <boost/thread/latch.hpp>
 
+#ifdef BITPRIM_USE_DOMAIN
+#include <bitcoin/infrastructure/error.hpp>
+#else
 #include <bitcoin/bitcoin/error.hpp>
+#endif // BITPRIM_USE_DOMAIN
+
+
 #include <bitcoin/bitcoin/multi_crypto_support.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 // #include <bitcoin/node/full_node.hpp>

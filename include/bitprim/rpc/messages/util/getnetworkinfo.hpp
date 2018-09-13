@@ -22,6 +22,7 @@
 #define BITPRIM_RPC_MESSAGES_UTIL_GETNETWORKINFO_HPP_
 
 #include <bitprim/rpc/json/json.hpp>
+#include <bitcoin/network/user_agent.hpp>
 #include <bitcoin/node/full_node.hpp>
 
 #include <bitprim/rpc/messages/utils.hpp>
@@ -34,7 +35,8 @@ bool getnetworkinfo(nlohmann::json& json_object, int& error, std::string& error_
 {
     json_object["version"] = 001100;
 
-    json_object["subversion"] = "/Bitprim:"+ std::string(BITPRIM_CORE_VERSION);
+    // json_object["subversion"] = "/Bitprim:"+ std::string(BITPRIM_CORE_VERSION);
+    json_object["subversion"] = libbitcoin::network::get_user_agent();
 
     json_object["protocolversion"] = node.network_settings().protocol_maximum;
 
