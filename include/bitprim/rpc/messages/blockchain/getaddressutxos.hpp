@@ -127,11 +127,12 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
             for (int j = 0; j < i ; ++j ) {
               for(auto const& dependant : unconfirmed) {
                 if ( temp_utxos[j]["txid"] == dependant.previous_output_hash()) {
-                  temp_utxos[j]["txid"] = "";
+                    temp_utxos[j]["txid"] = "";
+                  }
                 }
             }
 
-            k = 0;
+            int k = 0;
             for (int j = 0; j < i ; ++j ) {
               if(temp_utxos[j]["txid"] != "") {
                 utxos[k] = temp_utxos[j];
@@ -140,7 +141,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
             }
 
             for (auto const& r : unconfirmed) {
-                if(r.satoshis > 0) {
+                if(std::stoi (r.satoshis(), nullptr, 10) > 0) {
                   bool used = false;
 
                   for(auto const& dependant : unconfirmed) {
