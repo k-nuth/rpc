@@ -74,7 +74,7 @@ message( STATUS "Bitprim: Compiling for ${MICROARCHITECTURE}")
 option(WITH_KEOKEN "Keoken enabled." OFF)
 if (WITH_KEOKEN)
   message(STATUS "Bitprim: Keoken enabled")
-  add_definitions(-DWITH_KEOKEN)
+  add_definitions(-DBITPRIM_WITH_KEOKEN)
 endif()
 
 # Implement --with-mining and declare WITH_MINING.
