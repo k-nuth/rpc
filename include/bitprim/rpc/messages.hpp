@@ -70,9 +70,9 @@ signature_map<Blockchain> load_signature_map() {
         , { "getblockhash", process_getblockhash }
         , { "getblockheader", process_getblockhash }
         , { "validateaddress", process_validateaddress }
-#ifdef WITH_MINING
+#ifdef BITPRIM_WITH_MINING
         , { "getblocktemplate", process_getblocktemplate }
-#endif // WITH_MINING
+#endif // BITPRIM_WITH_MINING
     };
 }
 
@@ -142,13 +142,13 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return process_getnetworkinfo(json_in, node, use_testnet_rules);
 
         if (json_in.find("params") != json_in.end()) {
-#ifdef WITH_MINING
+#ifdef BITPRIM_WITH_MINING
             if (key == "submitblock")
                 return process_submitblock(json_in, node.chain_bitprim(), use_testnet_rules);
 
             if (key == "sendrawtransaction")
                 return process_sendrawtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
-#endif // WITH_MINING
+#endif // BITPRIM_WITH_MINING
 
             if (key == "createtransaction")
                 return process_createtransaction(json_in, node.chain_bitprim(), use_testnet_rules);

@@ -214,7 +214,7 @@ public:
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
-#ifdef WITH_MINING
+#ifdef BITPRIM_WITH_MINING
     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
     std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
         return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
@@ -226,7 +226,7 @@ public:
     bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
         return true;
     }
-#endif // WITH_MINING
+#endif // BITPRIM_WITH_MINING
 
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;
@@ -391,9 +391,9 @@ TEST_CASE("[load_signature_map] validate map keys") {
     CHECK(map.count("getblockheader") == 1);
     CHECK(map.count("validateaddress") == 1);
 
-#ifdef WITH_MINING
+#ifdef BITPRIM_WITH_MINING
     CHECK(map.count("getblocktemplate") == 1);
-#endif // WITH_MINING
+#endif // BITPRIM_WITH_MINING
 
     CHECK(map.count("getbestblockhash") == 0);
     CHECK(map.count("getblockchaininfo") == 0);
@@ -404,9 +404,9 @@ TEST_CASE("[load_signature_map] validate map keys") {
 
     CHECK(map.count("submitblock") == 0);
 
-#ifdef WITH_MINING    
+#ifdef BITPRIM_WITH_MINING    
     CHECK(map.count("sendrawtransaction") == 0);
-#endif // WITH_MINING
+#endif // BITPRIM_WITH_MINING
 
     CHECK(map.count("getinfo") == 0);
 }
@@ -474,7 +474,7 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
 }
 
 
-#ifdef WITH_MINING
+#ifdef BITPRIM_WITH_MINING
 TEST_CASE("[process_data] submitblock ") {
 
     using blk_t = block_chain_dummy;
@@ -505,7 +505,7 @@ TEST_CASE("[process_data] submitblock ") {
     CHECK(output["id"] == input["id"]);
     CHECK((int)output["error"]["code"] == bitprim::RPC_MISC_ERROR);
 }
-#endif // WITH_MINING
+#endif // BITPRIM_WITH_MINING
 
 #ifdef WITH_KEOKEN
 
