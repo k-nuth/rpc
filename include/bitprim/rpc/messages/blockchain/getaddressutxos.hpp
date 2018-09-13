@@ -63,7 +63,7 @@ bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std:
 }
 
 template <typename Blockchain>
-bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, const bool chain_info, Blockchain const& chain) {
+bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, const bool chain_info, Blockchain const& chain, bool use_testnet_rules) {
 #ifdef BITPRIM_CURRENCY_BCH
     bool witness = false;
 #else
@@ -121,6 +121,45 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
                 latch.count_down();
             });
             latch.count_down_and_wait();
+
+
+            auto unconfirmed = chain.get_mempool_transactions(address.encoded(), use_testnet_rules, witness);
+
+            for (auto const& r : unconfirmed) {
+
+                bool used = false;
+                for(auto const& dependant : unconfirmed) {
+                    if (dependant.previous_output_hash() == r.hash()) {
+                        used = true;
+                    }
+                }
+
+                if (!used) {
+                    utxos[i]["address"] = r.address();
+                    utxos[i]["txid"] = r.hash();
+                    utxos[i]["outputIndex"] = r.index();
+                    utxos[i]["satoshis"] = r.satoshis();
+                    boost::latch latch3(2);
+                    libbitcoin::hash_digest hash;
+                    libbitcoin::decode_hash(hash,r.hash());
+                    chain.fetch_transaction(hash, false, witness,
+                                            [&](const libbitcoin::code &ec,
+                                                libbitcoin::transaction_const_ptr tx_ptr,
+                                                size_t index,
+                                                size_t height) {
+                                              if (ec == libbitcoin::error::success) {
+                                                  utxos[i]["script"] =
+                                                  libbitcoin::encode_base16(tx_ptr->outputs().at(r.index()).script().to_data(
+                                                  0));
+                                              } else {
+                                                  utxos[i]["script"] = "";
+                                              }
+                                              latch3.count_down();
+                                            });
+                    latch3.count_down_and_wait();
+                    ++i;
+                }
+            }
         }
         else {
             error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
@@ -204,7 +243,7 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, Blockchain
         return container;
     }
 
-    if (getaddressutxos(result, error, error_code, payment_address, chain_info, chain))
+    if (getaddressutxos(result, error, error_code, payment_address, chain_info, chain, use_testnet_rules))
     {
         container["result"] = result;
         container["error"];
