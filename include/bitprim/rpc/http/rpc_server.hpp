@@ -57,7 +57,8 @@ public:
 #ifdef WITH_KEOKEN
             , size_t keoken_genesis_height
 #endif
-            , std::unordered_set<std::string> const& rpc_allowed_ips);
+            , std::unordered_set<std::string> const& rpc_allowed_ips
+            , bool rpc_allow_all_ips);
 
     //non-copyable
     rpc_server(rpc_server const&) = delete;
@@ -71,7 +72,8 @@ private:
     void configure_server();
 
     bool use_testnet_rules_;
-    bool stopped_;      
+    bool stopped_;
+    bool rpc_allow_all_ips_;
     //int port_;
     HttpServer server_;
 
@@ -85,6 +87,7 @@ private:
     signature_map<libbitcoin::blockchain::block_chain> signature_map_;
     signature_map<libbitcoin::blockchain::block_chain> signature_map_no_params_;
     std::unordered_set<std::string> rpc_allowed_ips_;
+
 };
 
 }} // namespace bitprim::rpc

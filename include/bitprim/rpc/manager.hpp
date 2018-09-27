@@ -35,7 +35,8 @@ public:
 #ifdef WITH_KEOKEN
             , size_t keoken_genesis_height
 #endif
-            , std::unordered_set<std::string> const& rpc_allowed_ips);
+            , std::unordered_set<std::string> const& rpc_allowed_ips
+            , bool rpc_allow_all_ips);
    ~manager();
 
    void start();
