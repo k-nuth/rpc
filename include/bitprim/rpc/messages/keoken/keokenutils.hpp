@@ -48,14 +48,14 @@ nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_c
         container["type"] = type;
         container["hash"] = libbitcoin::encode_hash((*tx_ptr).hash());
         switch (type) {
-        case 0: {
+        case bitprim::keoken::message::create_asset::type: {
             auto create = bitprim::keoken::message::create_asset::factory_from_data(source);
             container["asset"] = create.name();
             container["amount"] =  create.amount();
             container["owner"] = (bitprim::keoken::get_first_input_addr(chain, *tx_ptr, testnet)).encoded();
             break;
         }
-        case 1: {
+        case bitprim::keoken::message::send_tokens::type: {
             auto message = bitprim::keoken::message::send_tokens::factory_from_data(source);
             container["asset"] = message.asset_id();
             container["amount"] = message.amount();
