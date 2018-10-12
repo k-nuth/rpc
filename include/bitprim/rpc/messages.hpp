@@ -58,18 +58,32 @@ template <typename Blockchain>
 signature_map<Blockchain> load_signature_map() {
 
     return signature_map<Blockchain>  {
-          {"getrawtransaction", process_getrawtransaction}
-        , { "getaddressbalance", process_getaddressbalance }
-        , { "getspentinfo", process_getspentinfo }
+
+          { "getblockhash", process_getblockhash }
+        , { "validateaddress", process_validateaddress }
+
+#if defined(BITPRIM_DB_LEGACY)
+          { "getblockhashes", process_getblockhashes }
+        , { "getblock", process_getblock }
+        , { "getblockheader", process_getblockhash }
+#endif
+
+#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
         , { "getaddresstxids", process_getaddresstxids }
+        , { "getaddressmempool", process_getaddressmempool }
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+        , {"getrawtransaction", process_getrawtransaction}
+        , { "getspentinfo", process_getspentinfo }
+#endif        
+
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
+        , { "getaddressbalance", process_getaddressbalance }
         , { "getaddressdeltas", process_getaddressdeltas }
         , { "getaddressutxos", process_getaddressutxos }
-        , { "getblockhashes", process_getblockhashes }
-        , { "getaddressmempool", process_getaddressmempool }
-        , { "getblock", process_getblock }
-        , { "getblockhash", process_getblockhash }
-        , { "getblockheader", process_getblockhash }
-        , { "validateaddress", process_validateaddress }
+#endif        
+
 #ifdef BITPRIM_WITH_MINING
         , { "getblocktemplate", process_getblocktemplate }
 #endif // BITPRIM_WITH_MINING
@@ -80,12 +94,15 @@ template <typename Blockchain>
 signature_map<Blockchain> load_signature_map_no_params() {
 
     return signature_map<Blockchain>  {
-        { "getbestblockhash", process_getbestblockhash },
-        { "getblockchaininfo", process_getblockchaininfo },
-        { "getblockcount", process_getblockcount },
-        { "getdifficulty", process_getdifficulty },
-        { "getchaintips", process_getchaintips },
-        { "getmininginfo", process_getmininginfo }
+        { "getbestblockhash", process_getbestblockhash }
+
+#if defined(BITPRIM_DB_LEGACY)
+        , { "getblockchaininfo", process_getblockchaininfo }
+        , { "getchaintips", process_getchaintips }
+        , { "getdifficulty", process_getdifficulty }
+        , { "getmininginfo", process_getmininginfo }
+#endif
+        , { "getblockcount", process_getblockcount }
     };
 }
 
@@ -135,8 +152,10 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return process_getassetsbyaddress(json_in, keoken_manager, use_testnet_rules);
 #endif //WITH_KEOKEN
 
+#if defined(BITPRIM_DB_LEGACY)
         if (key == "getinfo")
             return process_getinfo(json_in, node, use_testnet_rules);
+#endif
 
         if (key == "getnetworkinfo")
             return process_getnetworkinfo(json_in, node, use_testnet_rules);

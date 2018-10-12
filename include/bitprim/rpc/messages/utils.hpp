@@ -26,71 +26,72 @@
 
 namespace bitprim {
 
-    double bits_to_difficulty (const uint32_t & bits);
+double bits_to_difficulty (const uint32_t & bits);
 
     //libbitcoin::chain::history::list expand(libbitcoin::chain::history_compact::list& compact);
 
 
+#if defined(BITPRIM_DB_LEGACY)
+template <typename Blockchain>
+libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, uint32_t& out_time,Blockchain const& chain) {
+    libbitcoin::code result;
+    boost::latch latch(2);
+    chain.fetch_block_hash_timestamp(i, [&](const libbitcoin::code &ec, const libbitcoin::hash_digest& h, uint32_t time, size_t height) {
+        result = ec;
+        if (ec == libbitcoin::error::success) {
+            out_hash = h;
+            out_time= time;
+        }
+        latch.count_down();
+    });
+    latch.count_down_and_wait();
+    return result;
+}
 
-    template <typename Blockchain>
-    libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, uint32_t& out_time,Blockchain const& chain) {
-        libbitcoin::code result;
-        boost::latch latch(2);
-        chain.fetch_block_hash_timestamp(i, [&](const libbitcoin::code &ec, const libbitcoin::hash_digest& h, uint32_t time, size_t height) {
-            result = ec;
-            if (ec == libbitcoin::error::success) {
-                out_hash = h;
-                out_time= time;
+template <typename Blockchain>
+libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
+    libbitcoin::code result;
+    boost::latch latch(2);
+
+    chain.fetch_block_header(i, [&](const libbitcoin::code &ec, libbitcoin::message::header::ptr h, size_t height) {
+        result = ec;
+        if (ec == libbitcoin::error::success) {
+            header = h;
+        }
+        latch.count_down();
+    });
+    latch.count_down_and_wait();
+
+    return result;
+}
+
+template <typename Blockchain>
+std::tuple<bool, size_t, double> get_last_block_difficulty(Blockchain const& chain) {
+
+    double diff = 1.0;
+    size_t top_height;
+    libbitcoin::message::header::ptr top = nullptr;
+    bool success = false;
+    if (chain.get_last_height(top_height)) {
+        auto ec = getblockheader(top_height, top, chain);
+        if (ec == libbitcoin::error::success && top != nullptr) {
+            success = true;
+            auto bits = top->bits();
+            int shift = (bits >> 24) & 0xff;
+            diff = (double)0x0000ffff / (double)(bits & 0x00ffffff);
+            while (shift < 29) {
+                diff *= 256.0;
+                ++shift;
             }
-            latch.count_down();
-        });
-        latch.count_down_and_wait();
-        return result;
-    }
-
-    template <typename Blockchain>
-    libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
-        libbitcoin::code result;
-        boost::latch latch(2);
-
-        chain.fetch_block_header(i, [&](const libbitcoin::code &ec, libbitcoin::message::header::ptr h, size_t height) {
-            result = ec;
-            if (ec == libbitcoin::error::success) {
-                header = h;
-            }
-            latch.count_down();
-        });
-        latch.count_down_and_wait();
-
-        return result;
-    }
-
-    template <typename Blockchain>
-    std::tuple<bool, size_t, double> get_last_block_difficulty(Blockchain const& chain) {
-
-        double diff = 1.0;
-        size_t top_height;
-        libbitcoin::message::header::ptr top = nullptr;
-        bool success = false;
-        if (chain.get_last_height(top_height)) {
-            auto ec = getblockheader(top_height, top, chain);
-            if (ec == libbitcoin::error::success && top != nullptr) {
-                success = true;
-                auto bits = top->bits();
-                int shift = (bits >> 24) & 0xff;
-                diff = (double)0x0000ffff / (double)(bits & 0x00ffffff);
-                while (shift < 29) {
-                    diff *= 256.0;
-                    ++shift;
-                }
-                while (shift > 29) {
-                    diff /= 256.0;
-                    --shift;
-                }
+            while (shift > 29) {
+                diff /= 256.0;
+                --shift;
             }
         }
-        return std::make_tuple(success, top_height, diff);
     }
+    return std::make_tuple(success, top_height, diff);
+}
+#endif    
 
 inline
 libbitcoin::ec_secret create_secret_from_seed(std::string const& seed_str) {
