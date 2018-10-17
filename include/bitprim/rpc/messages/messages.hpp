@@ -21,31 +21,47 @@
 #ifndef BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
 #define BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
 
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
 #include <bitprim/rpc/messages/blockchain/getaddressbalance.hpp>
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
 #include <bitprim/rpc/messages/blockchain/getrawtransaction.hpp>
 #include <bitprim/rpc/messages/blockchain/getspentinfo.hpp>
+#endif
+
+#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
+#include <bitprim/rpc/messages/blockchain/getaddressmempool.hpp>
 #include <bitprim/rpc/messages/blockchain/getaddresstxids.hpp>
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
 #include <bitprim/rpc/messages/blockchain/getaddressdeltas.hpp>
 #include <bitprim/rpc/messages/blockchain/getaddressutxos.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockhashes.hpp>
-#include <bitprim/rpc/messages/blockchain/getbestblockhash.hpp>
-#include <bitprim/rpc/messages/blockchain/getblock.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockhash.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockchaininfo.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockheader.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockcount.hpp>
-#include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
-#include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
-#include <bitprim/rpc/messages/blockchain/getaddressmempool.hpp>
+#endif
 
-#ifdef WITH_MINING
+#include <bitprim/rpc/messages/blockchain/getbestblockhash.hpp>
+
+#if defined(BITPRIM_DB_LEGACY)
+#include <bitprim/rpc/messages/blockchain/getblockhashes.hpp>
+#include <bitprim/rpc/messages/blockchain/getblock.hpp>
+#include <bitprim/rpc/messages/blockchain/getblockheader.hpp>
+#include <bitprim/rpc/messages/blockchain/getblockchaininfo.hpp>
+#include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
+#include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
+#include <bitprim/rpc/messages/mining/getmininginfo.hpp>
+#include <bitprim/rpc/messages/util/getinfo.hpp>
+#endif
+
+#include <bitprim/rpc/messages/blockchain/getblockhash.hpp>
+#include <bitprim/rpc/messages/blockchain/getblockcount.hpp>
+
+#ifdef BITPRIM_WITH_MINING
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
 #include <bitprim/rpc/messages/mining/submitblock.hpp>
 #include <bitprim/rpc/messages/wallet/sendrawtransaction.hpp>
-#endif // WITH_MINING
+#endif // BITPRIM_WITH_MINING
 
-#include <bitprim/rpc/messages/mining/getmininginfo.hpp>
-#include <bitprim/rpc/messages/util/getinfo.hpp>
 #include <bitprim/rpc/messages/util/validateaddress.hpp>
 #include <bitprim/rpc/messages/util/getnetworkinfo.hpp>
 #include <bitprim/rpc/messages/wallet/createtransaction.hpp>
