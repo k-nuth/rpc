@@ -63,7 +63,7 @@ signature_map<Blockchain> load_signature_map() {
         , { "validateaddress", process_validateaddress }
 
 #if defined(BITPRIM_DB_LEGACY)
-          { "getblockhashes", process_getblockhashes }
+        , { "getblockhashes", process_getblockhashes }
         , { "getblock", process_getblock }
         , { "getblockheader", process_getblockhash }
 #endif
