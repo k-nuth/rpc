@@ -266,6 +266,28 @@ public:
         return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
     }
 
+    std::vector<libbitcoin::blockchain::mempool_transaction_summary> get_mempool_transactions(std::string const& payment_addresses, bool use_testnet_rules, bool witness) const {
+       return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
+    }
+
+#ifdef WITH_KEOKEN
+    void fetch_keoken_history(const libbitcoin::short_hash& address_hash, size_t limit,
+        size_t from_height, libbitcoin::blockchain::safe_chain::keoken_history_fetch_handler handler) const {
+    }
+
+    void fetch_block_keoken(const libbitcoin::hash_digest& hash, bool witness,
+        libbitcoin::blockchain::safe_chain::block_keoken_fetch_handler handler) const {
+    }
+#endif
+
+  bool get_output(libbitcoin::chain::output& out_output, size_t& out_height,
+                          uint32_t& out_median_time_past, bool& out_coinbase,
+                          const libbitcoin::chain::output_point& outpoint, size_t branch_height,
+                          bool require_confirmed) const {
+        return true;
+    }
+
+
     ///// fetch stealth results.
     //void fetch_stealth(const binary& filter, size_t from_height,
     //	stealth_fetch_handler handler) const;

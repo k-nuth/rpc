@@ -28,8 +28,7 @@
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-// #include <bitcoin/node/full_node.hpp>
-
+#include <bitprim/rpc/messages/keoken/keokenutils.hpp>
 
 namespace bitprim {
 
@@ -48,17 +47,19 @@ bool json_in_getassetsbyaddress(nlohmann::json const& json_object,
     return true;
 }
 
+
 template <typename KeokenManager>
-bool getassetsbyaddress(nlohmann::json& json_object,  int& error, std::string& error_code, std::string& asset_owner,bool use_testnet_rules, KeokenManager const& keoken_manager)
+bool getassetsbyaddress(nlohmann::json& json_object,  int& error, std::string& error_code, std::string& asset_owner, bool use_testnet_rules, KeokenManager const& keoken_manager)
 {
-    libbitcoin::wallet::payment_address wallet (asset_owner);
+    libbitcoin::wallet::payment_address wallet = str_to_network_wallet(false, asset_owner);
+
     if(wallet){
-        auto assets_list = keoken_manager.get_assets_by_address({asset_owner});
+        auto assets_list = keoken_manager.get_assets_by_address(wallet);
         size_t i = 0;
         for(auto const& asset : assets_list) {
             json_object[i]["asset_id"] = asset.asset_id;
             json_object[i]["asset_name"] = asset.asset_name;
-            json_object[i]["asset_creator"] = asset.asset_creator.encoded();
+            json_object[i]["asset_creator"] = to_network_wallet(use_testnet_rules, asset.asset_creator).encoded();
             json_object[i]["amount"] = asset.amount;
             ++i;
         }

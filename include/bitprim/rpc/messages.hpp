@@ -187,6 +187,13 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
             if (key == "sendtoken")
                 return process_sendtoken(json_in, use_testnet_rules);
+
+            if (key == "getkeokenaddress")
+                return process_getkeokenaddress(json_in, node.chain_bitprim(), node.node_settings().keoken_genesis_height, use_testnet_rules);
+
+            if (key == "getkeokenblock")
+                return process_getkeokenblock(json_in, node.chain_bitprim(), use_testnet_rules);
+
 #endif //WITH_KEOKEN
 
             nlohmann::json container;

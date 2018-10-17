@@ -30,9 +30,11 @@ rpc_server::rpc_server(bool use_testnet_rules
 #ifdef WITH_KEOKEN
         , size_t keoken_genesis_height
 #endif
-        , std::unordered_set<std::string> const& rpc_allowed_ips)
+        , std::unordered_set<std::string> const& rpc_allowed_ips
+        , bool rpc_allow_all_ips)
     : use_testnet_rules_(use_testnet_rules)
     , stopped_(true)
+    , rpc_allow_all_ips_(true)
     , node_(node)
 #ifdef WITH_KEOKEN
     , keoken_manager_(node.chain_bitprim(), keoken_genesis_height)
@@ -49,7 +51,7 @@ void rpc_server::configure_server() {
 
     server_.resource["^/json$"]["POST"] = [this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
         //TODO: validate json parameters
-        if (rpc_allowed_ips_.find(request->remote_endpoint_address) != rpc_allowed_ips_.end()){
+        if (rpc_allow_all_ips_ || rpc_allowed_ips_.find(request->remote_endpoint_address) != rpc_allowed_ips_.end()){
             try {
                 auto json_str = request->content.string();
                 if (json_str.size() > 0 && json_str.back() == '\n') {
@@ -81,7 +83,7 @@ void rpc_server::configure_server() {
     server_.default_resource["POST"] = [this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
         //TODO: validate if request is application/json
 
-        if (rpc_allowed_ips_.find(request->remote_endpoint_address) != rpc_allowed_ips_.end()){
+        if (rpc_allow_all_ips_ || rpc_allowed_ips_.find(request->remote_endpoint_address) != rpc_allowed_ips_.end()){
             try {
     //            nlohmann::json json_object = nlohmann::json::parse(request->content.string());
 
