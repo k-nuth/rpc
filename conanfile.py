@@ -228,4 +228,3 @@ class BitprimRPCConan(BitprimConanFile):
     def package_info(self):
         self.cpp_info.includedirs = ['include']
         self.cpp_info.libs = ["bitprim-rpc"]
-

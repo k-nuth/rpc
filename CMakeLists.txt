@@ -149,6 +149,9 @@ if (DB_NEW)
   add_definitions(-DBITPRIM_DB_NEW)
 endif()
 
+
+
+
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
 if (${CURRENCY} STREQUAL "BCH")
