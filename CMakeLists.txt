@@ -150,8 +150,6 @@ if (DB_NEW)
 endif()
 
 
-
-
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
 if (${CURRENCY} STREQUAL "BCH")
