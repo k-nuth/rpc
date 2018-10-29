@@ -62,7 +62,7 @@ signature_map<Blockchain> load_signature_map() {
           { "getblockhash", process_getblockhash }
         , { "validateaddress", process_validateaddress }
 
-#if defined(BITPRIM_DB_LEGACY)
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
         , { "getblockhashes", process_getblockhashes }
         , { "getblock", process_getblock }
         , { "getblockheader", process_getblockhash }
@@ -96,7 +96,7 @@ signature_map<Blockchain> load_signature_map_no_params() {
     return signature_map<Blockchain>  {
         { "getbestblockhash", process_getbestblockhash }
 
-#if defined(BITPRIM_DB_LEGACY)
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
         , { "getblockchaininfo", process_getblockchaininfo }
         , { "getchaintips", process_getchaintips }
         , { "getdifficulty", process_getdifficulty }
@@ -152,7 +152,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return process_getassetsbyaddress(json_in, keoken_manager, use_testnet_rules);
 #endif //WITH_KEOKEN
 
-#if defined(BITPRIM_DB_LEGACY)
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
         if (key == "getinfo")
             return process_getinfo(json_in, node, use_testnet_rules);
 #endif
