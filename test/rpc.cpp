@@ -400,17 +400,45 @@ TEST_CASE("[load_signature_map] validate map keys") {
 
     auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
 
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
     CHECK(map.count("getrawtransaction") == 1);
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
     CHECK(map.count("getaddressbalance") == 1);
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
     CHECK(map.count("getspentinfo") == 1);
+#endif
+
+#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
     CHECK(map.count("getaddresstxids") == 1);
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)    
     CHECK(map.count("getaddressdeltas") == 1);
     CHECK(map.count("getaddressutxos") == 1);
+#endif    
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
     CHECK(map.count("getblockhashes") == 1);
+#endif
+
+#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
     CHECK(map.count("getaddressmempool") == 1);
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
     CHECK(map.count("getblock") == 1);
+#endif
+
     CHECK(map.count("getblockhash") == 1);
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS)     
     CHECK(map.count("getblockheader") == 1);
+#endif
+    
     CHECK(map.count("validateaddress") == 1);
 
 #ifdef BITPRIM_WITH_MINING
@@ -466,6 +494,7 @@ TEST_CASE("[process_data] invalid key") {
 }
 
 
+#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
 TEST_CASE("[process_data] getrawtransaction error invalid params") {
 
     using blk_t = block_chain_dummy;
@@ -494,6 +523,7 @@ TEST_CASE("[process_data] getrawtransaction error invalid params") {
     CHECK(output["id"] == input["id"]);
     CHECK((int)output["error"]["code"] == bitprim::RPC_PARSE_ERROR);
 }
+#endif
 
 
 #ifdef BITPRIM_WITH_MINING
