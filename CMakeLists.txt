@@ -361,6 +361,7 @@ if (WITH_TESTS)
 
   add_executable(bitprim_rpc_test
           test/rpc.cpp
+          test/user_agent_dummy.cpp
   )
 
   target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
