@@ -94,10 +94,10 @@ template <typename Blockchain>
 signature_map<Blockchain> load_signature_map_no_params() {
 
     return signature_map<Blockchain>  {
-        { "getbestblockhash", process_getbestblockhash }
+          { "getbestblockhash", process_getbestblockhash }
+        , { "getblockchaininfo", process_getblockchaininfo }
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
-        , { "getblockchaininfo", process_getblockchaininfo }
         , { "getchaintips", process_getchaintips }
         , { "getdifficulty", process_getdifficulty }
         , { "getmininginfo", process_getmininginfo }

@@ -42,11 +42,14 @@
 
 #include <bitprim/rpc/messages/blockchain/getbestblockhash.hpp>
 
+#include <bitprim/rpc/messages/blockchain/getblockchaininfo.hpp>
+
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
 #include <bitprim/rpc/messages/blockchain/getblockhashes.hpp>
 #include <bitprim/rpc/messages/blockchain/getblock.hpp>
 #include <bitprim/rpc/messages/blockchain/getblockheader.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockchaininfo.hpp>
+
+
 #include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
 #include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
 #include <bitprim/rpc/messages/mining/getmininginfo.hpp>

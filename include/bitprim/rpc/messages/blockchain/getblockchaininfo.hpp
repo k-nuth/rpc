@@ -44,19 +44,21 @@ namespace bitprim {
         chain.get_last_height(top_height);
 
         boost::latch latch(2);
-        chain.fetch_block(top_height, witness, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
+        
+        // chain.fetch_block(top_height, witness, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
+        chain.fetch_block_header(top_height, [&](const libbitcoin::code &ec, libbitcoin::header_ptr header, size_t height) {
             if (ec == libbitcoin::error::success) {
                 json_object["blocks"] = height;
                 json_object["headers"] = height;
-                json_object["bestblockhash"] = libbitcoin::encode_hash(block->hash());
-                json_object["difficulty"] = bits_to_difficulty(block->header().bits());
-                json_object["mediantime"] = block->header().timestamp(); //TODO Get medianpasttime
+                json_object["bestblockhash"] = libbitcoin::encode_hash(header->hash());
+                json_object["difficulty"] = bits_to_difficulty(header->bits());
+                json_object["mediantime"] = header->timestamp(); //TODO Get medianpasttime
                 json_object["verificationprogress"] = 1;
                 std::stringstream ss;
                 ss << std::setfill('0')
                     << std::nouppercase
                     << std::hex
-                    << block->proof();
+                    << header->proof();
                 json_object["chainwork"] = ss.str();
                 json_object["pruned"] = false;
                 json_object["pruneheight"] = 0;
