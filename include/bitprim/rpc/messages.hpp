@@ -65,7 +65,7 @@ signature_map<Blockchain> load_signature_map() {
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
         , { "getblockhashes", process_getblockhashes }
         , { "getblock", process_getblock }
-        , { "getblockheader", process_getblockhash }
+        , { "getblockheader", process_getblockhash }    //TODO(fernando): is this OK?
 #endif
 
 #if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
@@ -74,7 +74,7 @@ signature_map<Blockchain> load_signature_map() {
 #endif
 
 #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
-        , {"getrawtransaction", process_getrawtransaction}
+        , { "getrawtransaction", process_getrawtransaction}
         , { "getspentinfo", process_getspentinfo }
 #endif        
 
@@ -94,10 +94,10 @@ template <typename Blockchain>
 signature_map<Blockchain> load_signature_map_no_params() {
 
     return signature_map<Blockchain>  {
-        { "getbestblockhash", process_getbestblockhash }
+          { "getbestblockhash", process_getbestblockhash }
+        , { "getblockchaininfo", process_getblockchaininfo }
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
-        , { "getblockchaininfo", process_getblockchaininfo }
         , { "getchaintips", process_getchaintips }
         , { "getdifficulty", process_getdifficulty }
         , { "getmininginfo", process_getmininginfo }

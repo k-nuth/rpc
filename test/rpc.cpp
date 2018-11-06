@@ -396,216 +396,236 @@ private:
     libbitcoin::node::settings node_settings_;
 };
 
-TEST_CASE("[load_signature_map] validate map keys") {
+// TEST_CASE("[load_signature_map] validate map keys") {
 
-    auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
+//     auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
 
-    CHECK(map.count("getrawtransaction") == 1);
-    CHECK(map.count("getaddressbalance") == 1);
-    CHECK(map.count("getspentinfo") == 1);
-    CHECK(map.count("getaddresstxids") == 1);
-    CHECK(map.count("getaddressdeltas") == 1);
-    CHECK(map.count("getaddressutxos") == 1);
-    CHECK(map.count("getblockhashes") == 1);
-    CHECK(map.count("getaddressmempool") == 1);
-    CHECK(map.count("getblock") == 1);
-    CHECK(map.count("getblockhash") == 1);
-    CHECK(map.count("getblockheader") == 1);
-    CHECK(map.count("validateaddress") == 1);
+// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+//     CHECK(map.count("getrawtransaction") == 1);
+// #endif
 
-#ifdef BITPRIM_WITH_MINING
-    CHECK(map.count("getblocktemplate") == 1);
-#endif // BITPRIM_WITH_MINING
+// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
+//     CHECK(map.count("getaddressbalance") == 1);
+// #endif
 
-    CHECK(map.count("getbestblockhash") == 0);
-    CHECK(map.count("getblockchaininfo") == 0);
-    CHECK(map.count("getblockcount") == 0);
-    CHECK(map.count("getdifficulty") == 0);
-    CHECK(map.count("getchaintips") == 0);
-    CHECK(map.count("getmininginfo") == 0);
+// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+//     CHECK(map.count("getspentinfo") == 1);
+// #endif
 
-    CHECK(map.count("submitblock") == 0);
+// #if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
+//     CHECK(map.count("getaddresstxids") == 1);
+// #endif
 
-#ifdef BITPRIM_WITH_MINING    
-    CHECK(map.count("sendrawtransaction") == 0);
-#endif // BITPRIM_WITH_MINING
+// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)    
+//     CHECK(map.count("getaddressdeltas") == 1);
+//     CHECK(map.count("getaddressutxos") == 1);
+// #endif    
 
-    CHECK(map.count("getinfo") == 0);
-}
+// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
+//     CHECK(map.count("getblockhashes") == 1);
+// #endif
 
-TEST_CASE("[process_data] invalid key") {
+// #if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
+//     CHECK(map.count("getaddressmempool") == 1);
+// #endif
 
-    //using blk_t = libbitcoin::blockchain::block_chain;
-    using blk_t = block_chain_dummy;
+// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
+//     CHECK(map.count("getblock") == 1);
+// #endif
 
-    auto map = bitprim::load_signature_map<blk_t>();
-    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
-    nlohmann::json input;
+//     CHECK(map.count("getblockhash") == 1);
 
-    input["method"] = "invalid_key";
-
-    //libbitcoin::threadpool threadpool;
-    //libbitcoin::blockchain::settings chain_settings;
-    //libbitcoin::database::settings database_settings;
-
-    //libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
-
-    //blk_t chain(threadpool, chain_settings, database_settings, true);
-    full_node_dummy node;
-
-#ifdef WITH_KEOKEN
-    keoken_manager_dummy manager;
-    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
-#else
-    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
-#endif    
-
-
-    nlohmann::json output = nlohmann::json::parse(ret);
-    CHECK((int)output["error"]["code"] == bitprim::RPC_INVALID_REQUEST);
-}
-
-
-TEST_CASE("[process_data] getrawtransaction error invalid params") {
-
-    using blk_t = block_chain_dummy;
-
-    auto map = bitprim::load_signature_map<blk_t>();
-    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
-    nlohmann::json input;
-
-    input["method"] = "getrawtransaction";
-    input["id"] = 123;
-    input["params"] = nullptr;
-
-    full_node_dummy node;
-
-#ifdef WITH_KEOKEN
-    keoken_manager_dummy manager;
-    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
-#else
-    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
-#endif    
-
-    //MESSAGE(ret);
+// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS)     
+//     CHECK(map.count("getblockheader") == 1);
+// #endif
     
-    nlohmann::json output = nlohmann::json::parse(ret);
+//     CHECK(map.count("validateaddress") == 1);
 
-    CHECK(output["id"] == input["id"]);
-    CHECK((int)output["error"]["code"] == bitprim::RPC_PARSE_ERROR);
-}
+// #ifdef BITPRIM_WITH_MINING
+//     CHECK(map.count("getblocktemplate") == 1);
+// #endif // BITPRIM_WITH_MINING
 
+//     CHECK(map.count("getbestblockhash") == 0);
+//     CHECK(map.count("getblockchaininfo") == 0);
+//     CHECK(map.count("getblockcount") == 0);
+//     CHECK(map.count("getdifficulty") == 0);
+//     CHECK(map.count("getchaintips") == 0);
+//     CHECK(map.count("getmininginfo") == 0);
 
-#ifdef BITPRIM_WITH_MINING
-TEST_CASE("[process_data] submitblock ") {
+//     CHECK(map.count("submitblock") == 0);
 
-    using blk_t = block_chain_dummy;
+// #ifdef BITPRIM_WITH_MINING    
+//     CHECK(map.count("sendrawtransaction") == 0);
+// #endif // BITPRIM_WITH_MINING
 
-    auto map = bitprim::load_signature_map<blk_t>();
-    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     CHECK(map.count("getinfo") == 0);
+// }
 
-    nlohmann::json input;
+// TEST_CASE("[process_data] invalid key") {
 
-    input["method"] = "submitblock";
-    input["id"] = 123;
-    input["params"] = nullptr;
+//     //using blk_t = libbitcoin::blockchain::block_chain;
+//     using blk_t = block_chain_dummy;
 
-    full_node_dummy node;
+//     auto map = bitprim::load_signature_map<blk_t>();
+//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     nlohmann::json input;
 
+//     input["method"] = "invalid_key";
 
-#ifdef WITH_KEOKEN
-    keoken_manager_dummy manager;
-    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
-#else
-    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
-#endif    
+//     //libbitcoin::threadpool threadpool;
+//     //libbitcoin::blockchain::settings chain_settings;
+//     //libbitcoin::database::settings database_settings;
 
-    //MESSAGE(ret);
+//     //libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
 
-    nlohmann::json output = nlohmann::json::parse(ret);
+//     //blk_t chain(threadpool, chain_settings, database_settings, true);
+//     full_node_dummy node;
 
-    CHECK(output["id"] == input["id"]);
-    CHECK((int)output["error"]["code"] == bitprim::RPC_MISC_ERROR);
-}
-#endif // BITPRIM_WITH_MINING
-
-#ifdef WITH_KEOKEN
-
-TEST_CASE("[process_data] create asset ") {
-
-    using blk_t = block_chain_dummy;
-
-    auto map = bitprim::load_signature_map<blk_t>();
-    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
-
-    nlohmann::json input, params, origin;
-
-    input["method"] = "createasset";
-    input["id"] = 123;
-    input["params"]["origin"][0]["output_hash"] = std::string("980de6ce12c29698d54323c6b0f358e1a9ae867598b840ee0094b9df22b07393");
-    input["params"]["origin"][0]["output_index"] = 1;
-    input["params"]["utxo_satoshis"] = 21647102398;
-    input["params"]["asset_name"] = "testcoin";
-    input["params"]["asset_amount"] = 1;
-    input["params"]["asset_owner"] = "mwx2YDHgpdfHUmCpFjEi9LarXf7EkQN6YG";
-    input["params"]["utxo_satoshis"] = 21647102398;
+// #ifdef WITH_KEOKEN
+//     keoken_manager_dummy manager;
+//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+// #else
+//     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+// #endif    
 
 
-    full_node_dummy node;
-
-#ifdef WITH_KEOKEN
-    keoken_manager_dummy manager;
-    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
-#else
-    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
-#endif    
-
-    nlohmann::json output = nlohmann::json::parse(ret);
-
-    CHECK(output["id"] == input["id"]);
-    CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff02ee89440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac00000000000000001c6a0400004b50150000000074657374636f696e00000000000000000100000000");
-}
+//     nlohmann::json output = nlohmann::json::parse(ret);
+//     CHECK((int)output["error"]["code"] == bitprim::RPC_INVALID_REQUEST);
+// }
 
 
-TEST_CASE("[process_data] send token ") {
+// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+// TEST_CASE("[process_data] getrawtransaction error invalid params") {
 
-    using blk_t = block_chain_dummy;
+//     using blk_t = block_chain_dummy;
 
-    auto map = bitprim::load_signature_map<blk_t>();
-    auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     auto map = bitprim::load_signature_map<blk_t>();
+//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     nlohmann::json input;
 
-    nlohmann::json input, params, origin;
+//     input["method"] = "getrawtransaction";
+//     input["id"] = 123;
+//     input["params"] = nullptr;
 
-    input["method"] = "sendtoken";
-    input["id"] = 123;
-    input["params"]["origin"][0]["output_hash"] = std::string("980de6ce12c29698d54323c6b0f358e1a9ae867598b840ee0094b9df22b07393");
-    input["params"]["origin"][0]["output_index"] = 1;
-    input["params"]["utxo_satoshis"] = 21647102398;
-    input["params"]["asset_id"] = 1;
-    input["params"]["asset_amount"] = 1;
-    input["params"]["asset_owner"] = "mwx2YDHgpdfHUmCpFjEi9LarXf7EkQN6YG";
-    input["params"]["token_receiver"] = "ms9qrYaJ468QCwgX6v7ittgX3vBk3mg6PM";
-    input["params"]["dust"] = 20000;
-    input["params"]["utxo_satoshis"] = 21647102398;
+//     full_node_dummy node;
 
+// #ifdef WITH_KEOKEN
+//     keoken_manager_dummy manager;
+//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+// #else
+//     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+// #endif    
 
-    full_node_dummy node;
+//     //MESSAGE(ret);
+    
+//     nlohmann::json output = nlohmann::json::parse(ret);
 
-#ifdef WITH_KEOKEN
-    keoken_manager_dummy manager;
-    auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
-#else
-    auto ret = bitprim::process_data(input, false, node, map, map_no_params);
-#endif    
-
-    nlohmann::json output = nlohmann::json::parse(ret);
-
-    CHECK(output["id"] == input["id"]);
-    CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff03204e0000000000001976a9147fa36605e302ed00aeca0da8e2743772df11290188acce3b440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac0000000000000000176a0400004b50100000000100000001000000000000000100000000");
-}
+//     CHECK(output["id"] == input["id"]);
+//     CHECK((int)output["error"]["code"] == bitprim::RPC_PARSE_ERROR);
+// }
+// #endif
 
 
-#endif
+// #ifdef BITPRIM_WITH_MINING
+// TEST_CASE("[process_data] submitblock ") {
+
+//     using blk_t = block_chain_dummy;
+
+//     auto map = bitprim::load_signature_map<blk_t>();
+//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+
+//     nlohmann::json input;
+
+//     input["method"] = "submitblock";
+//     input["id"] = 123;
+//     input["params"] = nullptr;
+
+//     full_node_dummy node;
+
+
+// #ifdef WITH_KEOKEN
+//     keoken_manager_dummy manager;
+//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+// #else
+//     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+// #endif    
+
+//     //MESSAGE(ret);
+
+//     nlohmann::json output = nlohmann::json::parse(ret);
+
+//     CHECK(output["id"] == input["id"]);
+//     CHECK((int)output["error"]["code"] == bitprim::RPC_MISC_ERROR);
+// }
+// #endif // BITPRIM_WITH_MINING
+
+
+
+// #ifdef WITH_KEOKEN
+
+// TEST_CASE("[process_data] Keoken create asset ") {
+
+//     using blk_t = block_chain_dummy;
+
+//     auto map = bitprim::load_signature_map<blk_t>();
+//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+
+//     nlohmann::json input, params, origin;
+
+//     input["method"] = "createasset";
+//     input["id"] = 123;
+//     input["params"]["origin"][0]["output_hash"] = std::string("980de6ce12c29698d54323c6b0f358e1a9ae867598b840ee0094b9df22b07393");
+//     input["params"]["origin"][0]["output_index"] = 1;
+//     input["params"]["utxo_satoshis"] = 21647102398;
+//     input["params"]["asset_name"] = "testcoin";
+//     input["params"]["asset_amount"] = 1;
+//     input["params"]["asset_owner"] = "mwx2YDHgpdfHUmCpFjEi9LarXf7EkQN6YG";
+//     input["params"]["utxo_satoshis"] = 21647102398;
+
+
+//     full_node_dummy node;
+//     keoken_manager_dummy manager;
+//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+//     nlohmann::json output = nlohmann::json::parse(ret);
+
+//     CHECK(output["id"] == input["id"]);
+//     CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff02ee89440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac00000000000000001c6a0400004b50150000000074657374636f696e00000000000000000100000000");
+// }
+
+
+// TEST_CASE("[process_data] Keoken send token ") {
+
+//     using blk_t = block_chain_dummy;
+
+//     auto map = bitprim::load_signature_map<blk_t>();
+//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+
+//     nlohmann::json input, params, origin;
+
+//     input["method"] = "sendtoken";
+//     input["id"] = 123;
+//     input["params"]["origin"][0]["output_hash"] = std::string("980de6ce12c29698d54323c6b0f358e1a9ae867598b840ee0094b9df22b07393");
+//     input["params"]["origin"][0]["output_index"] = 1;
+//     input["params"]["utxo_satoshis"] = 21647102398;
+//     input["params"]["asset_id"] = 1;
+//     input["params"]["asset_amount"] = 1;
+//     input["params"]["asset_owner"] = "mwx2YDHgpdfHUmCpFjEi9LarXf7EkQN6YG";
+//     input["params"]["token_receiver"] = "ms9qrYaJ468QCwgX6v7ittgX3vBk3mg6PM";
+//     input["params"]["dust"] = 20000;
+//     input["params"]["utxo_satoshis"] = 21647102398;
+
+
+//     full_node_dummy node;
+
+//     keoken_manager_dummy manager;
+//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+
+//     nlohmann::json output = nlohmann::json::parse(ret);
+
+//     CHECK(output["id"] == input["id"]);
+//     CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff03204e0000000000001976a9147fa36605e302ed00aeca0da8e2743772df11290188acce3b440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac0000000000000000176a0400004b50100000000100000001000000000000000100000000");
+// }
+// #endif // WITH_KEOKEN
 
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
