@@ -21,11 +21,11 @@
 #ifndef BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
 #define BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
 
-#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
+#if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
 #include <bitprim/rpc/messages/blockchain/getaddressbalance.hpp>
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+#if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
 #include <bitprim/rpc/messages/blockchain/getrawtransaction.hpp>
 #include <bitprim/rpc/messages/blockchain/getspentinfo.hpp>
 #endif
@@ -35,7 +35,7 @@
 #include <bitprim/rpc/messages/blockchain/getaddresstxids.hpp>
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
+#if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
 #include <bitprim/rpc/messages/blockchain/getaddressdeltas.hpp>
 #include <bitprim/rpc/messages/blockchain/getaddressutxos.hpp>
 #endif
