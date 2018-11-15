@@ -24,6 +24,7 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
+#include <bitprim/rpc/messages/error_codes.hpp>
 #include <bitprim/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
