@@ -432,6 +432,7 @@ set(_bitprim_headers
         bitprim/rpc/messages/blockchain/getblock.hpp
         bitprim/rpc/messages/blockchain/getblockhash.hpp
         bitprim/rpc/messages/blockchain/getblockchaininfo.hpp
+        bitprim/rpc/messages/blockchain/getheader.hpp
         bitprim/rpc/messages/blockchain/getblockheader.hpp
         bitprim/rpc/messages/blockchain/getblockcount.hpp
         bitprim/rpc/messages/blockchain/getdifficulty.hpp
