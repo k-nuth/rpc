@@ -56,10 +56,11 @@ bool json_in_getheader(nlohmann::json const& json_object, size_t & height) {
         chain.fetch_block_header(requested_height, [&](const libbitcoin::code &ec, libbitcoin::header_ptr header, size_t height) {
             if (ec == libbitcoin::error::success) {
                 json_object["blocks"] = height;
-                json_object["headers"] = height;
-                json_object["bestblockhash"] = libbitcoin::encode_hash(header->hash());
+                json_object["height"] = height;
+                json_object["hash"] = libbitcoin::encode_hash(header->hash());
                 json_object["difficulty"] = bits_to_difficulty(header->bits());
                 json_object["mediantime"] = header->timestamp(); //TODO Get medianpasttime
+		json_object["time"] = header->timestamp(); //TODO Get medianpasttime
                 json_object["verificationprogress"] = 1;
                 std::stringstream ss;
                 ss << std::setfill('0')
@@ -71,6 +72,7 @@ bool json_in_getheader(nlohmann::json const& json_object, size_t & height) {
                 json_object["pruneheight"] = 0;
                 json_object["softforks"] = nlohmann::json::array(); //TODO Check softforks
                 json_object["bip9_softforks"] = nlohmann::json::array(); //TODO Check softforks
+		json_object["previousblockhash"] = libbitcoin::encode_hash(header->previous_block_hash());
 
             } else {
                 // The block doesn't exists
@@ -95,7 +97,7 @@ bool json_in_getheader(nlohmann::json const& json_object, size_t & height) {
         if (!json_in_getheader(json_in, height)) //if false return error
         {
             container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
-            container["error"]["message"] = "getheight \"height\"\n";
+            container["error"]["message"] = "getheader \"height\"\n";
             return container;
         }
 
