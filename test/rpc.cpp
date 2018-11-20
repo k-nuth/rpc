@@ -400,15 +400,15 @@ private:
 
 //     auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
 //     CHECK(map.count("getrawtransaction") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
+// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
 //     CHECK(map.count("getaddressbalance") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
 //     CHECK(map.count("getspentinfo") == 1);
 // #endif
 
@@ -416,7 +416,7 @@ private:
 //     CHECK(map.count("getaddresstxids") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)    
+// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
 //     CHECK(map.count("getaddressdeltas") == 1);
 //     CHECK(map.count("getaddressutxos") == 1);
 // #endif    
@@ -494,7 +494,7 @@ private:
 // }
 
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
 // TEST_CASE("[process_data] getrawtransaction error invalid params") {
 
 //     using blk_t = block_chain_dummy;

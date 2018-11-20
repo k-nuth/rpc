@@ -73,12 +73,12 @@ signature_map<Blockchain> load_signature_map() {
         , { "getaddressmempool", process_getaddressmempool }
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS)
+#if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
         , { "getrawtransaction", process_getrawtransaction}
         , { "getspentinfo", process_getspentinfo }
 #endif        
 
-#if defined(BITPRIM_DB_LEGACY) && defined(DB_SPENDS) && defined(DB_HISTORY)
+#if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
         , { "getaddressbalance", process_getaddressbalance }
         , { "getaddressdeltas", process_getaddressdeltas }
         , { "getaddressutxos", process_getaddressutxos }
