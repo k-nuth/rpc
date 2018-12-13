@@ -27,7 +27,7 @@ namespace bitprim { namespace rpc {
 rpc_server::rpc_server(bool use_testnet_rules
         , libbitcoin::node::full_node& node
         , uint32_t rpc_port
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
         , size_t keoken_genesis_height
 #endif
         , std::unordered_set<std::string> const& rpc_allowed_ips
@@ -36,7 +36,7 @@ rpc_server::rpc_server(bool use_testnet_rules
     , stopped_(true)
     , rpc_allow_all_ips_(true)
     , node_(node)
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     , keoken_manager_(node.chain_bitprim(), keoken_genesis_height)
 #endif
     , rpc_allowed_ips_(rpc_allowed_ips)
@@ -59,7 +59,7 @@ void rpc_server::configure_server() {
                 }
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
                 auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
 #else
                 auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
@@ -95,7 +95,7 @@ void rpc_server::configure_server() {
 
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
                 auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
 #else
                 auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
