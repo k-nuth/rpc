@@ -29,7 +29,7 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitprim/rpc/messages.hpp>
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
 #include <bitprim/keoken/manager.hpp>
 #include <bitprim/keoken/memory_state.hpp>
 #endif
@@ -47,14 +47,14 @@ namespace bitprim { namespace rpc {
 class rpc_server {
     using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 public:
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     using keoken_manager_t = bitprim::keoken::manager<bitprim::keoken::memory_state>;
 #endif
 
     rpc_server(bool use_testnet_rules
             , libbitcoin::node::full_node& node
             , uint32_t rpc_port
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
             , size_t keoken_genesis_height
 #endif
             , std::unordered_set<std::string> const& rpc_allowed_ips
@@ -80,7 +80,7 @@ private:
     // If the subscribe methods are removed from here the chain_ can be const
     libbitcoin::node::full_node& node_;
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     keoken_manager_t keoken_manager_;
 #endif
 
