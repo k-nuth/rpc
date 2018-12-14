@@ -32,7 +32,7 @@ public:
             , libbitcoin::node::full_node& node
             , uint32_t rpc_port
             , uint32_t subscriber_port
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
             , size_t keoken_genesis_height
 #endif
             , std::unordered_set<std::string> const& rpc_allowed_ips

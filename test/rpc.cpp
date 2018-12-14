@@ -270,7 +270,7 @@ public:
        return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
     }
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     void fetch_keoken_history(const libbitcoin::short_hash& address_hash, size_t limit,
         size_t from_height, libbitcoin::blockchain::safe_chain::keoken_history_fetch_handler handler) const {
     }
@@ -364,7 +364,7 @@ public:
     // libbitcoin::network::settings p2p_settings_;
     // libbitcoin::node::settings node_settings_;
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
     keoken_manager_dummy keoken_manager_;
 #endif    
     block_chain_dummy blockchain_;
@@ -385,7 +385,7 @@ public:
         return node_settings_;
     }
 
-// #ifdef WITH_KEOKEN
+// #ifdef BITPRIM_WITH_KEOKEN
 //     keoken_manager_dummy& keoken_manager() {
 //         return keoken_manager_;
 //     }
@@ -481,7 +481,7 @@ private:
 //     //blk_t chain(threadpool, chain_settings, database_settings, true);
 //     full_node_dummy node;
 
-// #ifdef WITH_KEOKEN
+// #ifdef BITPRIM_WITH_KEOKEN
 //     keoken_manager_dummy manager;
 //     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
 // #else
@@ -509,7 +509,7 @@ private:
 
 //     full_node_dummy node;
 
-// #ifdef WITH_KEOKEN
+// #ifdef BITPRIM_WITH_KEOKEN
 //     keoken_manager_dummy manager;
 //     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
 // #else
@@ -543,7 +543,7 @@ private:
 //     full_node_dummy node;
 
 
-// #ifdef WITH_KEOKEN
+// #ifdef BITPRIM_WITH_KEOKEN
 //     keoken_manager_dummy manager;
 //     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
 // #else
@@ -561,7 +561,7 @@ private:
 
 
 
-// #ifdef WITH_KEOKEN
+// #ifdef BITPRIM_WITH_KEOKEN
 
 // TEST_CASE("[process_data] Keoken create asset ") {
 
@@ -625,7 +625,7 @@ private:
 //     CHECK(output["id"] == input["id"]);
 //     CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff03204e0000000000001976a9147fa36605e302ed00aeca0da8e2743772df11290188acce3b440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac0000000000000000176a0400004b50100000000100000001000000000000000100000000");
 // }
-// #endif // WITH_KEOKEN
+// #endif // BITPRIM_WITH_KEOKEN
 
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/
