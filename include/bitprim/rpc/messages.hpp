@@ -164,10 +164,10 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 #ifdef BITPRIM_WITH_MINING
             if (key == "submitblock")
                 return process_submitblock(json_in, node.chain_bitprim(), use_testnet_rules);
+#endif // BITPRIM_WITH_MINING
 
             if (key == "sendrawtransaction")
                 return process_sendrawtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
-#endif // BITPRIM_WITH_MINING
 
             if (key == "createtransaction")
                 return process_createtransaction(json_in, node.chain_bitprim(), use_testnet_rules);

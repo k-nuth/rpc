@@ -78,7 +78,9 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
     if (error != 0)
         return false;
 
+#ifdef BITPRIM_WITH_MINING
     chain.add_to_chosen_list(tx);
+#endif
     return true;
 }
 
