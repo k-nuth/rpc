@@ -47,6 +47,7 @@ class BitprimRPCConan(BitprimConanFile):
                "db": ['legacy', 'legacy_full', 'new', 'new_with_blocks', 'new_full'],
                "cxxflags": "ANY",
                "cflags": "ANY",
+               "glibcxx_supports_cxx11_abi": "ANY",
     }
 
     default_options = "shared=False", \
@@ -62,7 +63,8 @@ class BitprimRPCConan(BitprimConanFile):
         "use_domain=False", \
         "db=legacy_full", \
         "cxxflags=_DUMMY_", \
-        "cflags=_DUMMY_"
+        "cflags=_DUMMY_", \
+        "glibcxx_supports_cxx11_abi=_DUMMY_"
 
 
     generators = "cmake"

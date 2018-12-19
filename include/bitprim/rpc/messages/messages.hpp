@@ -61,9 +61,10 @@
 
 #ifdef BITPRIM_WITH_MINING
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
+#endif
+
 #include <bitprim/rpc/messages/mining/submitblock.hpp>
 #include <bitprim/rpc/messages/wallet/sendrawtransaction.hpp>
-#endif // BITPRIM_WITH_MINING
 
 #include <bitprim/rpc/messages/util/validateaddress.hpp>
 #include <bitprim/rpc/messages/util/getnetworkinfo.hpp>
