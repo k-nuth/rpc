@@ -102,10 +102,10 @@ signature_map<Blockchain> load_signature_map_no_params() {
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
         , { "getchaintips", process_getchaintips }
-        , { "getmininginfo", process_getmininginfo }
 #endif
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+        , { "getmininginfo", process_getmininginfo }
         , { "getdifficulty", process_getdifficulty }
 #endif
 
