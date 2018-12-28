@@ -44,7 +44,7 @@
 
 #include <bitprim/rpc/messages/blockchain/getblockchaininfo.hpp>
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
 #include <bitprim/rpc/messages/blockchain/getblockhashes.hpp>
 #include <bitprim/rpc/messages/blockchain/getblock.hpp>
 #include <bitprim/rpc/messages/blockchain/getblockheader.hpp>

@@ -421,7 +421,7 @@ private:
 //     CHECK(map.count("getaddressutxos") == 1);
 // #endif    
 
-// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
+// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
 //     CHECK(map.count("getblockhashes") == 1);
 // #endif
 
@@ -429,13 +429,13 @@ private:
 //     CHECK(map.count("getaddressmempool") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS) 
+// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
 //     CHECK(map.count("getblock") == 1);
 // #endif
 
 //     CHECK(map.count("getblockhash") == 1);
 
-// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_NEW_DB_BLOCKS)     
+// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS)     
 //     CHECK(map.count("getblockheader") == 1);
 // #endif
     
