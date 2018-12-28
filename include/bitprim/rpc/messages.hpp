@@ -65,10 +65,10 @@ signature_map<Blockchain> load_signature_map() {
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
         , { "getblockhashes", process_getblockhashes }
         , { "getblock", process_getblock }
+        , { "getblockheader", process_getblockheader }
 #endif
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
-        , { "getblockheader", process_getblockheader }
 #endif
 
 #if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)

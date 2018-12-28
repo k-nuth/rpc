@@ -48,6 +48,10 @@ libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, 
     return result;
 }
 
+#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+
 template <typename Blockchain>
 libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
     libbitcoin::code result;
@@ -64,10 +68,6 @@ libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& head
 
     return result;
 }
-
-#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
-
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
 
 template <typename Blockchain>
 std::tuple<bool, size_t, double> get_last_block_difficulty(Blockchain const& chain) {
