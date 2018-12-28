@@ -65,6 +65,10 @@ libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& head
     return result;
 }
 
+#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+
 template <typename Blockchain>
 std::tuple<bool, size_t, double> get_last_block_difficulty(Blockchain const& chain) {
 
@@ -91,7 +95,9 @@ std::tuple<bool, size_t, double> get_last_block_difficulty(Blockchain const& cha
     }
     return std::make_tuple(success, top_height, diff);
 }
-#endif    
+
+#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+
 
 inline
 libbitcoin::ec_secret create_secret_from_seed(std::string const& seed_str) {
