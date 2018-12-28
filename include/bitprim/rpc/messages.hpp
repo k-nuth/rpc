@@ -159,7 +159,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return process_getassetsbyaddress(json_in, keoken_manager, use_testnet_rules);
 #endif //BITPRIM_WITH_KEOKEN
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
         if (key == "getinfo")
             return process_getinfo(json_in, node, use_testnet_rules);
 #endif
