@@ -444,14 +444,16 @@ set(_bitprim_headers
         bitprim/rpc/messages/util/validateaddress.hpp
         bitprim/rpc/messages/utils.hpp
         bitprim/rpc/messages/error_codes.hpp
+
+        bitprim/rpc/messages/mining/submitblock.hpp
+        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
+
 )
 
 if (WITH_MINING)
     set(_bitprim_headers
         ${_bitprim_headers}
         bitprim/rpc/messages/mining/getblocktemplate.hpp
-        bitprim/rpc/messages/mining/submitblock.hpp
-        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
     )
 endif()
 

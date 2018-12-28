@@ -100,10 +100,6 @@ std::vector<uint8_t> create_default_witness_commitment(std::vector<libbitcoin::h
     return bytes;
 }
 
-
-
-
-
 template <typename Blockchain>
 bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, std::chrono::nanoseconds timeout, Blockchain const& chain) {
 
@@ -119,14 +115,12 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     static bool first_time = true;
     static size_t old_height = 0;
-    static std::vector<libbitcoin::blockchain::block_chain::tx_benefit> tx_cache;
+    static std::pair<std::vector<libbitcoin::mining::transaction_element>, uint64_t> get_block_template_data;
     static std::chrono::time_point<std::chrono::high_resolution_clock> cache_timestamp = std::chrono::high_resolution_clock::now();
 
     size_t last_height;
-    chain.get_last_height(last_height);
-
-    libbitcoin::message::header::ptr header;
-    if (getblockheader(last_height, header, chain) != libbitcoin::error::success) {
+    libbitcoin::message::header header;
+    if ( ! get_last_block_header(last_height, header, chain)) {
         return false;
     }
 
@@ -140,7 +134,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     auto const bits = chain.chain_state()->get_next_work_required(time_now);
     auto const height = last_height + 1;
 
-    json_object["previousblockhash"] = libbitcoin::encode_hash(header->hash());
+    json_object["previousblockhash"] = libbitcoin::encode_hash(header.hash());
 
 #ifdef BITPRIM_CURRENCY_BCH
     json_object["sigoplimit"] = libbitcoin::get_max_block_sigops();
@@ -161,7 +155,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     {
         first_time = false;
         old_height = last_height;
-        tx_cache = chain.get_gbt_tx_list();
+        get_block_template_data = chain.get_block_template();
         cache_timestamp = std::chrono::high_resolution_clock::now();
     }
 
@@ -175,23 +169,23 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     witness_gen.reserve(tx_cache.size());
 #endif
     uint64_t fees = 0;
-    for (size_t i = 0; i < tx_cache.size(); ++i) {
-        auto const& tx_mem = tx_cache[i];
-        transactions_json[i]["data"] = libbitcoin::encode_base16(tx_mem.tx_hex);
-        transactions_json[i]["txid"] = libbitcoin::encode_hash(tx_mem.tx_id);
+    for (size_t i = 0; i < get_block_template_data.first.size(); ++i) {
+        auto const& tx_mem = get_block_template_data.first[i];
+        transactions_json[i]["data"] = libbitcoin::encode_base16(tx_mem.raw());
+        transactions_json[i]["txid"] = libbitcoin::encode_hash(tx_mem.txid());
 #ifdef BITPRIM_CURRENCY_BCH
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.tx_id);
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.txid());
 #else
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.tx_hash);
+        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.hash());
         if(witness){
-            witness_gen.insert(witness_gen.end(), tx_mem.tx_hash);
+            witness_gen.insert(witness_gen.end(), tx_mem.hash());
         }
 #endif
         transactions_json[i]["depends"] = nlohmann::json::array(); //TODO CARGAR DEPS
-        transactions_json[i]["fee"] = tx_mem.tx_fees;
-        transactions_json[i]["sigops"] = tx_mem.tx_sigops;
-        transactions_json[i]["weight"] = tx_mem.tx_size;
-        fees += tx_mem.tx_fees;
+        transactions_json[i]["fee"] = tx_mem.fee();
+        transactions_json[i]["sigops"] = tx_mem.sigops();
+        transactions_json[i]["weight"] = tx_mem.size();
+//        fees += tx_mem.tx_fees;
 
     }
 #ifndef BITPRIM_CURRENCY_BCH
@@ -204,7 +198,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     json_object["transactions"] = transactions_json;
 
     auto coinbase_reward = get_block_reward(height);
-    json_object["coinbasevalue"] = coinbase_reward + fees;
+    json_object["coinbasevalue"] = coinbase_reward + get_block_template_data.second /* acum fees*/;
     json_object["coinbaseaux"]["flags"] = "";
 
     const auto header_bits = libbitcoin::chain::compact(bits);

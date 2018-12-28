@@ -78,7 +78,6 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
     if (error != 0)
         return false;
 
-    chain.add_to_chosen_list(tx);
     return true;
 }
 

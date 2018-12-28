@@ -36,14 +36,14 @@
 #include <bitprim/rpc/json/json.hpp>
 #include <bitprim/rpc/messages/messages.hpp>
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
 #include <bitprim/keoken/manager.hpp>
 #include <bitprim/keoken/memory_state.hpp>
 #endif
 
 namespace bitprim {
 
-// #ifdef WITH_KEOKEN
+// #ifdef BITPRIM_WITH_KEOKEN
 //     using keoken_manager_t = bitprim::keoken::manager<bitprim::keoken::memory_state>;
 // #endif
 
@@ -86,7 +86,7 @@ signature_map<Blockchain> load_signature_map() {
 
 #ifdef BITPRIM_WITH_MINING
         , { "getblocktemplate", process_getblocktemplate }
-#endif // BITPRIM_WITH_MINING
+#endif
     };
 }
 
@@ -111,7 +111,7 @@ signature_map<Blockchain> load_signature_map_no_params() {
 }
 
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
 template <typename Node, typename Blockchain, typename KeokenManager>
 nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, Node& node, KeokenManager& keoken_manager, signature_map<Blockchain> const& signature_, signature_map<Blockchain> const& no_params_map) {
 #else
@@ -142,7 +142,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return  it_n->second(json_in, node.chain_bitprim(), use_testnet_rules);
         }
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
         if (key == "initkeoken")
             return process_initkeoken(json_in, keoken_manager, use_testnet_rules);
 
@@ -154,7 +154,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
         if (key == "getassetsbyaddress")
             return process_getassetsbyaddress(json_in, keoken_manager, use_testnet_rules);
-#endif //WITH_KEOKEN
+#endif //BITPRIM_WITH_KEOKEN
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
         if (key == "getinfo")
@@ -165,13 +165,11 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return process_getnetworkinfo(json_in, node, use_testnet_rules);
 
         if (json_in.find("params") != json_in.end()) {
-#ifdef BITPRIM_WITH_MINING
             if (key == "submitblock")
                 return process_submitblock(json_in, node.chain_bitprim(), use_testnet_rules);
 
             if (key == "sendrawtransaction")
                 return process_sendrawtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
-#endif // BITPRIM_WITH_MINING
 
             if (key == "createtransaction")
                 return process_createtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
@@ -185,7 +183,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             if (key == "newwallet")
                 return process_newwallet(json_in, node.chain_bitprim(), use_testnet_rules);
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
             if (key == "createasset")
                 return process_createasset(json_in, use_testnet_rules);
 
@@ -198,7 +196,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             if (key == "getkeokenblock")
                 return process_getkeokenblock(json_in, node.chain_bitprim(), use_testnet_rules);
 
-#endif //WITH_KEOKEN
+#endif //BITPRIM_WITH_KEOKEN
 
             nlohmann::json container;
             container["result"];
@@ -220,7 +218,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     return nlohmann::json(); //TODO: error!
 }
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
 template <typename Node, typename Blockchain, typename KeokenManager>
 std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Node& node, KeokenManager& keoken_manager, signature_map<Blockchain> const& signature_, signature_map<Blockchain> const& no_params_map) {
 #else
@@ -235,7 +233,7 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
         size_t i = 0;
         for (const auto & method : json_object) {
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
             res[i] = process_data_element(method, use_testnet_rules, node, keoken_manager, signature_, no_params_map);
 #else
             res[i] = process_data_element(method, use_testnet_rules, node, signature_, no_params_map);
@@ -245,7 +243,7 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
         return res.dump();
     }
     else {
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
         return process_data_element(json_object, use_testnet_rules, node, keoken_manager, signature_, no_params_map).dump();
 #else
         return process_data_element(json_object, use_testnet_rules, node, signature_, no_params_map).dump();

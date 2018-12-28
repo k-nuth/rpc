@@ -61,9 +61,10 @@
 
 #ifdef BITPRIM_WITH_MINING
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
+#endif
+
 #include <bitprim/rpc/messages/mining/submitblock.hpp>
 #include <bitprim/rpc/messages/wallet/sendrawtransaction.hpp>
-#endif // BITPRIM_WITH_MINING
 
 #include <bitprim/rpc/messages/util/validateaddress.hpp>
 #include <bitprim/rpc/messages/util/getnetworkinfo.hpp>
@@ -72,7 +73,7 @@
 #include <bitprim/rpc/messages/wallet/setsignature.hpp>
 #include <bitprim/rpc/messages/wallet/newwallet.hpp>
 
-#ifdef WITH_KEOKEN
+#ifdef BITPRIM_WITH_KEOKEN
 #include <bitprim/rpc/messages/keoken/createasset.hpp>
 #include <bitprim/rpc/messages/keoken/sendtoken.hpp>
 #include <bitprim/rpc/messages/keoken/initkeoken.hpp>
@@ -81,6 +82,6 @@
 #include <bitprim/rpc/messages/keoken/getallassets.hpp>
 #include <bitprim/rpc/messages/keoken/getkeokenaddress.hpp>
 #include <bitprim/rpc/messages/keoken/getkeokenblock.hpp>
-#endif //WITH_KEOKEN
+#endif //BITPRIM_WITH_KEOKEN
 
 #endif //BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
