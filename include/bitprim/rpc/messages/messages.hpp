@@ -61,7 +61,7 @@
 #include <bitprim/rpc/messages/blockchain/getblockhash.hpp>
 #include <bitprim/rpc/messages/blockchain/getblockcount.hpp>
 
-#ifdef BITPRIM_WITH_MINING
+#ifdef BITPRIM_WITH_MEMPOOL
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
 #endif
 

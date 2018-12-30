@@ -214,19 +214,19 @@ public:
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
-#ifdef BITPRIM_WITH_MINING
-    //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
-    std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
-        return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
-    }
+// #ifdef BITPRIM_WITH_MINING
+//     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
+//     std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
+//         return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
+//     }
 
-    void remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
-    }
+//     void remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
+//     }
 
-    bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
-        return true;
-    }
-#endif // BITPRIM_WITH_MINING
+//     bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
+//         return true;
+//     }
+// #endif // BITPRIM_WITH_MINING
 
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;

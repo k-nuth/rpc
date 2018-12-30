@@ -77,12 +77,12 @@ if (WITH_KEOKEN)
   add_definitions(-DBITPRIM_WITH_KEOKEN)
 endif()
 
-# Implement --with-mining and declare WITH_MINING.
+# Implement --with-mempool and declare WITH_MEMPOOL.
 #------------------------------------------------------------------------------
-option(WITH_MINING "Mining enabled." OFF)
-if (WITH_MINING)
-  message(STATUS "Bitprim: MINING enabled")
-  add_definitions(-DBITPRIM_WITH_MINING)
+option(WITH_MEMPOOL "Mempool enabled." OFF)
+if (WITH_MEMPOOL)
+  message(STATUS "Bitprim: Mempool enabled")
+  add_definitions(-DBITPRIM_WITH_MEMPOOL)
 endif()
 
 # Implement --use-domain and declare USE_DOMAIN.
@@ -457,7 +457,7 @@ set(_bitprim_headers
 
 )
 
-if (WITH_MINING)
+if (WITH_MEMPOOL)
     set(_bitprim_headers
         ${_bitprim_headers}
         bitprim/rpc/messages/mining/getblocktemplate.hpp

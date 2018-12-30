@@ -87,7 +87,7 @@ signature_map<Blockchain> load_signature_map() {
         , { "getaddressutxos", process_getaddressutxos }
 #endif        
 
-#ifdef BITPRIM_WITH_MINING
+#ifdef BITPRIM_WITH_MEMPOOL
         , { "getblocktemplate", process_getblocktemplate }
 #endif
     };
