@@ -62,7 +62,7 @@ signature_map<Blockchain> load_signature_map() {
           { "getblockhash", process_getblockhash }
         , { "validateaddress", process_validateaddress }
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
         , { "getblockhashes", process_getblockhashes }
         , { "getblock", process_getblock }
         , { "getblockheader", process_getblockheader }
@@ -71,17 +71,17 @@ signature_map<Blockchain> load_signature_map() {
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
 #endif
 
-#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
+#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED) || defined(BITPRIM_DB_NEW_FULL)
         , { "getaddresstxids", process_getaddresstxids }
         , { "getaddressmempool", process_getaddressmempool }
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
+#if (defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)) || defined(BITPRIM_DB_NEW_FULL)
         , { "getrawtransaction", process_getrawtransaction}
         , { "getspentinfo", process_getspentinfo }
 #endif        
 
-#if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
+#if (defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)) || defined(BITPRIM_DB_NEW_FULL)
         , { "getaddressbalance", process_getaddressbalance }
         , { "getaddressdeltas", process_getaddressdeltas }
         , { "getaddressutxos", process_getaddressutxos }
@@ -100,7 +100,7 @@ signature_map<Blockchain> load_signature_map_no_params() {
           { "getbestblockhash", process_getbestblockhash }
         , { "getblockchaininfo", process_getblockchaininfo }
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
         , { "getchaintips", process_getchaintips }
 #endif
 

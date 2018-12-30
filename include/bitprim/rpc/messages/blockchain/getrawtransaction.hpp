@@ -183,7 +183,11 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                         ++i;
                     }
 
+#if defined(BITPRIM_DB_NEW)
+                    if (index != libbitcoin::database::position_max) {
+#else
                     if (index != libbitcoin::database::transaction_database::unconfirmed) {
+#endif
                         //confirmed txn
                         boost::latch latch(2);
                         chain.fetch_block_hash_timestamp(height, [&](const libbitcoin::code &ec, const libbitcoin::hash_digest& h, uint32_t time, size_t block_height) {

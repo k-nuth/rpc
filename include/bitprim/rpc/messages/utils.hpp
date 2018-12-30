@@ -31,7 +31,7 @@ double bits_to_difficulty (const uint32_t & bits);
     //libbitcoin::chain::history::list expand(libbitcoin::chain::history_compact::list& compact);
 
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
 template <typename Blockchain>
 libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, uint32_t& out_time,Blockchain const& chain) {
     libbitcoin::code result;
@@ -47,8 +47,7 @@ libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, 
     latch.count_down_and_wait();
     return result;
 }
-
-#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+#endif
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
 

@@ -58,7 +58,9 @@ void setcoinbasereserved(std::shared_ptr<bc::message::block> block){
     }
     libbitcoin::data_stack stack{};
     stack.insert(stack.begin(), stack_s);
+#ifndef BITPRIM_CURRENCY_BCH
     block->transactions()[0].inputs()[0].set_witness(libbitcoin::chain::witness(stack));
+#endif
 }
 
 template <typename Blockchain>
