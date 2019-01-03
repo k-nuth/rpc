@@ -94,10 +94,6 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
     LOG_INFO("rpc")
         << "Block submitted successfully [" << libbitcoin::encode_hash(block->hash()) << "]" ;
 
-#ifdef BITPRIM_WITH_MINING
-    chain.remove_mined_txs_from_chosen_list(block);
-#endif
-
     return true;
 }
 

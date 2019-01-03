@@ -47,19 +47,21 @@
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL) 
 #include <bitprim/rpc/messages/blockchain/getblockhashes.hpp>
 #include <bitprim/rpc/messages/blockchain/getblock.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockheader.hpp>
-
-
 #include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
-#include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
-#include <bitprim/rpc/messages/mining/getmininginfo.hpp>
-#include <bitprim/rpc/messages/util/getinfo.hpp>
+#include <bitprim/rpc/messages/blockchain/getblockheader.hpp>
 #endif
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+#include <bitprim/rpc/messages/util/getinfo.hpp>
+#include <bitprim/rpc/messages/mining/getmininginfo.hpp>
+#include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
+#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+
 
 #include <bitprim/rpc/messages/blockchain/getblockhash.hpp>
 #include <bitprim/rpc/messages/blockchain/getblockcount.hpp>
 
-#ifdef BITPRIM_WITH_MINING
+#ifdef BITPRIM_WITH_MEMPOOL
 #include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
 #endif
 

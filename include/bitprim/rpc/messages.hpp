@@ -65,7 +65,10 @@ signature_map<Blockchain> load_signature_map() {
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
         , { "getblockhashes", process_getblockhashes }
         , { "getblock", process_getblock }
-        , { "getblockheader", process_getblockhash }    //TODO(fernando): is this OK?
+        , { "getblockheader", process_getblockheader }
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
 #endif
 
 #if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED) || defined(BITPRIM_DB_NEW_FULL)
@@ -84,7 +87,7 @@ signature_map<Blockchain> load_signature_map() {
         , { "getaddressutxos", process_getaddressutxos }
 #endif        
 
-#ifdef BITPRIM_WITH_MINING
+#ifdef BITPRIM_WITH_MEMPOOL
         , { "getblocktemplate", process_getblocktemplate }
 #endif
     };
@@ -99,9 +102,13 @@ signature_map<Blockchain> load_signature_map_no_params() {
 
 #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
         , { "getchaintips", process_getchaintips }
-        , { "getdifficulty", process_getdifficulty }
-        , { "getmininginfo", process_getmininginfo }
 #endif
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+        , { "getmininginfo", process_getmininginfo }
+        , { "getdifficulty", process_getdifficulty }
+#endif
+
         , { "getblockcount", process_getblockcount }
     };
 }
@@ -152,7 +159,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return process_getassetsbyaddress(json_in, keoken_manager, use_testnet_rules);
 #endif //BITPRIM_WITH_KEOKEN
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
         if (key == "getinfo")
             return process_getinfo(json_in, node, use_testnet_rules);
 #endif

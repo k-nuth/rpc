@@ -47,6 +47,9 @@ libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, 
     latch.count_down_and_wait();
     return result;
 }
+#endif
+
+#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
 
 template <typename Blockchain>
 libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
@@ -91,7 +94,9 @@ std::tuple<bool, size_t, double> get_last_block_difficulty(Blockchain const& cha
     }
     return std::make_tuple(success, top_height, diff);
 }
-#endif    
+
+#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+
 
 inline
 libbitcoin::ec_secret create_secret_from_seed(std::string const& seed_str) {
