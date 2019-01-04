@@ -98,6 +98,8 @@ class BitprimRPCConan(BitprimConanFile):
                 self.options.remove("shared")
 
     def configure(self):
+        BitprimConanFile.configure(self)
+
         if self.settings.arch == "x86_64" and self.options.microarchitecture == "_DUMMY_":
             del self.options.fix_march
             # self.options.remove("fix_march")
@@ -130,6 +132,8 @@ class BitprimRPCConan(BitprimConanFile):
         self.output.info("Compiling for DB: %s" % (self.options.db,))
 
     def package_id(self):
+        BitprimConanFile.package_id(self)
+        
         self.info.options.with_tests = "ANY"
         self.info.options.with_console = "ANY"
         self.info.options.verbose = "ANY"
