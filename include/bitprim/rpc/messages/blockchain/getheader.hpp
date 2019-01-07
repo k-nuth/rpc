@@ -75,7 +75,7 @@ bool json_in_getheader(nlohmann::json const& json_object, size_t & height) {
 		json_object["previousblockhash"] = libbitcoin::encode_hash(header->previous_block_hash());
 
             } else {
-                // The block doesn't exists
+                // The block doesn't exist
                 json_object["blocks"] = 0;
             }
             latch.count_down();
