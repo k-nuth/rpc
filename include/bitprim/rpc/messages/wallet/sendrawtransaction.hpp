@@ -59,25 +59,26 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
         boost::latch latch(2);
         chain.organize(tx, [&](const libbitcoin::code & ec) {
             if (ec) {
-                error = bitprim::RPC_VERIFY_ERROR;
+                // error = bitprim::RPC_VERIFY_ERROR;
+                error = ec.value();
                 error_code = "Failed to submit transaction.";
                 json_object;
-            }
-            else {
+            } else {
                 json_object = libbitcoin::encode_hash(tx->hash());
             }
             latch.count_down();
         });
         latch.count_down_and_wait();
-    }
-    else {
+    } else {
         error = bitprim::RPC_DESERIALIZATION_ERROR;
         error_code = "TX decode failed.";
     }
 
-    if (error != 0)
+    if (error != 0){
+        LOG_WARNING("rpc") << "Failed to Submit Transaction [Error code: " << error << "]";
         return false;
-
+    }
+    
     return true;
 }
 
