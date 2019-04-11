@@ -60,7 +60,7 @@ class BitprimRPCConan(BitprimConanFile):
         "verbose=False", \
         "keoken=False", \
         "mempool=True", \
-        "use_domain=False", \
+        "use_domain=True", \
         "db=default", \
         "cxxflags=_DUMMY_", \
         "cflags=_DUMMY_", \
@@ -79,7 +79,7 @@ class BitprimRPCConan(BitprimConanFile):
 
     def requirements(self):
         if self.options.use_domain:
-            self.requires("boost/1.68.0@bitprim/stable")
+            self.requires("boost/1.69.0@bitprim/stable")
         else:
             self.requires("boost/1.66.0@bitprim/stable")
 
