@@ -44,11 +44,11 @@ if __name__ == "__main__":
                 opts_bch_full = copy.deepcopy(opts_bch_no_keoken)
                 opts_bch_full["%s:db" % name] = "full"
 
-                opts_btc_full = copy.deepcopy(opts_btc)
-                opts_btc_full["%s:db" % name] = "full"
+                # opts_btc_full = copy.deepcopy(opts_btc)
+                # opts_btc_full["%s:db" % name] = "full"
 
                 handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_bch_full, env_vars, build_requires)
-                handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_btc_full, env_vars, build_requires)
+                # handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_btc_full, env_vars, build_requires)
                 # handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_bch_domain, env_vars, build_requires)
                 # handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_bch_keoken, env_vars, build_requires)
                 handle_microarchs("%s:march_id" % name, march_ids, filtered_builds, settings, opts_bch_no_keoken, env_vars, build_requires)
