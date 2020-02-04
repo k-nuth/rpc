@@ -21,10 +21,10 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 #include <boost/thread/latch.hpp>
-#include <knuth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
 
 namespace kth {
 
@@ -37,7 +37,7 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
         return false;
 
     // TODO: if the payment_address are invalid return
-    //       error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+    //       error = kth::RPC_INVALID_ADDRESS_OR_KEY;
     //       error_code = "No information available for address";
     // instead of calling getaddressmempool and returning an empty json
     try {
@@ -96,7 +96,7 @@ nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, Blockcha
     std::vector<std::string> payment_addresses;
     if (!json_in_getaddressmempool(json_in, payment_addresses))
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressmempool\n"
                 "\nReturns all mempool deltas for an address (requires addressindex to be enabled).\n"
                 "\nArguments:\n"

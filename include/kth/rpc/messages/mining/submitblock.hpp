@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
 #define KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -81,7 +81,7 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
         });
     }
     else {
-        error = knuth::RPC_DESERIALIZATION_ERROR;
+        error = kth::RPC_DESERIALIZATION_ERROR;
         error_code = "Block decode failed";
     }
 
@@ -109,7 +109,7 @@ nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& ch
     if (!json_in_submitblock(json_in, block_str)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = knuth::RPC_MISC_ERROR;
+        container["error"]["code"] = kth::RPC_MISC_ERROR;
         container["error"]["message"] = "submitblock \"hexdata\" ( \"jsonparametersobject\" )\n\nAttempts to submit new block to network.\nThe 'jsonparametersobject' parameter is currently ignored.\nSee https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n\nArguments\n1. \"hexdata\"    (string, required) the hex-encoded block data to submit\n2. \"jsonparametersobject\"     (string, optional) object of optional parameters\n    {\n      \"workid\" : \"id\"    (string, optional) if the server provided a workid, it MUST be included with submissions\n    }\n\nResult:\n\nExamples:\n> bitcoin-cli submitblock \"mydata\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"submitblock\", \"params\": [\"mydata\"] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/\n";
         return container;
     }

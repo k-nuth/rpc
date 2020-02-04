@@ -18,7 +18,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <knuth/rpc/zmq/zmq_helper.hpp>
+#include <kth/rpc/zmq/zmq_helper.hpp>
 
 namespace kth { namespace rpc {
 

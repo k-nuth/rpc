@@ -24,7 +24,7 @@
 #include <chrono>
 #include <thread>
 
-#include <bitcoin/blockchain.hpp>
+#include <kth/blockchain.hpp>
 
 #include <zmq.h>
 

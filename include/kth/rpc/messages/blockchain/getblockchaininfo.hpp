@@ -21,10 +21,10 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKCHAININFO_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKCHAININFO_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {

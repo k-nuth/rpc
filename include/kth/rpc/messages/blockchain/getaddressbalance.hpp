@@ -21,10 +21,10 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSBALANCE_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSBALANCE_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -83,7 +83,7 @@ bool getaddressbalance(nlohmann::json& json_result, int& error, std::string& err
                     }
                 }
                 else {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
                 latch.count_down();
@@ -92,7 +92,7 @@ bool getaddressbalance(nlohmann::json& json_result, int& error, std::string& err
         }
         else
         {
-            error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+            error = kth::RPC_INVALID_ADDRESS_OR_KEY;
             error_code = "Invalid address";
         }
     }
@@ -116,7 +116,7 @@ nlohmann::json process_getaddressbalance(nlohmann::json const& json_in, Blockcha
     std::vector<std::string> payment_addresses;
     if (!json_in_getaddressbalance(json_in, payment_addresses)) //if false return error
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressbalance\n"
             "\nReturns the balance for an address(es) (requires addressindex to be enabled).\n"
             "\nArguments:\n"

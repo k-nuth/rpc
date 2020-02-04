@@ -18,7 +18,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/utils.hpp>
 
 namespace kth {
 

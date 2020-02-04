@@ -21,15 +21,15 @@
 #ifndef KTH_RPC_MESSAGES_NEWWALLET_HPP_
 #define KTH_RPC_MESSAGES_NEWWALLET_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-// #include <bitcoin/bitcoin/constants.hpp>
-// #include <bitcoin/bitcoin/utility/pseudo_random.hpp>
+// #include <kth/domain/constants.hpp>
+// #include <kth/domain/utility/pseudo_random.hpp>
 #include <kth/domain.hpp>
 
 namespace kth {
@@ -136,7 +136,7 @@ nlohmann::json process_newwallet(nlohmann::json const& json_in, Node& node, bool
     if (!json_in_newwallet(json_in, compressed, mainnet)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "Parse error.";
         return container;
     }

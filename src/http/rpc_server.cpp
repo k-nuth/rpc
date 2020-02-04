@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <knuth/rpc/http/rpc_server.hpp>
+#include <kth/rpc/http/rpc_server.hpp>
 
 #include <iostream>
 
@@ -60,9 +60,9 @@ void rpc_server::configure_server() {
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
 #ifdef KTH_WITH_KEOKEN
-                auto result = knuth::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
 #else
-                auto result = knuth::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
 #endif
                 result = result + "\u000a";
 
@@ -96,9 +96,9 @@ void rpc_server::configure_server() {
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
 #ifdef KTH_WITH_KEOKEN
-                auto result = knuth::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
 #else
-                auto result = knuth::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
 #endif
 
                 result = result + "\u000a";
@@ -142,4 +142,4 @@ bool rpc_server::stopped() const {
     return stopped_;
 }
 
-}} // namespace knuth::rpc
+}} // namespace kth::rpc

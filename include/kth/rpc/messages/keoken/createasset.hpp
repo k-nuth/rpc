@@ -23,12 +23,12 @@
 
 #include <boost/thread/latch.hpp>
 
-#include <knuth/rpc/json/json.hpp>
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
-#include <knuth/keoken/wallet/create_transaction.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
+include <kth/keoken/wallet/create_transaction.hpp>
 
-// #include <bitcoin/blockchain/interface/block_chain.hpp>
+// #include <kth/blockchain/interface/block_chain.hpp>
 
 namespace kth {
 
@@ -71,7 +71,7 @@ bool createasset(nlohmann::json& json_object, int& error, std::string& error_cod
                         std::vector<kth::chain::input_point>& outputs_to_spend,  
                         kth::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
                         std::string& asset_name, uint64_t& asset_amount, bool use_testnet_rules) {
-    json_object = kth::encode_base16(knuth::keoken::wallet::tx_encode_create_asset(outputs_to_spend, asset_owner, utxo_satoshis, asset_name, asset_amount).second.to_data(true));
+    json_object = kth::encode_base16(kth::keoken::wallet::tx_encode_create_asset(outputs_to_spend, asset_owner, utxo_satoshis, asset_name, asset_amount).second.to_data(true));
     return true;
 }
 
@@ -93,7 +93,7 @@ nlohmann::json process_createasset(nlohmann::json const& json_in, bool use_testn
 
     if ( ! json_in_createasset(json_in, outputs_to_spend, asset_owner, utxo_satoshis, asset_name, asset_amount)) { //if false return error
         container["result"];
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "Parse error.";
         return container;
     }

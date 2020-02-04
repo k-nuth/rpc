@@ -8,29 +8,23 @@
 
 #include <boost/thread/latch.hpp>
 
-#ifdef KTH_USE_DOMAIN
-#include <bitcoin/infrastructure/error.hpp>
-#else
-#include <bitcoin/bitcoin/error.hpp>
-#endif // KTH_USE_DOMAIN
+#include <kth/infrastructure/error.hpp>
+#include <kth/domain/multi_crypto_support.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
+// #include <kth/node/full_node.hpp>
 
-
-#include <bitcoin/bitcoin/multi_crypto_support.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
-// #include <bitcoin/node/full_node.hpp>
-
-#include <knuth/rpc/json/json.hpp>
-#include <knuth/rpc/messages/messages.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/rpc/messages/messages.hpp>
 
 #ifdef KTH_WITH_KEOKEN
-#include <knuth/keoken/manager.hpp>
-#include <knuth/keoken/memory_state.hpp>
+include <kth/keoken/manager.hpp>
+include <kth/keoken/memory_state.hpp>
 #endif
 
 namespace kth {
 
 // #ifdef KTH_WITH_KEOKEN
-//     using keoken_manager_t = knuth::keoken::manager<knuth::keoken::memory_state>;
+//     using keoken_manager_t = kth::keoken::manager<kth::keoken::memory_state>;
 // #endif
 
 template <typename Blockchain>
@@ -189,13 +183,13 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
             nlohmann::json container;
             container["result"];
-            container["error"]["code"] = knuth::RPC_INVALID_REQUEST;
+            container["error"]["code"] = kth::RPC_INVALID_REQUEST;
             container["error"]["message"] = "Invalid or incomplete command";
             return container;
         } else {
             nlohmann::json container;
             container["result"];
-            container["error"]["code"] = knuth::RPC_INVALID_REQUEST;
+            container["error"]["code"] = kth::RPC_INVALID_REQUEST;
             container["error"]["message"] = "Invalid or incomplete command";
             return container;
         }

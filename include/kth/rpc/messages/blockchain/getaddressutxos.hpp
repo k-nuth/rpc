@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -115,7 +115,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
                     }
                 }
                 else {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
                 latch.count_down();
@@ -179,7 +179,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
             }
         }
         else {
-            error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+            error = kth::RPC_INVALID_ADDRESS_OR_KEY;
             error_code = "Invalid address";
         }
     }
@@ -234,7 +234,7 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, Blockchain
     bool chain_info;
     if (!json_in_getaddressutxos(json_in, payment_address, chain_info))
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressutxos\n"
             "\nReturns all unspent outputs for an address (requires addressindex to be enabled).\n"
             "\nArguments:\n"

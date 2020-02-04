@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASHES_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASHES_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -176,7 +176,7 @@ nlohmann::json process_getblockhashes(nlohmann::json const& json_in, Blockchain 
 
     if (!json_in_getblockhashes(json_in, time_high, time_low, no_orphans, logical_times))
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockhashes timestamp\n"
             "\nReturns array of hashes of blocks within the timestamp range provided.\n"
             "\nArguments:\n"

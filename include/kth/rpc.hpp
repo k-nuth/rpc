@@ -6,14 +6,14 @@
 #ifndef KTH_RPC_HPP_
 #define KTH_RPC_HPP_
 
-#include <bitcoin/blockchain.hpp>
-#include <knuth/rpc/define.hpp>
-#include <knuth/rpc/messages.hpp>
-#include <knuth/rpc/json/json.hpp>
-#include <knuth/rpc/http/rpc_server.hpp>
-#include <knuth/rpc/http/server_http.hpp>
-#include <knuth/rpc/zmq/zmq_helper.hpp>
-#include <knuth/rpc/manager.hpp>
-#include <knuth/rpc/version.hpp>
+#include <kth/blockchain.hpp>
+#include <kth/rpc/define.hpp>
+#include <kth/rpc/messages.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/rpc/http/rpc_server.hpp>
+#include <kth/rpc/http/server_http.hpp>
+#include <kth/rpc/zmq/zmq_helper.hpp>
+#include <kth/rpc/manager.hpp>
+#include <kth/rpc/version.hpp>
 
 #endif /* KTH_RPC_HPP_ */

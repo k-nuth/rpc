@@ -21,7 +21,7 @@
 #ifndef KTH_RPC_MESSAGES_UTILS_HPP_
 #define KTH_RPC_MESSAGES_UTILS_HPP_
 
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {

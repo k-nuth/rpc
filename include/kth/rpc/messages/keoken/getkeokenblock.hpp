@@ -21,14 +21,14 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETKEOKENBLOCK_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETKEOKENBLOCK_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-#include <knuth/rpc/messages/keoken/keokenutils.hpp>
+#include <kth/rpc/messages/keoken/keokenutils.hpp>
 
 namespace kth {
 
@@ -112,11 +112,11 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
             else {
                 if (ec == kth::error::not_found)
                 {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "Block not found";
                 }
                 else {
-                    error = knuth::RPC_INTERNAL_ERROR;
+                    error = kth::RPC_INTERNAL_ERROR;
                     error_code = "Can't read block from disk";
                 }
             }
@@ -125,7 +125,7 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
         latch.count_down_and_wait();
     }
     else {
-        error = knuth::RPC_INVALID_PARAMETER;
+        error = kth::RPC_INVALID_PARAMETER;
         error_code = "Invalid block hash";
     }
 
@@ -149,7 +149,7 @@ nlohmann::json process_getkeokenblock(nlohmann::json const& json_in, Blockchain 
     std::string hash;
     if (!json_in_getkeokenblock(json_in, hash)) //if false return error
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "";
         return container;
     }

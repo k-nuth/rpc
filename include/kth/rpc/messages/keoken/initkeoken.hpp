@@ -23,13 +23,13 @@
 
 #include <boost/thread/latch.hpp>
 
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/json/json.hpp>
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 
-// #include <bitcoin/node/full_node.hpp>
+// #include <kth/node/full_node.hpp>
 
 namespace kth {
 

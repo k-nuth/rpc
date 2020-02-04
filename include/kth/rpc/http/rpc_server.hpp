@@ -21,17 +21,17 @@
 #ifndef KTH_RPC_SERVER_HPP_
 #define	KTH_RPC_SERVER_HPP_
 
-#include <bitcoin/blockchain/interface/block_chain.hpp>
-#include <bitcoin/network/p2p.hpp>
-#include <bitcoin/node/full_node.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
+#include <kth/network/p2p.hpp>
+#include <kth/node/full_node.hpp>
 
-#include <knuth/rpc/http/server_http.hpp>
-#include <knuth/rpc/json/json.hpp>
-#include <knuth/rpc/messages.hpp>
+#include <kth/rpc/http/server_http.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/rpc/messages.hpp>
 
 #ifdef KTH_WITH_KEOKEN
-#include <knuth/keoken/manager.hpp>
-#include <knuth/keoken/memory_state.hpp>
+include <kth/keoken/manager.hpp>
+include <kth/keoken/memory_state.hpp>
 #endif
 
 //Note: do not change the order of the following headers (compilation error in Windows)
@@ -48,7 +48,7 @@ class rpc_server {
     using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 public:
 #ifdef KTH_WITH_KEOKEN
-    using keoken_manager_t = knuth::keoken::manager<knuth::keoken::memory_state>;
+    using keoken_manager_t = kth::keoken::manager<kth::keoken::memory_state>;
 #endif
 
     rpc_server(bool use_testnet_rules
@@ -90,6 +90,6 @@ private:
 
 };
 
-}} // namespace knuth::rpc
+}} // namespace kth::rpc
 
 #endif /*KTH_RPC_SERVER_HPP_*/

@@ -3,8 +3,8 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 
-#include <knuth/rpc/messages.hpp>
-#include <knuth/keoken/state_dto.hpp>
+#include <kth/rpc/messages.hpp>
+include <kth/keoken/state_dto.hpp>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -331,15 +331,15 @@ class keoken_manager_dummy {
 public:
     void initialize_from_blockchain(){};
 
-    std::vector<knuth::keoken::get_assets_data> get_assets_by_address(bc::wallet::payment_address const& addr) const {
+    std::vector<kth::keoken::get_assets_data> get_assets_by_address(bc::wallet::payment_address const& addr) const {
         return {};
     };
 
-    std::vector<knuth::keoken::get_assets_data> get_assets() const {
+    std::vector<kth::keoken::get_assets_data> get_assets() const {
         return {};
     };
 
-    std::vector<knuth::keoken::get_all_asset_addresses_data> get_all_asset_addresses() const {
+    std::vector<kth::keoken::get_all_asset_addresses_data> get_all_asset_addresses() const {
         return {};    
     };
 
@@ -384,7 +384,7 @@ private:
 
 // TEST_CASE("[load_signature_map] validate map keys") {
 
-//     auto map = knuth::load_signature_map<kth::blockchain::block_chain>();
+//     auto map = kth::load_signature_map<kth::blockchain::block_chain>();
 
 // #if defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS)
 //     CHECK(map.count("getrawtransaction") == 1);
@@ -452,8 +452,8 @@ private:
 //     //using blk_t = kth::blockchain::block_chain;
 //     using blk_t = block_chain_dummy;
 
-//     auto map = knuth::load_signature_map<blk_t>();
-//     auto map_no_params = knuth::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 //     nlohmann::json input;
 
 //     input["method"] = "invalid_key";
@@ -469,14 +469,14 @@ private:
 
 // #ifdef KTH_WITH_KEOKEN
 //     keoken_manager_dummy manager;
-//     auto ret = knuth::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 // #else
-//     auto ret = knuth::process_data(input, false, node, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, map, map_no_params);
 // #endif    
 
 
 //     nlohmann::json output = nlohmann::json::parse(ret);
-//     CHECK((int)output["error"]["code"] == knuth::RPC_INVALID_REQUEST);
+//     CHECK((int)output["error"]["code"] == kth::RPC_INVALID_REQUEST);
 // }
 
 
@@ -485,8 +485,8 @@ private:
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = knuth::load_signature_map<blk_t>();
-//     auto map_no_params = knuth::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 //     nlohmann::json input;
 
 //     input["method"] = "getrawtransaction";
@@ -497,9 +497,9 @@ private:
 
 // #ifdef KTH_WITH_KEOKEN
 //     keoken_manager_dummy manager;
-//     auto ret = knuth::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 // #else
-//     auto ret = knuth::process_data(input, false, node, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, map, map_no_params);
 // #endif    
 
 //     //MESSAGE(ret);
@@ -507,7 +507,7 @@ private:
 //     nlohmann::json output = nlohmann::json::parse(ret);
 
 //     CHECK(output["id"] == input["id"]);
-//     CHECK((int)output["error"]["code"] == knuth::RPC_PARSE_ERROR);
+//     CHECK((int)output["error"]["code"] == kth::RPC_PARSE_ERROR);
 // }
 // #endif
 
@@ -517,8 +517,8 @@ private:
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = knuth::load_signature_map<blk_t>();
-//     auto map_no_params = knuth::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 
 //     nlohmann::json input;
 
@@ -531,9 +531,9 @@ private:
 
 // #ifdef KTH_WITH_KEOKEN
 //     keoken_manager_dummy manager;
-//     auto ret = knuth::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 // #else
-//     auto ret = knuth::process_data(input, false, node, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, map, map_no_params);
 // #endif    
 
 //     //MESSAGE(ret);
@@ -541,7 +541,7 @@ private:
 //     nlohmann::json output = nlohmann::json::parse(ret);
 
 //     CHECK(output["id"] == input["id"]);
-//     CHECK((int)output["error"]["code"] == knuth::RPC_MISC_ERROR);
+//     CHECK((int)output["error"]["code"] == kth::RPC_MISC_ERROR);
 // }
 // #endif // KTH_WITH_MINING
 
@@ -553,8 +553,8 @@ private:
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = knuth::load_signature_map<blk_t>();
-//     auto map_no_params = knuth::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 
 //     nlohmann::json input, params, origin;
 
@@ -571,7 +571,7 @@ private:
 
 //     full_node_dummy node;
 //     keoken_manager_dummy manager;
-//     auto ret = knuth::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 //     nlohmann::json output = nlohmann::json::parse(ret);
 
 //     CHECK(output["id"] == input["id"]);
@@ -583,8 +583,8 @@ private:
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = knuth::load_signature_map<blk_t>();
-//     auto map_no_params = knuth::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 
 //     nlohmann::json input, params, origin;
 
@@ -604,7 +604,7 @@ private:
 //     full_node_dummy node;
 
 //     keoken_manager_dummy manager;
-//     auto ret = knuth::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 
 //     nlohmann::json output = nlohmann::json::parse(ret);
 

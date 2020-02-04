@@ -18,7 +18,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <knuth/rpc/manager.hpp>
+#include <kth/rpc/manager.hpp>
 
 namespace kth { namespace rpc {
 
@@ -62,4 +62,4 @@ bool manager::is_stopped() const {
     return stopped_;
 }
 
-}} //namespace knuth::rpc
+}} //namespace kth::rpc

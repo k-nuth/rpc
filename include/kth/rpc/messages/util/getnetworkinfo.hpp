@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_UTIL_GETNETWORKINFO_HPP_
 #define KTH_RPC_MESSAGES_UTIL_GETNETWORKINFO_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/network/user_agent.hpp>
-#include <bitcoin/node/full_node.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/network/user_agent.hpp>
+#include <kth/node/full_node.hpp>
 
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {

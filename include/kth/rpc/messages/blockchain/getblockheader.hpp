@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -97,10 +97,10 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
                 }
             } else {
                 if (ec == kth::error::not_found) {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "Block not found";
                 } else {
-                    error = knuth::RPC_INTERNAL_ERROR;
+                    error = kth::RPC_INTERNAL_ERROR;
                     error_code = "Can't read block from disk";
                 }
             }
@@ -108,7 +108,7 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
         });
         latch.count_down_and_wait();
     } else {
-        error = knuth::RPC_INVALID_PARAMETER;
+        error = kth::RPC_INVALID_PARAMETER;
         error_code = "Invalid block hash";
     }
 
@@ -129,7 +129,7 @@ nlohmann::json process_getblockheader(nlohmann::json const& json_in, Blockchain 
     std::string hash;
     bool verbose;
     if (!json_in_getblockheader(json_in, hash, verbose)) { //if false return error
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockheader \"hash\" ( verbose )\n"
             "\nIf verbose is false, returns a string that is serialized, "
             "hex-encoded data for blockheader 'hash'.\n"

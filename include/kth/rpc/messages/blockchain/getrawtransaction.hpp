@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/blockchain/getspentinfo.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/blockchain/getspentinfo.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -216,7 +216,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     }
                 }
                 else {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available about transaction";
                 }
                 latch.count_down();
@@ -233,7 +233,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     json_object = kth::encode_base16(tx_ptr->to_data(/*version is not used*/ 0));
                 }
                 else {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available about transaction";
                 }
                 latch.count_down();
@@ -242,7 +242,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
         }
     }
     else {
-        error = knuth::RPC_INVALID_PARAMETER;
+        error = kth::RPC_INVALID_PARAMETER;
         error_code = "Invalid transaction hash";
     }
 
@@ -264,7 +264,7 @@ nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, Blockcha
     bool verbose;
     if (!json_in_getrawtransaction(json_in, tx_id, verbose)) //if false return error
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getrawtransaction \"txid\" ( verbose )\n"
 
             "\nNOTE: By default this function only works for mempool "

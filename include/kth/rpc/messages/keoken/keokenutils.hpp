@@ -21,12 +21,12 @@
 #ifndef KTH_RPC_MESSAGES_KEOKENUTILS_HPP_
 #define KTH_RPC_MESSAGES_KEOKENUTILS_HPP_
 
-#include <bitcoin/blockchain/interface/block_chain.hpp>
-#include <knuth/keoken/message/create_asset.hpp>
-#include <knuth/keoken/message/send_tokens.hpp>
-#include <knuth/keoken/transaction_extractor.hpp>
-#include <knuth/keoken/transaction_processors/commons.hpp>
-#include <knuth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
+include <kth/keoken/message/create_asset.hpp>
+include <kth/keoken/message/send_tokens.hpp>
+include <kth/keoken/transaction_extractor.hpp>
+include <kth/keoken/transaction_processors/commons.hpp>
+#include <kth/rpc/json/json.hpp>
 
 namespace kth {
 
@@ -35,7 +35,7 @@ nlohmann::json decode_keoken( Blockchain const& chain, kth::transaction_const_pt
 
     nlohmann::json container;
 
-    auto keoken_data = knuth::keoken::first_keoken_output(*tx_ptr);
+    auto keoken_data = kth::keoken::first_keoken_output(*tx_ptr);
     if ( ! keoken_data.empty()) {
         kth::data_source ds(keoken_data);
         kth::istream_reader source(ds);
@@ -48,18 +48,18 @@ nlohmann::json decode_keoken( Blockchain const& chain, kth::transaction_const_pt
         container["type"] = type;
         container["hash"] = kth::encode_hash((*tx_ptr).hash());
         switch (type) {
-        case knuth::keoken::message::create_asset::type: {
-            auto create = knuth::keoken::message::create_asset::factory_from_data(source);
+        case kth::keoken::message::create_asset::type: {
+            auto create = kth::keoken::message::create_asset::factory_from_data(source);
             container["asset"] = create.name();
             container["amount"] =  create.amount();
-            container["owner"] = (knuth::keoken::get_first_input_addr(chain, *tx_ptr, testnet)).encoded();
+            container["owner"] = (kth::keoken::get_first_input_addr(chain, *tx_ptr, testnet)).encoded();
             break;
         }
-        case knuth::keoken::message::send_tokens::type: {
-            auto message = knuth::keoken::message::send_tokens::factory_from_data(source);
+        case kth::keoken::message::send_tokens::type: {
+            auto message = kth::keoken::message::send_tokens::factory_from_data(source);
             container["asset"] = message.asset_id();
             container["amount"] = message.amount();
-            auto addresses = knuth::keoken::get_send_tokens_addrs(chain, *tx_ptr, testnet);
+            auto addresses = kth::keoken::get_send_tokens_addrs(chain, *tx_ptr, testnet);
             container["sender"] = (addresses.first).encoded();
             container["receiver"] = (addresses.second).encoded();
             break;

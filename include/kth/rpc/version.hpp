@@ -14,6 +14,6 @@
 
 namespace kth { namespace rpc {
 char const* version();
-}} /*namespace knuth::rpc*/
+}} /*namespace kth::rpc*/
  
 #endif /* KTH_RPC_VERSION_HPP_ */

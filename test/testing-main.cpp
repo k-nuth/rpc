@@ -19,8 +19,8 @@
 */
 
 #include <iostream>
-#include <bitcoin/blockchain.hpp>
-#include <knuth/rpc/zmq/zmq_helper.hpp>
+#include <kth/blockchain.hpp>
+#include <kth/rpc/zmq/zmq_helper.hpp>
 
 int main () {
     kth::threadpool t(0);
@@ -28,7 +28,7 @@ int main () {
     const kth::database::settings d;
     kth::blockchain::block_chain chain(t, s, d);
 
-    knuth::rpc::zmq zmq_object(5556, chain);
+    kth::rpc::zmq zmq_object(5556, chain);
 
     size_t i = 1;
     while (i<=5){

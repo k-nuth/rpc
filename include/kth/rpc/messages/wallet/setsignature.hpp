@@ -21,14 +21,14 @@
 #ifndef KTH_RPC_MESSAGES_WALLET_SETSIGNATURE_HPP_
 #define KTH_RPC_MESSAGES_WALLET_SETSIGNATURE_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-#include <bitcoin/bitcoin/wallet/transaction_functions.hpp>
+#include <kth/domain/wallet/transaction_functions.hpp>
 
 namespace kth {
 
@@ -43,7 +43,7 @@ bool json_in_set_signature(nlohmann::json const& json_object,
         return false;
     try {
         // Priv key
-        private_key = knuth::create_secret_from_seed(json_object["params"]["seed"]);
+        private_key = kth::create_secret_from_seed(json_object["params"]["seed"]);
         json_signature = json_object["params"]["signature"];
         // TX
         kth::data_chunk raw_data;
@@ -66,7 +66,7 @@ bool set_signature(nlohmann::json& json_object, int& error, std::string& error_c
                               bool use_testnet_rules, Blockchain& chain)
 {
 
-    auto pub_key = knuth::secret_to_compressed_public(private_key);
+    auto pub_key = kth::secret_to_compressed_public(private_key);
     // Redeem script for P2KH [SIGNATURE][PUBKEY]
     kth::chain::script input_script;
     input_script.from_string("[" + json_signature + "] [" + pub_key.encoded() + "]");
@@ -91,7 +91,7 @@ nlohmann::json process_setsignature(nlohmann::json const& json_in, Blockchain& c
     if (!json_in_set_signature(json_in, private_key, json_signature, tx,  index)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "";
         return container;
     }

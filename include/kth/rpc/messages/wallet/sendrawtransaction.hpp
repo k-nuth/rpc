@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
 #define KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -59,7 +59,7 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
         boost::latch latch(2);
         chain.organize(tx, [&](const kth::code & ec) {
             if (ec) {
-                // error = knuth::RPC_VERIFY_ERROR;
+                // error = kth::RPC_VERIFY_ERROR;
                 error = ec.value();
                 error_code = "Failed to submit transaction.";
                 json_object;
@@ -70,7 +70,7 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
         });
         latch.count_down_and_wait();
     } else {
-        error = knuth::RPC_DESERIALIZATION_ERROR;
+        error = kth::RPC_DESERIALIZATION_ERROR;
         error_code = "TX decode failed.";
     }
 
@@ -96,7 +96,7 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, Blockch
     if (!json_in_sendrawtransaction(json_in, tx_str, allowhighfees)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "sendrawtransaction \"hexstring\" ( allowhighfees )\n"
             "\nSubmits raw transaction (serialized, hex-encoded) to local node "
             "and network.\n"

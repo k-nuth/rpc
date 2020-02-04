@@ -21,10 +21,10 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -80,7 +80,7 @@ bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_co
 
             }
             else {
-                error = knuth::RPC_INVALID_PARAMETER;
+                error = kth::RPC_INVALID_PARAMETER;
                 error_code = "Unable to get spent info";
             }
             latch.count_down();
@@ -88,7 +88,7 @@ bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_co
         latch.count_down_and_wait();
     }
     else {
-        error = knuth::RPC_INVALID_PARAMETER;
+        error = kth::RPC_INVALID_PARAMETER;
         error_code = "Invalid transaction hash";
     }
 
@@ -110,7 +110,7 @@ nlohmann::json process_getspentinfo(nlohmann::json const& json_in, Blockchain co
     size_t index;
     if (!json_in_getspentinfo(json_in, tx_id, index)) //if false return error
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getspentinfo\n"
             "\nReturns the txid and index where an output is spent.\n"
             "\nArguments:\n"

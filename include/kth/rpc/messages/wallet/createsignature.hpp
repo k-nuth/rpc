@@ -21,14 +21,14 @@
 #ifndef KTH_RPC_MESSAGES_WALLET_CREATESIGNATURE_HPP_
 #define KTH_RPC_MESSAGES_WALLET_CREATESIGNATURE_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-#include <bitcoin/bitcoin/wallet/transaction_functions.hpp>
+#include <kth/domain/wallet/transaction_functions.hpp>
 
 namespace kth {
 
@@ -42,7 +42,7 @@ bool json_in_create_signature(nlohmann::json const& json_object,
         return false;
     try {
         // Priv key
-        private_key = knuth::create_secret_from_seed(json_object["params"]["seed"]);
+        private_key = kth::create_secret_from_seed(json_object["params"]["seed"]);
         // Script
         kth::data_chunk raw_script;
         kth::decode_base16(raw_script, json_object["params"]["script"]);
@@ -90,7 +90,7 @@ nlohmann::json process_createsignature(nlohmann::json const& json_in, Blockchain
     if (!json_in_create_signature(json_in, private_key, output_script, tx, amount, index)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "";
         return container;
     }

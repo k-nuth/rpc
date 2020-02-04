@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASH_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASH_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {
@@ -66,7 +66,7 @@ nlohmann::json process_getblockhash(nlohmann::json const& json_in, Blockchain co
     size_t height;
     if (!json_in_getblockhash(json_in, height)) //if false return error
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockhash height\n"
             "\nReturns hash of block in best-block-chain at height provided.\n"
             "\nArguments:\n"

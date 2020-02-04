@@ -21,8 +21,8 @@
 #ifndef KTH_RPC_MANAGER_HPP_
 #define KTH_RPC_MANAGER_HPP_
 
-#include <knuth/rpc/http/rpc_server.hpp>
-#include <knuth/rpc/zmq/zmq_helper.hpp>
+#include <kth/rpc/http/rpc_server.hpp>
+#include <kth/rpc/zmq/zmq_helper.hpp>
 
 namespace kth { namespace rpc {
 
@@ -49,7 +49,7 @@ private:
    rpc_server http_;
 };
 
-}} //namespace knuth::rpc
+}} //namespace kth::rpc
 
 #endif //KTH_RPC_MANAGER_HPP_
 

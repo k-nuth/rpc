@@ -21,11 +21,11 @@
 #ifndef KTH_RPC_MESSAGES_MINING_GETMININGINFO_HPP_
 #define KTH_RPC_MESSAGES_MINING_GETMININGINFO_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/utils.hpp>
-#include <bitcoin/bitcoin/multi_crypto_support.hpp>
+#include <kth/rpc/messages/utils.hpp>
+#include <kth/domain/multi_crypto_support.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace kth {

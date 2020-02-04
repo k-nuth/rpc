@@ -21,14 +21,14 @@
 #ifndef KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
 #define KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
+#include <kth/rpc/json/json.hpp>
+#include <kth/blockchain/interface/block_chain.hpp>
 
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-#include <knuth/rpc/messages/keoken/keokenutils.hpp>
+#include <kth/rpc/messages/keoken/keokenutils.hpp>
 
 namespace kth {
 
@@ -90,14 +90,14 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
                     size_t limit = index_end > (*keoken_txs).size() ? (*keoken_txs).size() : index_end;
                     size_t j = 0;
                     for(size_t i = index_start; i < limit; ++i){
-                        json_object["transactions"][j] = knuth::decode_keoken(chain, (*keoken_txs)[i], use_testnet_rules);
+                        json_object["transactions"][j] = kth::decode_keoken(chain, (*keoken_txs)[i], use_testnet_rules);
                         ++j;
                     }
 
                     json_object["count"] = (*keoken_txs).size();
                 }
                 else {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
             latch.count_down();
@@ -105,7 +105,7 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
         latch.count_down_and_wait();
     }
     else {
-        error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+        error = kth::RPC_INVALID_ADDRESS_OR_KEY;
         error_code = "Invalid address";
     }
 
@@ -130,7 +130,7 @@ nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchai
     size_t index_end;
     if (!json_in_getkeokenaddress(json_in, payment_address, index_start, index_end))
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "";
         return container;
     }

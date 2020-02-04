@@ -21,12 +21,13 @@
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
 
-#include <knuth/rpc/json/json.hpp>
-#include <bitcoin/blockchain/interface/block_chain.hpp>
-
-#include <knuth/rpc/messages/error_codes.hpp>
-#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
+
+#include <kth/blockchain/interface/block_chain.hpp>
+
+#include <kth/rpc/json/json.hpp>
+#include <kth/rpc/messages/error_codes.hpp>
+#include <kth/rpc/messages/utils.hpp>
 
 namespace kth {
 
@@ -112,7 +113,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                                     }
                                 }
                                 else {
-                                    error = knuth::RPC_DATABASE_ERROR;
+                                    error = kth::RPC_DATABASE_ERROR;
                                     error_code = "Error fetching transaction.";
                                 }
                                 latch2.count_down();
@@ -145,7 +146,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                                             }
                                         }
                                         else {
-                                            error = knuth::RPC_DATABASE_ERROR;
+                                            error = kth::RPC_DATABASE_ERROR;
                                             error_code = "Error fetching transaction.";
                                         }
                                         latch4.count_down();
@@ -159,7 +160,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                     }
                 }
                 else {
-                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = kth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
                 latch.count_down();
@@ -167,7 +168,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
             latch.count_down_and_wait();
         }
         else {
-            error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
+            error = kth::RPC_INVALID_ADDRESS_OR_KEY;
             error_code = "Invalid address";
         }
     }
@@ -194,7 +195,7 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, Blockchai
     bool include_chain_info;
     if (!json_in_getaddressdeltas(json_in, payment_address, start_height, end_height, include_chain_info))
     {
-        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
+        container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressdeltas\n"
             "\nReturns all changes for an address (requires addressindex to be enabled).\n"
             "\nArguments:\n"
