@@ -72,7 +72,7 @@ class KnuthRPCConan(KnuthConanFile):
 
     def requirements(self):
         self.requires("boost/1.72.0@kth/stable")
-        self.requires("libzmq/4.2.2@kth/stable")
+        self.requires("libzmq/4.3.2@kth/stable")
         self.requires("node/0.X@%s/%s" % (self.user, self.channel))
 
     def config_options(self):
