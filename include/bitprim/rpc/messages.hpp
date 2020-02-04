@@ -215,7 +215,7 @@ template <typename Node, typename Blockchain>
 std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Node& node, signature_map<Blockchain> const& signature_, signature_map<Blockchain> const& no_params_map) {
 #endif
     //std::cout << "method: " << json_object["method"].get<std::string>() << "\n";
-    //Bitprim-mining process data
+    //Mining process data
 
     if (json_object.is_array()) {
         nlohmann::json res;

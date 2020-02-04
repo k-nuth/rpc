@@ -60,7 +60,6 @@ private:
     void *context_;
     void *publisher_;
     uint32_t nSequence;
-    // BITPRIM
     kth::blockchain::block_chain & chain_;
 };
 

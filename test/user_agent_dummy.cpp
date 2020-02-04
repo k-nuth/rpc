@@ -9,7 +9,7 @@ namespace network {
 
 std::string get_user_agent() {
     //return "/kth:" KTH_VERSION "/";
-    return "/bitprim:0.0.0/";
+    return "/kth-dummy:0.0.0/";
 }
 
 } // namespace network
