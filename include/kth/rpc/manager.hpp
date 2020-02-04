@@ -18,22 +18,38 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <kth/rpc/messages/utils.hpp>
+#ifndef KTH_RPC_MANAGER_HPP_
+#define KTH_RPC_MANAGER_HPP_
 
-namespace kth {
+#include <kth/rpc/http/rpc_server.hpp>
+#include <kth/rpc/zmq/zmq_helper.hpp>
 
-    double bits_to_difficulty(const uint32_t & bits) {
-        double diff = 1.0;
-        int shift = (bits >> 24) & 0xff;
-        diff = (double)0x0000ffff / (double)(bits & 0x00ffffff);
-        while (shift < 29) {
-            diff *= 256.0;
-            ++shift;
-        }
-        while (shift > 29) {
-            diff /= 256.0;
-            --shift;
-        }
-        return diff;
-    }
-}
+namespace kth { namespace rpc {
+
+class manager {
+public:
+    manager(bool use_testnet_rules
+            , kth::node::full_node& node
+            , uint32_t rpc_port
+            , uint32_t subscriber_port
+#ifdef KTH_WITH_KEOKEN
+            , size_t keoken_genesis_height
+#endif
+            , std::unordered_set<std::string> const& rpc_allowed_ips
+            , bool rpc_allow_all_ips);
+   ~manager();
+
+   void start();
+   void stop();
+   bool is_stopped() const;
+
+private:
+   bool stopped_;
+   zmq zmq_;
+   rpc_server http_;
+};
+
+}} //namespace kth::rpc
+
+#endif //KTH_RPC_MANAGER_HPP_
+

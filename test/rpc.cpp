@@ -1,24 +1,10 @@
-/**
- * Copyright (c) 2017-2018 Bitprim Inc.
- *
- * This file is part of Bitprim.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <bitprim/rpc/messages.hpp>
-#include <bitprim/keoken/state_dto.hpp>
+
+#include <kth/rpc/messages.hpp>
+include <kth/keoken/state_dto.hpp>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -54,7 +40,7 @@ public:
     //bool get_block_exists(const hash_digest& block_hash) const;
 
     /// Get the hash of the block if it exists.
-    bool get_block_hash(libbitcoin::hash_digest& out_hash, size_t height) const {
+    bool get_block_hash(kth::hash_digest& out_hash, size_t height) const {
         return true;
     }
 
@@ -132,8 +118,8 @@ public:
     //// ------------------------------------------------------------------------
 
     /// Get forks chain state relative to chain top.
-    libbitcoin::chain::chain_state::ptr chain_state() const {
-        return  libbitcoin::chain::chain_state::ptr();
+    kth::chain::chain_state::ptr chain_state() const {
+        return  kth::chain::chain_state::ptr();
     }
 
     ///// Get full chain state relative to the branch top.
@@ -163,18 +149,18 @@ public:
 
     /// fetch a block by height.
     // virtual      // OLD previo a merge de Feb2017
-    void fetch_block(size_t height, bool witness, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
+    void fetch_block(size_t height, bool witness, kth::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch a block by hash.
-    void fetch_block(const libbitcoin::hash_digest& hash, bool witness, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
+    void fetch_block(const kth::hash_digest& hash, bool witness, kth::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch block header by height.
     // virtual      // OLD previo a merge de Feb2017 
-    void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const {}
+    void fetch_block_header(size_t height, kth::blockchain::safe_chain::block_header_fetch_handler handler) const {}
 
-    void fetch_block_header_txs_size(libbitcoin::hash_digest const& hash, libbitcoin::blockchain::safe_chain::block_header_txs_size_fetch_handler handler) const {}
+    void fetch_block_header_txs_size(kth::hash_digest const& hash, kth::blockchain::safe_chain::block_header_txs_size_fetch_handler handler) const {}
 
-    void fetch_block_hash_timestamp(size_t height, libbitcoin::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {}
+    void fetch_block_hash_timestamp(size_t height, kth::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {}
 
     ///// fetch block header by hash.
     //void fetch_block_header(const hash_digest& hash,
@@ -203,30 +189,30 @@ public:
     //	block_height_fetch_handler handler) const;
 
     /// fetch height of latest block.
-    void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const {}
+    void fetch_last_height(kth::blockchain::safe_chain::last_height_fetch_handler handler) const {}
 
     /// fetch transaction by hash.
-    void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, bool witness, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const {}
+    void fetch_transaction(const kth::hash_digest& hash, bool require_confirmed, bool witness, kth::blockchain::safe_chain::transaction_fetch_handler handler) const {}
 
     ///// Generate fees for mining
-    //std::pair<bool, uint64_t> total_input_value(libbitcoin::chain::transaction const& tx) const;
-    //std::pair<bool, uint64_t> fees(libbitcoin::chain::transaction const& tx) const;
+    //std::pair<bool, uint64_t> total_input_value(kth::chain::transaction const& tx) const;
+    //std::pair<bool, uint64_t> fees(kth::chain::transaction const& tx) const;
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
-// #ifdef BITPRIM_WITH_MINING
+// #ifdef KTH_WITH_MINING
 //     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
-//     std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
-//         return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
+//     std::vector<kth::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
+//         return std::vector<kth::blockchain::block_chain::tx_benefit>();
 //     }
 
-//     void remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
+//     void remove_mined_txs_from_chosen_list(kth::block_const_ptr blk) {
 //     }
 
-//     bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
+//     bool add_to_chosen_list(kth::transaction_const_ptr tx){
 //         return true;
 //     }
-// #endif // BITPRIM_WITH_MINING
+// #endif // KTH_WITH_MINING
 
     //std::pair<bool, size_t> is_double_spent_and_sigops(chain::transaction const& tx, bool bip16_active) const;
     //std::tuple<bool, size_t, uint64_t> is_double_spent_sigops_and_fees(chain::transaction const& tx, bool bip16_active) const;
@@ -254,35 +240,35 @@ public:
     ////-------------------------------------------------------------------------
 
     ///// fetch the inpoint (spender) of an outpoint.
-    void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const {}
+    void fetch_spend(const kth::chain::output_point& outpoint, kth::blockchain::safe_chain::spend_fetch_handler handler) const {}
 
     /// fetch outputs, values and spends for an address_hash.
-    void fetch_history(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::history_fetch_handler handler) const {}
+    void fetch_history(const kth::short_hash& address_hash, size_t limit, size_t from_height, kth::blockchain::safe_chain::history_fetch_handler handler) const {}
 
     /// Fetch all the txns used by the wallet
-    void fetch_confirmed_transactions(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::confirmed_transactions_fetch_handler handler) const {}
+    void fetch_confirmed_transactions(const kth::short_hash& address_hash, size_t limit, size_t from_height, kth::blockchain::safe_chain::confirmed_transactions_fetch_handler handler) const {}
 
-    std::vector<libbitcoin::blockchain::mempool_transaction_summary> get_mempool_transactions(std::vector<std::string> const& payment_addresses, bool use_testnet_rules, bool witness) const {
-        return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
+    std::vector<kth::blockchain::mempool_transaction_summary> get_mempool_transactions(std::vector<std::string> const& payment_addresses, bool use_testnet_rules, bool witness) const {
+        return std::vector<kth::blockchain::mempool_transaction_summary> ();
     }
 
-    std::vector<libbitcoin::blockchain::mempool_transaction_summary> get_mempool_transactions(std::string const& payment_addresses, bool use_testnet_rules, bool witness) const {
-       return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
+    std::vector<kth::blockchain::mempool_transaction_summary> get_mempool_transactions(std::string const& payment_addresses, bool use_testnet_rules, bool witness) const {
+       return std::vector<kth::blockchain::mempool_transaction_summary> ();
     }
 
-#ifdef BITPRIM_WITH_KEOKEN
-    void fetch_keoken_history(const libbitcoin::short_hash& address_hash, size_t limit,
-        size_t from_height, libbitcoin::blockchain::safe_chain::keoken_history_fetch_handler handler) const {
+#ifdef KTH_WITH_KEOKEN
+    void fetch_keoken_history(const kth::short_hash& address_hash, size_t limit,
+        size_t from_height, kth::blockchain::safe_chain::keoken_history_fetch_handler handler) const {
     }
 
-    void fetch_block_keoken(const libbitcoin::hash_digest& hash, bool witness,
-        libbitcoin::blockchain::safe_chain::block_keoken_fetch_handler handler) const {
+    void fetch_block_keoken(const kth::hash_digest& hash, bool witness,
+        kth::blockchain::safe_chain::block_keoken_fetch_handler handler) const {
     }
 #endif
 
-  bool get_output(libbitcoin::chain::output& out_output, size_t& out_height,
+  bool get_output(kth::chain::output& out_output, size_t& out_height,
                           uint32_t& out_median_time_past, bool& out_coinbase,
-                          const libbitcoin::chain::output_point& outpoint, size_t branch_height,
+                          const kth::chain::output_point& outpoint, size_t branch_height,
                           bool require_confirmed) const {
         return true;
     }
@@ -328,10 +314,10 @@ public:
     ////-------------------------------------------------------------------------
 
     ///// Organize a block into the block pool if valid and sufficient.
-    void organize(libbitcoin::block_const_ptr block, libbitcoin::blockchain::safe_chain::result_handler handler) {}
+    void organize(kth::block_const_ptr block, kth::blockchain::safe_chain::result_handler handler) {}
 
     ///// Store a transaction to the pool if valid.
-    void organize(libbitcoin::transaction_const_ptr tx, libbitcoin::blockchain::safe_chain::result_handler handler) {}
+    void organize(kth::transaction_const_ptr tx, kth::blockchain::safe_chain::result_handler handler) {}
 
     //// Properties.
     ////-------------------------------------------------------------------------
@@ -345,15 +331,15 @@ class keoken_manager_dummy {
 public:
     void initialize_from_blockchain(){};
 
-    std::vector<bitprim::keoken::get_assets_data> get_assets_by_address(bc::wallet::payment_address const& addr) const {
+    std::vector<kth::keoken::get_assets_data> get_assets_by_address(bc::wallet::payment_address const& addr) const {
         return {};
     };
 
-    std::vector<bitprim::keoken::get_assets_data> get_assets() const {
+    std::vector<kth::keoken::get_assets_data> get_assets() const {
         return {};
     };
 
-    std::vector<bitprim::keoken::get_all_asset_addresses_data> get_all_asset_addresses() const {
+    std::vector<kth::keoken::get_all_asset_addresses_data> get_all_asset_addresses() const {
         return {};    
     };
 
@@ -361,15 +347,15 @@ public:
 
 class full_node_dummy {
 public:
-    // libbitcoin::network::settings p2p_settings_;
-    // libbitcoin::node::settings node_settings_;
+    // kth::network::settings p2p_settings_;
+    // kth::node::settings node_settings_;
 
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
     keoken_manager_dummy keoken_manager_;
 #endif    
     block_chain_dummy blockchain_;
 
-    block_chain_dummy& chain_bitprim() {
+    block_chain_dummy& chain_kth() {
         return blockchain_;
     }
 
@@ -377,73 +363,73 @@ public:
         return 0;
     }
 
-    const libbitcoin::network::settings& network_settings() const {
+    const kth::network::settings& network_settings() const {
         return network_settings_;
     }
 
-    const libbitcoin::node::settings& node_settings() const {
+    const kth::node::settings& node_settings() const {
         return node_settings_;
     }
 
-// #ifdef BITPRIM_WITH_KEOKEN
+// #ifdef KTH_WITH_KEOKEN
 //     keoken_manager_dummy& keoken_manager() {
 //         return keoken_manager_;
 //     }
 // #endif   
 
 private:
-    libbitcoin::network::settings network_settings_;
-    libbitcoin::node::settings node_settings_;
+    kth::network::settings network_settings_;
+    kth::node::settings node_settings_;
 };
 
 // TEST_CASE("[load_signature_map] validate map keys") {
 
-//     auto map = bitprim::load_signature_map<libbitcoin::blockchain::block_chain>();
+//     auto map = kth::load_signature_map<kth::blockchain::block_chain>();
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
+// #if defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS)
 //     CHECK(map.count("getrawtransaction") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
+// #if defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS) && defined(KTH_DB_HISTORY)
 //     CHECK(map.count("getaddressbalance") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
+// #if defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS)
 //     CHECK(map.count("getspentinfo") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
+// #if defined(KTH_DB_TRANSACTION_UNCONFIRMED)
 //     CHECK(map.count("getaddresstxids") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)
+// #if defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS) && defined(KTH_DB_HISTORY)
 //     CHECK(map.count("getaddressdeltas") == 1);
 //     CHECK(map.count("getaddressutxos") == 1);
 // #endif    
 
-// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+// #if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW_BLOCKS) 
 //     CHECK(map.count("getblockhashes") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED)
+// #if defined(KTH_DB_TRANSACTION_UNCONFIRMED)
 //     CHECK(map.count("getaddressmempool") == 1);
 // #endif
 
-// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) 
+// #if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW_BLOCKS) 
 //     CHECK(map.count("getblock") == 1);
 // #endif
 
 //     CHECK(map.count("getblockhash") == 1);
 
-// #if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS)     
+// #if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW_BLOCKS)     
 //     CHECK(map.count("getblockheader") == 1);
 // #endif
     
 //     CHECK(map.count("validateaddress") == 1);
 
-// #ifdef BITPRIM_WITH_MINING
+// #ifdef KTH_WITH_MINING
 //     CHECK(map.count("getblocktemplate") == 1);
-// #endif // BITPRIM_WITH_MINING
+// #endif // KTH_WITH_MINING
 
 //     CHECK(map.count("getbestblockhash") == 0);
 //     CHECK(map.count("getblockchaininfo") == 0);
@@ -454,53 +440,53 @@ private:
 
 //     CHECK(map.count("submitblock") == 0);
 
-// #ifdef BITPRIM_WITH_MINING    
+// #ifdef KTH_WITH_MINING    
 //     CHECK(map.count("sendrawtransaction") == 0);
-// #endif // BITPRIM_WITH_MINING
+// #endif // KTH_WITH_MINING
 
 //     CHECK(map.count("getinfo") == 0);
 // }
 
 // TEST_CASE("[process_data] invalid key") {
 
-//     //using blk_t = libbitcoin::blockchain::block_chain;
+//     //using blk_t = kth::blockchain::block_chain;
 //     using blk_t = block_chain_dummy;
 
-//     auto map = bitprim::load_signature_map<blk_t>();
-//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 //     nlohmann::json input;
 
 //     input["method"] = "invalid_key";
 
-//     //libbitcoin::threadpool threadpool;
-//     //libbitcoin::blockchain::settings chain_settings;
-//     //libbitcoin::database::settings database_settings;
+//     //kth::threadpool threadpool;
+//     //kth::blockchain::settings chain_settings;
+//     //kth::database::settings database_settings;
 
-//     //libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
+//     //kth::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
 
 //     //blk_t chain(threadpool, chain_settings, database_settings, true);
 //     full_node_dummy node;
 
-// #ifdef BITPRIM_WITH_KEOKEN
+// #ifdef KTH_WITH_KEOKEN
 //     keoken_manager_dummy manager;
-//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 // #else
-//     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, map, map_no_params);
 // #endif    
 
 
 //     nlohmann::json output = nlohmann::json::parse(ret);
-//     CHECK((int)output["error"]["code"] == bitprim::RPC_INVALID_REQUEST);
+//     CHECK((int)output["error"]["code"] == kth::RPC_INVALID_REQUEST);
 // }
 
 
-// #if defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)
+// #if defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS)
 // TEST_CASE("[process_data] getrawtransaction error invalid params") {
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = bitprim::load_signature_map<blk_t>();
-//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 //     nlohmann::json input;
 
 //     input["method"] = "getrawtransaction";
@@ -509,11 +495,11 @@ private:
 
 //     full_node_dummy node;
 
-// #ifdef BITPRIM_WITH_KEOKEN
+// #ifdef KTH_WITH_KEOKEN
 //     keoken_manager_dummy manager;
-//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 // #else
-//     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, map, map_no_params);
 // #endif    
 
 //     //MESSAGE(ret);
@@ -521,18 +507,18 @@ private:
 //     nlohmann::json output = nlohmann::json::parse(ret);
 
 //     CHECK(output["id"] == input["id"]);
-//     CHECK((int)output["error"]["code"] == bitprim::RPC_PARSE_ERROR);
+//     CHECK((int)output["error"]["code"] == kth::RPC_PARSE_ERROR);
 // }
 // #endif
 
 
-// #ifdef BITPRIM_WITH_MINING
+// #ifdef KTH_WITH_MINING
 // TEST_CASE("[process_data] submitblock ") {
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = bitprim::load_signature_map<blk_t>();
-//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 
 //     nlohmann::json input;
 
@@ -543,11 +529,11 @@ private:
 //     full_node_dummy node;
 
 
-// #ifdef BITPRIM_WITH_KEOKEN
+// #ifdef KTH_WITH_KEOKEN
 //     keoken_manager_dummy manager;
-//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 // #else
-//     auto ret = bitprim::process_data(input, false, node, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, map, map_no_params);
 // #endif    
 
 //     //MESSAGE(ret);
@@ -555,20 +541,20 @@ private:
 //     nlohmann::json output = nlohmann::json::parse(ret);
 
 //     CHECK(output["id"] == input["id"]);
-//     CHECK((int)output["error"]["code"] == bitprim::RPC_MISC_ERROR);
+//     CHECK((int)output["error"]["code"] == kth::RPC_MISC_ERROR);
 // }
-// #endif // BITPRIM_WITH_MINING
+// #endif // KTH_WITH_MINING
 
 
 
-// #ifdef BITPRIM_WITH_KEOKEN
+// #ifdef KTH_WITH_KEOKEN
 
 // TEST_CASE("[process_data] Keoken create asset ") {
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = bitprim::load_signature_map<blk_t>();
-//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 
 //     nlohmann::json input, params, origin;
 
@@ -585,7 +571,7 @@ private:
 
 //     full_node_dummy node;
 //     keoken_manager_dummy manager;
-//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 //     nlohmann::json output = nlohmann::json::parse(ret);
 
 //     CHECK(output["id"] == input["id"]);
@@ -597,8 +583,8 @@ private:
 
 //     using blk_t = block_chain_dummy;
 
-//     auto map = bitprim::load_signature_map<blk_t>();
-//     auto map_no_params = bitprim::load_signature_map_no_params<blk_t>();
+//     auto map = kth::load_signature_map<blk_t>();
+//     auto map_no_params = kth::load_signature_map_no_params<blk_t>();
 
 //     nlohmann::json input, params, origin;
 
@@ -618,14 +604,14 @@ private:
 //     full_node_dummy node;
 
 //     keoken_manager_dummy manager;
-//     auto ret = bitprim::process_data(input, false, node, manager, map, map_no_params);
+//     auto ret = kth::process_data(input, false, node, manager, map, map_no_params);
 
 //     nlohmann::json output = nlohmann::json::parse(ret);
 
 //     CHECK(output["id"] == input["id"]);
 //     CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff03204e0000000000001976a9147fa36605e302ed00aeca0da8e2743772df11290188acce3b440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac0000000000000000176a0400004b50100000000100000001000000000000000100000000");
 // }
-// #endif // BITPRIM_WITH_KEOKEN
+// #endif // KTH_WITH_KEOKEN
 
 
 #endif /*DOCTEST_LIBRARY_INCLUDED*/

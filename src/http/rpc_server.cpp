@@ -1,9 +1,9 @@
 /**
- * Copyright (c) 2017-2018 Bitprim Inc.
+ * Copyright (c) 2016-2020 Knuth Project developers.
  *
- * This file is part of bitprim-node.
+ * This file is part of kth-node.
  *
- * bitprim-node is free software: you can redistribute it and/or
+ * kth-node is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License with
  * additional permissions to the one published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
@@ -18,16 +18,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <bitprim/rpc/http/rpc_server.hpp>
+#include <kth/rpc/http/rpc_server.hpp>
 
 #include <iostream>
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 
 rpc_server::rpc_server(bool use_testnet_rules
-        , libbitcoin::node::full_node& node
+        , kth::node::full_node& node
         , uint32_t rpc_port
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
         , size_t keoken_genesis_height
 #endif
         , std::unordered_set<std::string> const& rpc_allowed_ips
@@ -36,12 +36,12 @@ rpc_server::rpc_server(bool use_testnet_rules
     , stopped_(true)
     , rpc_allow_all_ips_(true)
     , node_(node)
-#ifdef BITPRIM_WITH_KEOKEN
-    , keoken_manager_(node.chain_bitprim(), keoken_genesis_height)
+#ifdef KTH_WITH_KEOKEN
+    , keoken_manager_(node.chain_kth(), keoken_genesis_height)
 #endif
     , rpc_allowed_ips_(rpc_allowed_ips)
-    , signature_map_(load_signature_map<libbitcoin::blockchain::block_chain>())
-    , signature_map_no_params_(load_signature_map_no_params<libbitcoin::blockchain::block_chain>())
+    , signature_map_(load_signature_map<kth::blockchain::block_chain>())
+    , signature_map_no_params_(load_signature_map_no_params<kth::blockchain::block_chain>())
 {
     server_.config.port = rpc_port;
     configure_server();
@@ -59,10 +59,10 @@ void rpc_server::configure_server() {
                 }
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
-#ifdef BITPRIM_WITH_KEOKEN
-                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
+#ifdef KTH_WITH_KEOKEN
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
 #else
-                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
 #endif
                 result = result + "\u000a";
 
@@ -95,10 +95,10 @@ void rpc_server::configure_server() {
 
                 nlohmann::json json_object = nlohmann::json::parse(json_str);
 
-#ifdef BITPRIM_WITH_KEOKEN
-                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
+#ifdef KTH_WITH_KEOKEN
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, keoken_manager_, signature_map_, signature_map_no_params_);
 #else
-                auto result = bitprim::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
+                auto result = kth::process_data(json_object, use_testnet_rules_, node_, signature_map_, signature_map_no_params_);
 #endif
 
                 result = result + "\u000a";
@@ -142,4 +142,4 @@ bool rpc_server::stopped() const {
     return stopped_;
 }
 
-}} // namespace bitprim::rpc
+}} // namespace kth::rpc

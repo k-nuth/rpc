@@ -1,27 +1,13 @@
-#
-# Copyright (c) 2017-2018 Bitprim Inc.
-#
-# This file is part of Bitprim.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# Copyright (c) 2016-2020 Knuth Project developers.
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 cmake_minimum_required(VERSION 3.4)
 
-# bitprim-rpc
+# kth-rpc
 #==============================================================================
-project(bitprim-rpc
+project(kth-rpc
         VERSION 0
         LANGUAGES CXX C)
 
@@ -29,7 +15,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Check for baseline language coverage in the compiler for the C++11 standard.
 #------------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Process options.
@@ -43,6 +29,7 @@ option(NO_CONAN_AT_ALL "Conan totally disabled." OFF)
 if (NO_CONAN_AT_ALL)
   set(USE_CONAN OFF)
 endif()
+
 
 # Inherit --enable-shared and define BOOST_TEST_DYN_LINK.
 #------------------------------------------------------------------------------
@@ -60,132 +47,143 @@ option(WITH_TESTS "Compile with unit tests." ON)
 #------------------------------------------------------------------------------
 option(WITH_CONSOLE "Compile console application." ON)
 
-set(BITPRIM_PROJECT_VERSION "-" CACHE STRING "Specify the Bitprim Project Version.")
-# message(${BITPRIM_PROJECT_VERSION})
 
 
-set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Cryptocurrency (x86_64|...).")
-message( STATUS "Bitprim: Compiling for ${MICROARCHITECTURE}")
-# add_definitions(-DBITPRIM_MICROARCHITECTURE=${MICROARCHITECTURE})
-# add_definitions(-DBITPRIM_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
+
+set(KTH_PROJECT_VERSION "-" CACHE STRING "Specify the Knuth Project Version.")
+# message(${KTH_PROJECT_VERSION})
+message( STATUS "Knuth: Compiling version ${KTH_PROJECT_VERSION}")
+
+set(MICROARCHITECTURE "x86_64" CACHE STRING "Specify the Microarchitecture (x86_64|...).")
+message( STATUS "Knuth: Compiling for ${MICROARCHITECTURE}")
+# add_definitions(-DKTH_MICROARCHITECTURE=${MICROARCHITECTURE})
+# add_definitions(-DKTH_MICROARCHITECTURE_STR="${MICROARCHITECTURE}")
+
+set(MARCH_ID "" CACHE STRING "Specify the Microarchitecture ID (x86_64|...).")
+message( STATUS "Knuth: Compiling for Microarchitecture ID ${MARCH_ID}")
+
+message( STATUS "Knuth: CONAN_CXX_FLAGS ${CONAN_CXX_FLAGS}")
+message( STATUS "Knuth: CONAN_C_FLAGS ${CONAN_C_FLAGS}")
+
+
 
 # Implement --with-keoken and declare WITH_KEOKEN.
 #------------------------------------------------------------------------------
 option(WITH_KEOKEN "Keoken enabled." OFF)
 if (WITH_KEOKEN)
-  message(STATUS "Bitprim: Keoken enabled")
-  add_definitions(-DBITPRIM_WITH_KEOKEN)
+  message(STATUS "Knuth: Keoken enabled")
+  add_definitions(-DKTH_WITH_KEOKEN)
 endif()
 
 # Implement --with-mempool and declare WITH_MEMPOOL.
 #------------------------------------------------------------------------------
 option(WITH_MEMPOOL "Mempool enabled." OFF)
 if (WITH_MEMPOOL)
-  message(STATUS "Bitprim: Mempool enabled")
-  add_definitions(-DBITPRIM_WITH_MEMPOOL)
+  message(STATUS "Knuth: Mempool enabled")
+  add_definitions(-DKTH_WITH_MEMPOOL)
 endif()
 
 # Implement --use-domain and declare USE_DOMAIN.
 #------------------------------------------------------------------------------
 option(USE_DOMAIN "Domain enabled." ON)
 if (USE_DOMAIN)
-  message(STATUS "Bitprim: Using Domain enabled")
-  add_definitions(-DBITPRIM_USE_DOMAIN)
+  message(STATUS "Knuth: Using Domain enabled")
+  add_definitions(-DKTH_USE_DOMAIN)
 endif()
 
 # Implement and declare DB_TRANSACTION_UNCONFIRMED.
 #------------------------------------------------------------------------------
 option(DB_TRANSACTION_UNCONFIRMED "DB Transactions Unconfirmed enabled." OFF)
 if (DB_TRANSACTION_UNCONFIRMED)
-  message(STATUS "Bitprim: DB Transactions Unconfirmed enabled")
-  add_definitions(-DBITPRIM_DB_TRANSACTION_UNCONFIRMED)
+  message(STATUS "Knuth: DB Transactions Unconfirmed enabled")
+  add_definitions(-DKTH_DB_TRANSACTION_UNCONFIRMED)
 endif()
 
 # Implement and declare DB_SPENDS.
 #------------------------------------------------------------------------------
 option(DB_SPENDS "DB Spends enabled." OFF)
 if (DB_SPENDS)
-  message(STATUS "Bitprim: DB Spends enabled")
-  add_definitions(-DBITPRIM_DB_SPENDS)
+  message(STATUS "Knuth: DB Spends enabled")
+  add_definitions(-DKTH_DB_SPENDS)
 endif()
 
 # Implement and declare DB_HISTORY.
 #------------------------------------------------------------------------------
 option(DB_HISTORY "DB History enabled." OFF)
 if (DB_HISTORY)
-  message(STATUS "Bitprim: DB History enabled")
-  add_definitions(-DBITPRIM_DB_HISTORY)
+  message(STATUS "Knuth: DB History enabled")
+  add_definitions(-DKTH_DB_HISTORY)
 endif()
 
 # Implement and declare DB_STEALTH.
 #------------------------------------------------------------------------------
 option(DB_STEALTH "DB Stealth enabled." OFF)
 if (DB_STEALTH)
-  message(STATUS "Bitprim: DB Stealth enabled")
-  add_definitions(-DBITPRIM_DB_STEALTH)
+  message(STATUS "Knuth: DB Stealth enabled")
+  add_definitions(-DKTH_DB_STEALTH)
 endif()
 
-# Implement and declare DB_UNSPENT_LIBBITCOIN.
+# Implement and declare DB_UNSPENT_LEGACY.
 #------------------------------------------------------------------------------
-option(DB_UNSPENT_LIBBITCOIN "DB Unspent Libbitcoin enabled." OFF)
-if (DB_UNSPENT_LIBBITCOIN)
-  message(STATUS "Bitprim: DB Unspent Libbitcoin enabled")
-  add_definitions(-DBITPRIM_DB_UNSPENT_LIBBITCOIN)
+option(DB_UNSPENT_LEGACY "DB Unspent Legacy enabled." OFF)
+if (DB_UNSPENT_LEGACY)
+  message(STATUS "Knuth: DB Unspent Legacy enabled")
+  add_definitions(-DKTH_DB_UNSPENT_LEGACY)
 endif()
 
 # Implement and declare DB_LEGACY.
 #------------------------------------------------------------------------------
 option(DB_LEGACY "DB Legacy enabled." OFF)
 if (DB_LEGACY)
-  message(STATUS "Bitprim: DB Legacy enabled")
-  add_definitions(-DBITPRIM_DB_LEGACY)
+  message(STATUS "Knuth: DB Legacy enabled")
+  add_definitions(-DKTH_DB_LEGACY)
 endif()
 
 # Implement and declare DB_NEW.
 #------------------------------------------------------------------------------
 option(DB_NEW "DB New enabled." OFF)
 if (DB_NEW)
-  message(STATUS "Bitprim: DB New enabled")
-  add_definitions(-DBITPRIM_DB_NEW)
+  message(STATUS "Knuth: DB New enabled")
+  add_definitions(-DKTH_DB_NEW)
 endif()
 
 # Implement and declare DB_NEW_BLOCKS.
 #------------------------------------------------------------------------------
 option(DB_NEW_BLOCKS "DB Blocks New enabled." OFF)
 if (DB_NEW_BLOCKS)
-  message(STATUS "Bitprim: DB Blocks New enabled")
-  add_definitions(-DBITPRIM_DB_NEW_BLOCKS)
+  message(STATUS "Knuth: DB Blocks New enabled")
+  add_definitions(-DKTH_DB_NEW_BLOCKS)
 endif()
 
 # Implement and declare DB_NEW_FULL.
 #------------------------------------------------------------------------------
 option(DB_NEW_FULL "DB New Full enabled." OFF)
 if (DB_NEW_FULL)
-  message(STATUS "Bitprim: DB New Full enabled")
-  add_definitions(-DBITPRIM_DB_NEW_FULL)
+  message(STATUS "Knuth: DB New Full enabled")
+  add_definitions(-DKTH_DB_NEW_FULL)
 endif()
 
 set(CURRENCY "BCH" CACHE STRING "Specify the Cryptocurrency (BCH|BTC|LTC).")
 
 if (${CURRENCY} STREQUAL "BCH")
-  add_definitions(-DBITPRIM_CURRENCY_BCH)
+  add_definitions(-DKTH_CURRENCY_BCH)
 elseif (${CURRENCY} STREQUAL "BTC")
-  add_definitions(-DBITPRIM_CURRENCY_BTC)
+  add_definitions(-DKTH_CURRENCY_BTC)
 elseif (${CURRENCY} STREQUAL "LTC")
-  add_definitions(-DBITPRIM_CURRENCY_LTC)
+  add_definitions(-DKTH_CURRENCY_LTC)
 else()
   message(FATAL_ERROR "Invalid Cryptocurrency: ${CURRENCY}")
 endif()
 
-message(STATUS "Bitprim: Cryptocurrency: ${CURRENCY}")
+message(STATUS "Knuth: Cryptocurrency: ${CURRENCY}")
 
 
 # Conan infrastructure
 #==============================================================================
-if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/bitprimbuildinfo.cmake)
-    include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/bitprimbuildinfo.cmake)
+if(EXISTS ${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
+    include(${CMAKE_SOURCE_DIR}/ci_utils/cmake/knuthbuildinfo.cmake)
 else()
-    message( STATUS "bitprimbuildinfo doent exists")
+    message( STATUS "knuthbuildinfo doent exists")
 endif()
 
 
@@ -219,10 +217,10 @@ endif()
 
 
 if (NOT USE_CONAN)
-  # Require bitprim-node of at least version 0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require kth-node of at least version 0 and output ${kth_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
-  if (NOT TARGET bitprim-node)
-    find_package(bitprim-node 0 REQUIRED)
+  if (NOT TARGET kth-node)
+    find_package(kth-node 0 REQUIRED)
   endif()
 endif()
 
@@ -235,7 +233,7 @@ include(CheckCXXCompilerFlag)
 #------------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/ci_utils/cmake)
 
-include(BitprimTools)
+include(KnuthTools)
 
 
 # Warn on all stuff.
@@ -298,14 +296,14 @@ endif()
 # Build
 #==============================================================================
 
-# src/bitprim-rpc.la => ${libdir}
+# src/kth-rpc.la => ${libdir}
 #------------------------------------------------------------------------------
 set(MODE STATIC)
 if (ENABLE_SHARED)
   set(MODE SHARED)
 endif()
 
-add_library(bitprim-rpc ${MODE}
+add_library(kth-rpc ${MODE}
     src/messages/utils.cpp
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
@@ -313,43 +311,43 @@ add_library(bitprim-rpc ${MODE}
 )
 
 if (ENABLE_POSITION_INDEPENDENT_CODE) 
-  set_property(TARGET bitprim-rpc PROPERTY POSITION_INDEPENDENT_CODE ON)
+  set_property(TARGET kth-rpc PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif(ENABLE_POSITION_INDEPENDENT_CODE)
 
   
-target_include_directories(bitprim-rpc PUBLIC
+target_include_directories(kth-rpc PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
 
 
-target_compile_definitions(bitprim-rpc PUBLIC -DBITPRIM_PROJECT_VERSION="\\"${BITPRIM_PROJECT_VERSION}\\"") #TODO(fernando): manage with Conan????
+target_compile_definitions(kth-rpc PUBLIC -DKTH_PROJECT_VERSION="\\"${KTH_PROJECT_VERSION}\\"") #TODO(fernando): manage with Conan????
 
 if (NOT ENABLE_SHARED)
-  target_compile_definitions(bitprim-rpc PUBLIC -DBCT_STATIC -DBCN_STATIC -DBCR_STATIC -DBCB_STATIC -DBCD_STATIC -DBC_STATIC)
+  target_compile_definitions(kth-rpc PUBLIC -DBCT_STATIC -DBCN_STATIC -DBCR_STATIC -DBCB_STATIC -DBCD_STATIC -DBC_STATIC)
 endif()
 
 if (NOT MSVC)
-  target_compile_definitions(bitprim-rpc PUBLIC -DSYSCONFDIR=\"${SYSCONFDIR}\")
+  target_compile_definitions(kth-rpc PUBLIC -DSYSCONFDIR=\"${SYSCONFDIR}\")
 endif()
 
 if (NOT USE_CONAN)
-    target_link_libraries(bitprim-rpc PUBLIC bitprim-node)
+    target_link_libraries(kth-rpc PUBLIC kth-node)
 endif()
 
 if (NOT NO_CONAN_AT_ALL)
-  target_link_libraries(bitprim-rpc PUBLIC ${CONAN_LIBS})
+  target_link_libraries(kth-rpc PUBLIC ${CONAN_LIBS})
 elseif()
-  target_include_directories(bitprim-rpc PUBLIC ${ZeroMQ_INCLUDE_DIR})
-  target_link_libraries(bitprim-rpc PUBLIC ${ZeroMQ_LIBRARIES})
+  target_include_directories(kth-rpc PUBLIC ${ZeroMQ_INCLUDE_DIR})
+  target_link_libraries(kth-rpc PUBLIC ${ZeroMQ_LIBRARIES})
 endif()
 
 if (USE_CONAN)
   if (MINGW)
-    target_link_libraries(bitprim-rpc PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
+    target_link_libraries(kth-rpc PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
   endif()
 endif()
 
-_group_sources(bitprim-rpc "${CMAKE_CURRENT_LIST_DIR}")
+_group_sources(kth-rpc "${CMAKE_CURRENT_LIST_DIR}")
 
 # Tests
 #==============================================================================
@@ -358,7 +356,7 @@ if (WITH_TESTS)
     enable_testing()
 endif()
 
-# local: test/bitprim_rpc_test
+# local: test/kth_rpc_test
 #------------------------------------------------------------------------------
 if (WITH_TESTS)
 
@@ -366,29 +364,29 @@ if (WITH_TESTS)
       COMMAND ${CMAKE_CTEST_COMMAND} -C Debug --output-on-failure -R "test.+"
       COMMENT "Build and run all the unit tests.")
 
-  add_executable(bitprim_rpc_test
+  add_executable(kth_rpc_test
           test/rpc.cpp
           test/user_agent_dummy.cpp
   )
 
-  target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
+  target_link_libraries(kth_rpc_test PUBLIC kth-rpc)
 
-  # _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+  # _group_sources(kth_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-  add_test(NAME bitprim_rpc_test COMMAND bitprim_rpc_test)
+  add_test(NAME kth_rpc_test COMMAND kth_rpc_test)
 
-  add_dependencies(tests bitprim_rpc_test)
+  add_dependencies(tests kth_rpc_test)
 
 
 
-#  add_executable(bitprim_rpc_test
+#  add_executable(kth_rpc_test
 #          test/rpc.cpp
 #  )
 
-#  target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
-#  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+#  target_link_libraries(kth_rpc_test PUBLIC kth-rpc)
+#  _group_sources(kth_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-#  _add_tests(bitprim_rpc_test
+#  _add_tests(kth_rpc_test
 #          configuration_tests
 #          node_tests
 #          header_queue_tests
@@ -403,7 +401,7 @@ if (WITH_CONSOLE)
 
   add_executable(rpc.bn
           src/testing-main.cpp)
-  target_link_libraries(rpc.bn bitprim-rpc)
+  target_link_libraries(rpc.bn kth-rpc)
   set_target_properties(
           rpc.bn PROPERTIES
           FOLDER "rpc"
@@ -414,57 +412,57 @@ endif (WITH_CONSOLE)
 
 # Install
 #==============================================================================
-install(TARGETS bitprim-rpc
-        EXPORT bitprim-rpc
+install(TARGETS kth-rpc
+        EXPORT kth-rpc
         ARCHIVE DESTINATION lib)
 
-set(_bitprim_headers
-        bitprim/rpc.hpp
-        bitprim/rpc/define.hpp
-        bitprim/rpc/version.hpp
-        bitprim/rpc/http/server_http.hpp
-        bitprim/rpc/http/rpc_server.hpp
-        bitprim/rpc/json/json.hpp
-        bitprim/rpc/zmq/zmq_helper.hpp
-        bitprim/rpc/messages.hpp
-        bitprim/rpc/messages/messages.hpp
-        bitprim/rpc/messages/blockchain/getrawtransaction.hpp
-        bitprim/rpc/messages/blockchain/getaddressbalance.hpp
-        bitprim/rpc/messages/blockchain/getspentinfo.hpp
-        bitprim/rpc/messages/blockchain/getaddresstxids.hpp
-        bitprim/rpc/messages/blockchain/getaddressdeltas.hpp
-        bitprim/rpc/messages/blockchain/getaddressutxos.hpp
-        bitprim/rpc/messages/blockchain/getblockhashes.hpp
-        bitprim/rpc/messages/blockchain/getbestblockhash.hpp
-        bitprim/rpc/messages/blockchain/getblock.hpp
-        bitprim/rpc/messages/blockchain/getblockhash.hpp
-        bitprim/rpc/messages/blockchain/getblockchaininfo.hpp
-        bitprim/rpc/messages/blockchain/getblockheader.hpp
-        bitprim/rpc/messages/blockchain/getblockcount.hpp
-        bitprim/rpc/messages/blockchain/getdifficulty.hpp
-        bitprim/rpc/messages/blockchain/getchaintips.hpp
-        bitprim/rpc/messages/blockchain/getaddressmempool.hpp
+set(_kth_headers
+        kth/rpc.hpp
+        kth/rpc/define.hpp
+        kth/rpc/version.hpp
+        kth/rpc/http/server_http.hpp
+        kth/rpc/http/rpc_server.hpp
+        kth/rpc/json/json.hpp
+        kth/rpc/zmq/zmq_helper.hpp
+        kth/rpc/messages.hpp
+        kth/rpc/messages/messages.hpp
+        kth/rpc/messages/blockchain/getrawtransaction.hpp
+        kth/rpc/messages/blockchain/getaddressbalance.hpp
+        kth/rpc/messages/blockchain/getspentinfo.hpp
+        kth/rpc/messages/blockchain/getaddresstxids.hpp
+        kth/rpc/messages/blockchain/getaddressdeltas.hpp
+        kth/rpc/messages/blockchain/getaddressutxos.hpp
+        kth/rpc/messages/blockchain/getblockhashes.hpp
+        kth/rpc/messages/blockchain/getbestblockhash.hpp
+        kth/rpc/messages/blockchain/getblock.hpp
+        kth/rpc/messages/blockchain/getblockhash.hpp
+        kth/rpc/messages/blockchain/getblockchaininfo.hpp
+        kth/rpc/messages/blockchain/getblockheader.hpp
+        kth/rpc/messages/blockchain/getblockcount.hpp
+        kth/rpc/messages/blockchain/getdifficulty.hpp
+        kth/rpc/messages/blockchain/getchaintips.hpp
+        kth/rpc/messages/blockchain/getaddressmempool.hpp
         
-        bitprim/rpc/messages/mining/getmininginfo.hpp
-        bitprim/rpc/messages/util/getinfo.hpp
-        bitprim/rpc/messages/util/getnetworkinfo.hpp
-        bitprim/rpc/messages/util/validateaddress.hpp
-        bitprim/rpc/messages/utils.hpp
-        bitprim/rpc/messages/error_codes.hpp
+        kth/rpc/messages/mining/getmininginfo.hpp
+        kth/rpc/messages/util/getinfo.hpp
+        kth/rpc/messages/util/getnetworkinfo.hpp
+        kth/rpc/messages/util/validateaddress.hpp
+        kth/rpc/messages/utils.hpp
+        kth/rpc/messages/error_codes.hpp
 
-        bitprim/rpc/messages/mining/submitblock.hpp
-        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
+        kth/rpc/messages/mining/submitblock.hpp
+        kth/rpc/messages/wallet/sendrawtransaction.hpp
 
 )
 
 if (WITH_MEMPOOL)
-    set(_bitprim_headers
-        ${_bitprim_headers}
-        bitprim/rpc/messages/mining/getblocktemplate.hpp
+    set(_kth_headers
+        ${_kth_headers}
+        kth/rpc/messages/mining/getblocktemplate.hpp
     )
 endif()
 
-foreach (_header ${_bitprim_headers})
+foreach (_header ${_kth_headers})
   get_filename_component(_directory "${_header}" DIRECTORY)
   install(FILES "include/${_header}" DESTINATION "include/${_directory}")
 endforeach()
@@ -473,9 +471,9 @@ endforeach()
 #==============================================================================
 include(CMakePackageConfigHelpers)
 
-export(EXPORT bitprim-rpc
-        FILE "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcTargets.cmake")
-export(PACKAGE bitprim-rpc)
+export(EXPORT kth-rpc
+        FILE "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcTargets.cmake")
+export(PACKAGE kth-rpc)
 
 if (UNIX)
   set(_config_package_location "lib/cmake")
@@ -483,21 +481,21 @@ elseif (WIN32)
   set(_config_package_location "cmake")
 endif()
 
-install(EXPORT bitprim-rpc
-        FILE bitprim-rpcTargets.cmake
+install(EXPORT kth-rpc
+        FILE kth-rpcTargets.cmake
         DESTINATION ${_config_package_location})
 
-configure_file(bitprim-rpcConfig.cmake.in
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfig.cmake"
+configure_file(kth-rpcConfig.cmake.in
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfig.cmake"
         @ONLY)
 
 write_basic_package_version_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
         COMPATIBILITY AnyNewerVersion)
 
 install(
         FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfigVersion.cmake"
         DESTINATION ${_config_package_location})
