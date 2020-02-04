@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,8 +18,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_UTILS_HPP_
-#define BITPRIM_RPC_MESSAGES_UTILS_HPP_
+#ifndef KTH_RPC_MESSAGES_UTILS_HPP_
+#define KTH_RPC_MESSAGES_UTILS_HPP_
 
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 #include <boost/thread/latch.hpp>
@@ -31,7 +31,7 @@ double bits_to_difficulty (const uint32_t & bits);
     //libbitcoin::chain::history::list expand(libbitcoin::chain::history_compact::list& compact);
 
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW_BLOCKS) || defined(KTH_DB_NEW_FULL)
 template <typename Blockchain>
 libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, uint32_t& out_time,Blockchain const& chain) {
     libbitcoin::code result;
@@ -49,7 +49,7 @@ libbitcoin::code getblockhash_time(size_t i, libbitcoin::hash_digest& out_hash, 
 }
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW) 
 
 template <typename Blockchain>
 libbitcoin::code getblockheader(size_t i, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
@@ -95,7 +95,7 @@ std::tuple<bool, size_t, double> get_last_block_difficulty(Blockchain const& cha
     return std::make_tuple(success, top_height, diff);
 }
 
-#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+#endif // defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW) 
 
 
 inline

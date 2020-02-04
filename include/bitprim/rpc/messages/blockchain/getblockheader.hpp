@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -97,10 +97,10 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
                 }
             } else {
                 if (ec == libbitcoin::error::not_found) {
-                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "Block not found";
                 } else {
-                    error = bitprim::RPC_INTERNAL_ERROR;
+                    error = knuth::RPC_INTERNAL_ERROR;
                     error_code = "Can't read block from disk";
                 }
             }
@@ -108,7 +108,7 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
         });
         latch.count_down_and_wait();
     } else {
-        error = bitprim::RPC_INVALID_PARAMETER;
+        error = knuth::RPC_INVALID_PARAMETER;
         error_code = "Invalid block hash";
     }
 
@@ -129,7 +129,7 @@ nlohmann::json process_getblockheader(nlohmann::json const& json_in, Blockchain 
     std::string hash;
     bool verbose;
     if (!json_in_getblockheader(json_in, hash, verbose)) { //if false return error
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockheader \"hash\" ( verbose )\n"
             "\nIf verbose is false, returns a string that is serialized, "
             "hex-encoded data for blockheader 'hash'.\n"
@@ -185,4 +185,4 @@ nlohmann::json process_getblockheader(nlohmann::json const& json_in, Blockchain 
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
+#endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_

@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017 Bitprim developers (see AUTHORS)
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_UTIL_GETNETWORKINFO_HPP_
-#define BITPRIM_RPC_MESSAGES_UTIL_GETNETWORKINFO_HPP_
+#ifndef KTH_RPC_MESSAGES_UTIL_GETNETWORKINFO_HPP_
+#define KTH_RPC_MESSAGES_UTIL_GETNETWORKINFO_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/network/user_agent.hpp>
 #include <bitcoin/node/full_node.hpp>
 
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -35,7 +35,7 @@ bool getnetworkinfo(nlohmann::json& json_object, int& error, std::string& error_
 {
     json_object["version"] = 001100;
 
-    // json_object["subversion"] = "/Bitprim:"+ std::string(BITPRIM_CORE_VERSION);
+    // json_object["subversion"] = "/Knuth:"+ std::string(KTH_CORE_VERSION);
     json_object["subversion"] = libbitcoin::network::get_user_agent();
 
     json_object["protocolversion"] = node.network_settings().protocol_maximum;

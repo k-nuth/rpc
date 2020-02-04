@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,11 +18,11 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MANAGER_HPP_
-#define BITPRIM_RPC_MANAGER_HPP_
+#ifndef KTH_RPC_MANAGER_HPP_
+#define KTH_RPC_MANAGER_HPP_
 
-#include <bitprim/rpc/http/rpc_server.hpp>
-#include <bitprim/rpc/zmq/zmq_helper.hpp>
+#include <knuth/rpc/http/rpc_server.hpp>
+#include <knuth/rpc/zmq/zmq_helper.hpp>
 
 namespace bitprim { namespace rpc {
 
@@ -32,7 +32,7 @@ public:
             , libbitcoin::node::full_node& node
             , uint32_t rpc_port
             , uint32_t subscriber_port
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
             , size_t keoken_genesis_height
 #endif
             , std::unordered_set<std::string> const& rpc_allowed_ips
@@ -49,7 +49,7 @@ private:
    rpc_server http_;
 };
 
-}} //namespace bitprim::rpc
+}} //namespace knuth::rpc
 
-#endif //BITPRIM_RPC_MANAGER_HPP_
+#endif //KTH_RPC_MANAGER_HPP_
 

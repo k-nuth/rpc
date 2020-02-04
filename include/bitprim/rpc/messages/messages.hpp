@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,72 +18,72 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
-#define BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
+#ifndef KTH_RPC_MESSAGES_MESSAGES_HPP_
+#define KTH_RPC_MESSAGES_MESSAGES_HPP_
 
-#if (defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)) || defined(BITPRIM_DB_NEW_FULL)
-#include <bitprim/rpc/messages/blockchain/getaddressbalance.hpp>
+#if (defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS) && defined(KTH_DB_HISTORY)) || defined(KTH_DB_NEW_FULL)
+#include <knuth/rpc/messages/blockchain/getaddressbalance.hpp>
 #endif
 
-#if (defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)) || defined(BITPRIM_DB_NEW_FULL)
-#include <bitprim/rpc/messages/blockchain/getrawtransaction.hpp>
-#include <bitprim/rpc/messages/blockchain/getspentinfo.hpp>
+#if (defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS)) || defined(KTH_DB_NEW_FULL)
+#include <knuth/rpc/messages/blockchain/getrawtransaction.hpp>
+#include <knuth/rpc/messages/blockchain/getspentinfo.hpp>
 #endif
 
-#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED) || defined(BITPRIM_DB_NEW_FULL)
-#include <bitprim/rpc/messages/blockchain/getaddressmempool.hpp>
-#include <bitprim/rpc/messages/blockchain/getaddresstxids.hpp>
+#if defined(KTH_DB_TRANSACTION_UNCONFIRMED) || defined(KTH_DB_NEW_FULL)
+#include <knuth/rpc/messages/blockchain/getaddressmempool.hpp>
+#include <knuth/rpc/messages/blockchain/getaddresstxids.hpp>
 #endif
 
-#if (defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)) || defined(BITPRIM_DB_NEW_FULL)
-#include <bitprim/rpc/messages/blockchain/getaddressdeltas.hpp>
-#include <bitprim/rpc/messages/blockchain/getaddressutxos.hpp>
+#if (defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS) && defined(KTH_DB_HISTORY)) || defined(KTH_DB_NEW_FULL)
+#include <knuth/rpc/messages/blockchain/getaddressdeltas.hpp>
+#include <knuth/rpc/messages/blockchain/getaddressutxos.hpp>
 #endif
 
-#include <bitprim/rpc/messages/blockchain/getbestblockhash.hpp>
+#include <knuth/rpc/messages/blockchain/getbestblockhash.hpp>
 
-#include <bitprim/rpc/messages/blockchain/getblockchaininfo.hpp>
+#include <knuth/rpc/messages/blockchain/getblockchaininfo.hpp>
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL) 
-#include <bitprim/rpc/messages/blockchain/getblockhashes.hpp>
-#include <bitprim/rpc/messages/blockchain/getblock.hpp>
-#include <bitprim/rpc/messages/blockchain/getchaintips.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockheader.hpp>
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW_BLOCKS) || defined(KTH_DB_NEW_FULL) 
+#include <knuth/rpc/messages/blockchain/getblockhashes.hpp>
+#include <knuth/rpc/messages/blockchain/getblock.hpp>
+#include <knuth/rpc/messages/blockchain/getchaintips.hpp>
+#include <knuth/rpc/messages/blockchain/getblockheader.hpp>
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
-#include <bitprim/rpc/messages/util/getinfo.hpp>
-#include <bitprim/rpc/messages/mining/getmininginfo.hpp>
-#include <bitprim/rpc/messages/blockchain/getdifficulty.hpp>
-#endif // defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW) 
+#include <knuth/rpc/messages/util/getinfo.hpp>
+#include <knuth/rpc/messages/mining/getmininginfo.hpp>
+#include <knuth/rpc/messages/blockchain/getdifficulty.hpp>
+#endif // defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW) 
 
 
-#include <bitprim/rpc/messages/blockchain/getblockhash.hpp>
-#include <bitprim/rpc/messages/blockchain/getblockcount.hpp>
+#include <knuth/rpc/messages/blockchain/getblockhash.hpp>
+#include <knuth/rpc/messages/blockchain/getblockcount.hpp>
 
-#ifdef BITPRIM_WITH_MEMPOOL
-#include <bitprim/rpc/messages/mining/getblocktemplate.hpp>
+#ifdef KTH_WITH_MEMPOOL
+#include <knuth/rpc/messages/mining/getblocktemplate.hpp>
 #endif
 
-#include <bitprim/rpc/messages/mining/submitblock.hpp>
-#include <bitprim/rpc/messages/wallet/sendrawtransaction.hpp>
+#include <knuth/rpc/messages/mining/submitblock.hpp>
+#include <knuth/rpc/messages/wallet/sendrawtransaction.hpp>
 
-#include <bitprim/rpc/messages/util/validateaddress.hpp>
-#include <bitprim/rpc/messages/util/getnetworkinfo.hpp>
-#include <bitprim/rpc/messages/wallet/createtransaction.hpp>
-#include <bitprim/rpc/messages/wallet/createsignature.hpp>
-#include <bitprim/rpc/messages/wallet/setsignature.hpp>
-#include <bitprim/rpc/messages/wallet/newwallet.hpp>
+#include <knuth/rpc/messages/util/validateaddress.hpp>
+#include <knuth/rpc/messages/util/getnetworkinfo.hpp>
+#include <knuth/rpc/messages/wallet/createtransaction.hpp>
+#include <knuth/rpc/messages/wallet/createsignature.hpp>
+#include <knuth/rpc/messages/wallet/setsignature.hpp>
+#include <knuth/rpc/messages/wallet/newwallet.hpp>
 
-#ifdef BITPRIM_WITH_KEOKEN
-#include <bitprim/rpc/messages/keoken/createasset.hpp>
-#include <bitprim/rpc/messages/keoken/sendtoken.hpp>
-#include <bitprim/rpc/messages/keoken/initkeoken.hpp>
-#include <bitprim/rpc/messages/keoken/getassets.hpp>
-#include <bitprim/rpc/messages/keoken/getassetsbyaddress.hpp>
-#include <bitprim/rpc/messages/keoken/getallassets.hpp>
-#include <bitprim/rpc/messages/keoken/getkeokenaddress.hpp>
-#include <bitprim/rpc/messages/keoken/getkeokenblock.hpp>
-#endif //BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
+#include <knuth/rpc/messages/keoken/createasset.hpp>
+#include <knuth/rpc/messages/keoken/sendtoken.hpp>
+#include <knuth/rpc/messages/keoken/initkeoken.hpp>
+#include <knuth/rpc/messages/keoken/getassets.hpp>
+#include <knuth/rpc/messages/keoken/getassetsbyaddress.hpp>
+#include <knuth/rpc/messages/keoken/getallassets.hpp>
+#include <knuth/rpc/messages/keoken/getkeokenaddress.hpp>
+#include <knuth/rpc/messages/keoken/getkeokenblock.hpp>
+#endif //KTH_WITH_KEOKEN
 
-#endif //BITPRIM_RPC_MESSAGES_MESSAGES_HPP_
+#endif //KTH_RPC_MESSAGES_MESSAGES_HPP_

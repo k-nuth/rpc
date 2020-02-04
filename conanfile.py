@@ -1,32 +1,18 @@
-#
-# Copyright (c) 2017-2018 Bitprim Inc.
-#
-# This file is part of Bitprim.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# Copyright (c) 2016-2020 Knuth Project developers.
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 import os
 from conans import CMake
 from ci_utils import option_on_off, get_version, get_conan_req_version, march_conan_manip, pass_march_to_compiler
-from ci_utils import BitprimConanFile
+from ci_utils import KnuthConanFile
 
-class BitprimRPCConan(BitprimConanFile):
-    name = "bitprim-rpc"
+class KnuthRPCConan(KnuthConanFile):
+    name = "rpc"
     # version = get_version()
     license = "http://www.boost.org/users/license.html"
-    url = "https://github.com/bitprim/bitprim-rpc"
+    url = "https://github.com/k-nuth/rpc"
     description = "Bitprim RPC (HTTP+JSON) API"
     settings = "os", "compiler", "build_type", "arch"
 
@@ -69,7 +55,7 @@ class BitprimRPCConan(BitprimConanFile):
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
-    exports_sources = "src/*", "CMakeLists.txt", "cmake/*", "bitprim-rpcConfig.cmake.in", "bitprimbuildinfo.cmake", "include/*", "test/*"
+    exports_sources = "src/*", "CMakeLists.txt", "cmake/*", "bitprim-rpcConfig.cmake.in", "knuthbuildinfo.cmake", "include/*", "test/*"
     package_files = "build/lbitprim-rpc.a"
     build_policy = "missing"
 
@@ -79,12 +65,12 @@ class BitprimRPCConan(BitprimConanFile):
 
     def requirements(self):
         if self.options.use_domain:
-            self.requires("boost/1.69.0@bitprim/stable")
+            self.requires("boost/1.69.0@kth/stable")
         else:
-            self.requires("boost/1.66.0@bitprim/stable")
+            self.requires("boost/1.66.0@kth/stable")
 
-        self.requires("libzmq/4.2.2@bitprim/stable")
-        self.requires("bitprim-node/0.X@%s/%s" % (self.user, self.channel))
+        self.requires("libzmq/4.2.2@kth/stable")
+        self.requires("kth-node/0.X@%s/%s" % (self.user, self.channel))
 
     def config_options(self):
         if self.settings.arch != "x86_64":
@@ -98,7 +84,7 @@ class BitprimRPCConan(BitprimConanFile):
                 self.options.remove("shared")
 
     def configure(self):
-        BitprimConanFile.configure(self)
+        KnuthConanFile.configure(self)
 
         if self.settings.arch == "x86_64" and self.options.microarchitecture == "_DUMMY_":
             del self.options.fix_march
@@ -132,7 +118,7 @@ class BitprimRPCConan(BitprimConanFile):
         self.output.info("Compiling for DB: %s" % (self.options.db,))
 
     def package_id(self):
-        BitprimConanFile.package_id(self)
+        KnuthConanFile.package_id(self)
         
         self.info.options.with_tests = "ANY"
         self.info.options.with_console = "ANY"
@@ -167,7 +153,7 @@ class BitprimRPCConan(BitprimConanFile):
             cmake.definitions["DB_SPENDS"] = option_on_off(False)
             cmake.definitions["DB_HISTORY"] = option_on_off(False)
             cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(True)
+            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(True)
             cmake.definitions["DB_LEGACY"] = option_on_off(True)
             cmake.definitions["DB_NEW"] = option_on_off(False)
             cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
@@ -177,7 +163,7 @@ class BitprimRPCConan(BitprimConanFile):
             cmake.definitions["DB_SPENDS"] = option_on_off(True)
             cmake.definitions["DB_HISTORY"] = option_on_off(True)
             cmake.definitions["DB_STEALTH"] = option_on_off(True)
-            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(True)
+            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(True)
             cmake.definitions["DB_LEGACY"] = option_on_off(True)
             cmake.definitions["DB_NEW"] = option_on_off(False)
             cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
@@ -187,7 +173,7 @@ class BitprimRPCConan(BitprimConanFile):
             cmake.definitions["DB_SPENDS"] = option_on_off(False)
             cmake.definitions["DB_HISTORY"] = option_on_off(False)
             cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(False)
+            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(False)
             cmake.definitions["DB_LEGACY"] = option_on_off(False)
             cmake.definitions["DB_NEW"] = option_on_off(True)
             cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
@@ -197,7 +183,7 @@ class BitprimRPCConan(BitprimConanFile):
             cmake.definitions["DB_SPENDS"] = option_on_off(False)
             cmake.definitions["DB_HISTORY"] = option_on_off(False)
             cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(False)
+            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(False)
             cmake.definitions["DB_LEGACY"] = option_on_off(False)
             cmake.definitions["DB_NEW"] = option_on_off(True)
             cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(True)
@@ -207,7 +193,7 @@ class BitprimRPCConan(BitprimConanFile):
             cmake.definitions["DB_SPENDS"] = option_on_off(False)
             cmake.definitions["DB_HISTORY"] = option_on_off(False)
             cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(False)
+            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(False)
             cmake.definitions["DB_LEGACY"] = option_on_off(False)
             cmake.definitions["DB_NEW"] = option_on_off(True)
             cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
@@ -227,7 +213,7 @@ class BitprimRPCConan(BitprimConanFile):
 
 
         cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
-        cmake.definitions["BITPRIM_PROJECT_VERSION"] = self.version
+        cmake.definitions["KTH_PROJECT_VERSION"] = self.version
 
         if self.settings.compiler == "gcc":
             if float(str(self.settings.compiler.version)) >= 5:

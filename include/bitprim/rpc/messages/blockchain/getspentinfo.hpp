@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,13 +18,13 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -50,7 +50,7 @@ bool json_in_getspentinfo(nlohmann::json const& json_object, std::string& tx_id,
 template <typename Blockchain>
 bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, size_t const& index, Blockchain const& chain)
 {
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;
@@ -80,7 +80,7 @@ bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_co
 
             }
             else {
-                error = bitprim::RPC_INVALID_PARAMETER;
+                error = knuth::RPC_INVALID_PARAMETER;
                 error_code = "Unable to get spent info";
             }
             latch.count_down();
@@ -88,7 +88,7 @@ bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_co
         latch.count_down_and_wait();
     }
     else {
-        error = bitprim::RPC_INVALID_PARAMETER;
+        error = knuth::RPC_INVALID_PARAMETER;
         error_code = "Invalid transaction hash";
     }
 
@@ -110,7 +110,7 @@ nlohmann::json process_getspentinfo(nlohmann::json const& json_in, Blockchain co
     size_t index;
     if (!json_in_getspentinfo(json_in, tx_id, index)) //if false return error
     {
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getspentinfo\n"
             "\nReturns the txid and index where an output is spent.\n"
             "\nArguments:\n"
@@ -144,4 +144,4 @@ nlohmann::json process_getspentinfo(nlohmann::json const& json_in, Blockchain co
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
+#endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_

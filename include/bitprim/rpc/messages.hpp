@@ -1,50 +1,36 @@
-/**
- * Copyright (c) 2017-2018 Bitprim Inc.
- *
- * This file is part of Bitprim.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITPRIM_RPC_MESSAGES_HPP_
-#define BITPRIM_RPC_MESSAGES_HPP_
+
+#ifndef KTH_RPC_MESSAGES_HPP_
+#define KTH_RPC_MESSAGES_HPP_
 
 #include <boost/thread/latch.hpp>
 
-#ifdef BITPRIM_USE_DOMAIN
+#ifdef KTH_USE_DOMAIN
 #include <bitcoin/infrastructure/error.hpp>
 #else
 #include <bitcoin/bitcoin/error.hpp>
-#endif // BITPRIM_USE_DOMAIN
+#endif // KTH_USE_DOMAIN
 
 
 #include <bitcoin/bitcoin/multi_crypto_support.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 // #include <bitcoin/node/full_node.hpp>
 
-#include <bitprim/rpc/json/json.hpp>
-#include <bitprim/rpc/messages/messages.hpp>
+#include <knuth/rpc/json/json.hpp>
+#include <knuth/rpc/messages/messages.hpp>
 
-#ifdef BITPRIM_WITH_KEOKEN
-#include <bitprim/keoken/manager.hpp>
-#include <bitprim/keoken/memory_state.hpp>
+#ifdef KTH_WITH_KEOKEN
+#include <knuth/keoken/manager.hpp>
+#include <knuth/keoken/memory_state.hpp>
 #endif
 
 namespace bitprim {
 
-// #ifdef BITPRIM_WITH_KEOKEN
-//     using keoken_manager_t = bitprim::keoken::manager<bitprim::keoken::memory_state>;
+// #ifdef KTH_WITH_KEOKEN
+//     using keoken_manager_t = knuth::keoken::manager<knuth::keoken::memory_state>;
 // #endif
 
 template <typename Blockchain>
@@ -62,32 +48,32 @@ signature_map<Blockchain> load_signature_map() {
           { "getblockhash", process_getblockhash }
         , { "validateaddress", process_validateaddress }
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW_BLOCKS) || defined(KTH_DB_NEW_FULL)
         , { "getblockhashes", process_getblockhashes }
         , { "getblock", process_getblock }
         , { "getblockheader", process_getblockheader }
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW) 
 #endif
 
-#if defined(BITPRIM_DB_TRANSACTION_UNCONFIRMED) || defined(BITPRIM_DB_NEW_FULL)
+#if defined(KTH_DB_TRANSACTION_UNCONFIRMED) || defined(KTH_DB_NEW_FULL)
         , { "getaddresstxids", process_getaddresstxids }
         , { "getaddressmempool", process_getaddressmempool }
 #endif
 
-#if (defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS)) || defined(BITPRIM_DB_NEW_FULL)
+#if (defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS)) || defined(KTH_DB_NEW_FULL)
         , { "getrawtransaction", process_getrawtransaction}
         , { "getspentinfo", process_getspentinfo }
 #endif        
 
-#if (defined(BITPRIM_DB_LEGACY) && defined(BITPRIM_DB_SPENDS) && defined(BITPRIM_DB_HISTORY)) || defined(BITPRIM_DB_NEW_FULL)
+#if (defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS) && defined(KTH_DB_HISTORY)) || defined(KTH_DB_NEW_FULL)
         , { "getaddressbalance", process_getaddressbalance }
         , { "getaddressdeltas", process_getaddressdeltas }
         , { "getaddressutxos", process_getaddressutxos }
 #endif        
 
-#ifdef BITPRIM_WITH_MEMPOOL
+#ifdef KTH_WITH_MEMPOOL
         , { "getblocktemplate", process_getblocktemplate }
 #endif
     };
@@ -100,11 +86,11 @@ signature_map<Blockchain> load_signature_map_no_params() {
           { "getbestblockhash", process_getbestblockhash }
         , { "getblockchaininfo", process_getblockchaininfo }
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW_BLOCKS) || defined(BITPRIM_DB_NEW_FULL)
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW_BLOCKS) || defined(KTH_DB_NEW_FULL)
         , { "getchaintips", process_getchaintips }
 #endif
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW) 
         , { "getmininginfo", process_getmininginfo }
         , { "getdifficulty", process_getdifficulty }
 #endif
@@ -114,7 +100,7 @@ signature_map<Blockchain> load_signature_map_no_params() {
 }
 
 
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
 template <typename Node, typename Blockchain, typename KeokenManager>
 nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_testnet_rules, Node& node, KeokenManager& keoken_manager, signature_map<Blockchain> const& signature_, signature_map<Blockchain> const& no_params_map) {
 #else
@@ -145,7 +131,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             return  it_n->second(json_in, node.chain_bitprim(), use_testnet_rules);
         }
 
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
         if (key == "initkeoken")
             return process_initkeoken(json_in, keoken_manager, use_testnet_rules);
 
@@ -157,9 +143,9 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
         if (key == "getassetsbyaddress")
             return process_getassetsbyaddress(json_in, keoken_manager, use_testnet_rules);
-#endif //BITPRIM_WITH_KEOKEN
+#endif //KTH_WITH_KEOKEN
 
-#if defined(BITPRIM_DB_LEGACY) || defined(BITPRIM_DB_NEW) 
+#if defined(KTH_DB_LEGACY) || defined(KTH_DB_NEW) 
         if (key == "getinfo")
             return process_getinfo(json_in, node, use_testnet_rules);
 #endif
@@ -186,7 +172,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             if (key == "newwallet")
                 return process_newwallet(json_in, node.chain_bitprim(), use_testnet_rules);
 
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
             if (key == "createasset")
                 return process_createasset(json_in, use_testnet_rules);
 
@@ -199,17 +185,17 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
             if (key == "getkeokenblock")
                 return process_getkeokenblock(json_in, node.chain_bitprim(), use_testnet_rules);
 
-#endif //BITPRIM_WITH_KEOKEN
+#endif //KTH_WITH_KEOKEN
 
             nlohmann::json container;
             container["result"];
-            container["error"]["code"] = bitprim::RPC_INVALID_REQUEST;
+            container["error"]["code"] = knuth::RPC_INVALID_REQUEST;
             container["error"]["message"] = "Invalid or incomplete command";
             return container;
         } else {
             nlohmann::json container;
             container["result"];
-            container["error"]["code"] = bitprim::RPC_INVALID_REQUEST;
+            container["error"]["code"] = knuth::RPC_INVALID_REQUEST;
             container["error"]["message"] = "Invalid or incomplete command";
             return container;
         }
@@ -221,7 +207,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
     return nlohmann::json(); //TODO: error!
 }
 
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
 template <typename Node, typename Blockchain, typename KeokenManager>
 std::string process_data(nlohmann::json const& json_object, bool use_testnet_rules, Node& node, KeokenManager& keoken_manager, signature_map<Blockchain> const& signature_, signature_map<Blockchain> const& no_params_map) {
 #else
@@ -234,9 +220,9 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
     if (json_object.is_array()) {
         nlohmann::json res;
         size_t i = 0;
-        for (const auto & method : json_object) {
+        for (auto const & method : json_object) {
 
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
             res[i] = process_data_element(method, use_testnet_rules, node, keoken_manager, signature_, no_params_map);
 #else
             res[i] = process_data_element(method, use_testnet_rules, node, signature_, no_params_map);
@@ -246,7 +232,7 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
         return res.dump();
     }
     else {
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
         return process_data_element(json_object, use_testnet_rules, node, keoken_manager, signature_, no_params_map).dump();
 #else
         return process_data_element(json_object, use_testnet_rules, node, signature_, no_params_map).dump();
@@ -256,4 +242,4 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_HPP_
+#endif //KTH_RPC_MESSAGES_HPP_

@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,17 +18,17 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_GETASSETS_HPP_
-#define BITPRIM_RPC_MESSAGES_GETASSETS_HPP_
+#ifndef KTH_RPC_MESSAGES_GETASSETS_HPP_
+#define KTH_RPC_MESSAGES_GETASSETS_HPP_
 
 #include <boost/thread/latch.hpp>
 
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/json/json.hpp>
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
-#include <bitprim/rpc/messages/keoken/keokenutils.hpp>
+#include <knuth/rpc/json/json.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/keoken/keokenutils.hpp>
 
 namespace bitprim {
 
@@ -68,4 +68,4 @@ nlohmann::json process_getassets(nlohmann::json const& json_in, KeokenManager co
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_GETASSETS_HPP_
+#endif //KTH_RPC_MESSAGES_GETASSETS_HPP_

@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,24 +18,24 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_NEWWALLET_HPP_
-#define BITPRIM_RPC_MESSAGES_NEWWALLET_HPP_
+#ifndef KTH_RPC_MESSAGES_NEWWALLET_HPP_
+#define KTH_RPC_MESSAGES_NEWWALLET_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 // #include <bitcoin/bitcoin/constants.hpp>
 // #include <bitcoin/bitcoin/utility/pseudo_random.hpp>
-#include <bitcoin/bitcoin.hpp>
+#include <kth/domain.hpp>
 
 namespace bitprim {
 
 
-// TODO:move this function to bitprim-core
+// TODO:move this function to kth-domain
 inline
 libbitcoin::data_chunk create_new_seed(size_t bit_length = libbitcoin::minimum_seed_bits) {
   size_t fill_seed_size = bit_length / libbitcoin::byte_bits;
@@ -44,17 +44,17 @@ libbitcoin::data_chunk create_new_seed(size_t bit_length = libbitcoin::minimum_s
   return seed;
 };
 
-// TODO:move this function to bitprim-core
+// TODO:move this function to kth-domain
 inline
 libbitcoin::ec_secret generate_priv_key(libbitcoin::data_chunk const &seed) {
-// This check is needed on bitprim-core, here we always pass a valid seed.
+// This check is needed on kth-domain, here we always pass a valid seed.
 //   if (seed.size() < libbitcoin::minimum_seed_size) {
 //     // Short seed
 //     return {}};
 //   }
   const libbitcoin::wallet::hd_private key(seed);
   libbitcoin::ec_secret secret(key.secret());
-// This check is needed on bitprim-core, here this validation in called in seed_to_wallet.
+// This check is needed on kth-domain, here this validation in called in seed_to_wallet.
 //   if (secret == libbitcoin::null_hash) {
 //     // New invalid key
 //     return {};
@@ -62,7 +62,7 @@ libbitcoin::ec_secret generate_priv_key(libbitcoin::data_chunk const &seed) {
   return secret;
 }
 
-// TODO:move this function to bitprim-core
+// TODO:move this function to kth-domain
 inline
 libbitcoin::wallet::ec_public priv_key_to_public(libbitcoin::ec_secret const &priv_key, bool compress) {
   libbitcoin::ec_compressed point;
@@ -70,7 +70,7 @@ libbitcoin::wallet::ec_public priv_key_to_public(libbitcoin::ec_secret const &pr
   return libbitcoin::wallet::ec_public(point, compress);
 }
 
-// TODO:move this function to bitprim-core
+// TODO:move this function to kth-domain
 inline
 libbitcoin::wallet::payment_address pub_key_to_addr(libbitcoin::wallet::ec_public const &pub_key, bool mainnet) {
   uint8_t version;
@@ -136,7 +136,7 @@ nlohmann::json process_newwallet(nlohmann::json const& json_in, Node& node, bool
     if (!json_in_newwallet(json_in, compressed, mainnet)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "Parse error.";
         return container;
     }
@@ -155,4 +155,4 @@ nlohmann::json process_newwallet(nlohmann::json const& json_in, Node& node, bool
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_NEWWALLET_HPP_
+#endif //KTH_RPC_MESSAGES_NEWWALLET_HPP_

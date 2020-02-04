@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -46,7 +46,7 @@ bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std:
                 chain_info = temp["chainInfo"];
             }
 
-            for (const auto & addr : temp["addresses"]) {
+            for (auto const & addr : temp["addresses"]) {
                 payment_address.push_back(addr);
             }
         }
@@ -64,7 +64,7 @@ bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std:
 
 template <typename Blockchain>
 bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, const bool chain_info, Blockchain const& chain, bool use_testnet_rules) {
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;
@@ -73,14 +73,14 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
     boost::latch latch(2);
     nlohmann::json temp_utxos, utxos;
     int i = 0;
-    for (const auto & payment_address : payment_addresses) {
+    for (auto const & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
         if (address)
         {
             chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
                 libbitcoin::chain::history_compact::list history_compact_list) {
                 if (ec == libbitcoin::error::success) {
-                    for (const auto & history : history_compact_list) {
+                    for (auto const & history : history_compact_list) {
                         if (history.kind == libbitcoin::chain::point_kind::output) {
                             // It's outpoint
                             boost::latch latch2(2);
@@ -115,7 +115,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
                     }
                 }
                 else {
-                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
                 latch.count_down();
@@ -179,7 +179,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
             }
         }
         else {
-            error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+            error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
             error_code = "Invalid address";
         }
     }
@@ -234,7 +234,7 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, Blockchain
     bool chain_info;
     if (!json_in_getaddressutxos(json_in, payment_address, chain_info))
     {
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressutxos\n"
             "\nReturns all unspent outputs for an address (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -276,4 +276,4 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, Blockchain
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
+#endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_

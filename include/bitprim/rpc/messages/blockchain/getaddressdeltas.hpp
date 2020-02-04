@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -55,7 +55,7 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
                 include_chain_info = temp["chainInfo"].get<bool>();
             }
 
-            for (const auto & addr : temp["addresses"]) {
+            for (auto const & addr : temp["addresses"]) {
                 payment_address.push_back(addr);
             }
         }
@@ -74,14 +74,14 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
 template <typename Blockchain>
 bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, size_t const& start_height, size_t const& end_height, const bool include_chain_info, Blockchain const& chain)
 {
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;
 #endif
 
     int i = 0;
-    for (const auto & payment_address : payment_addresses) {
+    for (auto const & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
         if (address)
         {
@@ -89,7 +89,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
             chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
                 libbitcoin::chain::history_compact::list history_compact_list) {
                 if (ec == libbitcoin::error::success) {
-                    for (const auto & history : history_compact_list) {
+                    for (auto const & history : history_compact_list) {
                         if (history.kind == libbitcoin::chain::point_kind::output &&
                             history.height >= start_height && history.height <= end_height) {
                             //It's an output
@@ -112,7 +112,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                                     }
                                 }
                                 else {
-                                    error = bitprim::RPC_DATABASE_ERROR;
+                                    error = knuth::RPC_DATABASE_ERROR;
                                     error_code = "Error fetching transaction.";
                                 }
                                 latch2.count_down();
@@ -145,7 +145,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                                             }
                                         }
                                         else {
-                                            error = bitprim::RPC_DATABASE_ERROR;
+                                            error = knuth::RPC_DATABASE_ERROR;
                                             error_code = "Error fetching transaction.";
                                         }
                                         latch4.count_down();
@@ -159,7 +159,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                     }
                 }
                 else {
-                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
                 latch.count_down();
@@ -167,7 +167,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
             latch.count_down_and_wait();
         }
         else {
-            error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+            error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
             error_code = "Invalid address";
         }
     }
@@ -194,7 +194,7 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, Blockchai
     bool include_chain_info;
     if (!json_in_getaddressdeltas(json_in, payment_address, start_height, end_height, include_chain_info))
     {
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressdeltas\n"
             "\nReturns all changes for an address (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -236,4 +236,4 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, Blockchai
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
+#endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_

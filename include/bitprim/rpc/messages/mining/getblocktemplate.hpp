@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_
-#define BITPRIM_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_
+#ifndef KTH_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_
+#define KTH_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
 #include <bitcoin/bitcoin/multi_crypto_support.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -103,7 +103,7 @@ std::vector<uint8_t> create_default_witness_commitment(std::vector<libbitcoin::h
 template <typename Blockchain>
 bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, std::chrono::nanoseconds timeout, Blockchain const& chain) {
 
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;
@@ -112,7 +112,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["capabilities"] = std::vector<std::string>{ "proposal" };
     json_object["version"] = 536870912;                          //TODO: hardcoded value
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     json_object["rules"] = std::vector<std::string>{ "csv" };
 #else
     json_object["rules"] = std::vector<std::string>{ "csv", "segwit" };
@@ -143,7 +143,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["previousblockhash"] = libbitcoin::encode_hash(header.hash());
 
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     json_object["sigoplimit"] = libbitcoin::get_max_block_sigops();
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
     json_object["sizelimit"] = libbitcoin::get_max_block_size();
@@ -167,7 +167,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     nlohmann::json transactions_json = nlohmann::json::array();
 
-#if ! defined(BITPRIM_CURRENCY_BCH)
+#if ! defined(KTH_CURRENCY_BCH)
     std::vector<libbitcoin::hash_digest> witness_gen;
     witness_gen.reserve(get_block_template_data.first.size());
 #endif
@@ -178,7 +178,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
         transactions_json[i]["data"] = libbitcoin::encode_base16(tx_mem.raw());
         transactions_json[i]["txid"] = libbitcoin::encode_hash(tx_mem.txid());
 
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
         transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.txid());
 #else
         transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.hash());
@@ -194,7 +194,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 //        fees += tx_mem.tx_fees;
 
     }
-#ifndef BITPRIM_CURRENCY_BCH
+#ifndef KTH_CURRENCY_BCH
     if (witness) {
         json_object["default_witness_commitment"] = libbitcoin::encode_base16(create_default_witness_commitment(witness_gen));
     }
@@ -206,7 +206,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     json_object["coinbasevalue"] = coinbase_reward + get_block_template_data.second /* acum fees*/;
     json_object["coinbaseaux"]["flags"] = "";
 
-    const auto header_bits = libbitcoin::chain::compact(bits);
+    auto const header_bits = libbitcoin::chain::compact(bits);
     libbitcoin::uint256_t target(header_bits);
 
     std::ostringstream target_stream;
@@ -251,4 +251,4 @@ nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, Blockchai
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_
+#endif //KTH_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_

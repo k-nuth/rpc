@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,7 +18,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <bitprim/rpc/zmq/zmq_helper.hpp>
+#include <knuth/rpc/zmq/zmq_helper.hpp>
 
 namespace bitprim { namespace rpc {
 
@@ -146,7 +146,7 @@ bool zmq::send_hash_block_handler(libbitcoin::code ec, size_t height,
 
     const char *MSG_HASHBLOCK = "hashblock";
     if (incoming) {
-        for (const auto &block : *incoming) {
+        for (auto const &block : *incoming) {
             for (auto const &tx : block->transactions()) {
                 const char *MSG_RAWTX = "rawtx";
                 auto const temp = tx.to_data(1);

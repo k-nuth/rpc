@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
-#define BITPRIM_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
+#ifndef KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
+#define KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -58,18 +58,18 @@ void setcoinbasereserved(std::shared_ptr<bc::message::block> block){
     }
     libbitcoin::data_stack stack{};
     stack.insert(stack.begin(), stack_s);
-#ifndef BITPRIM_CURRENCY_BCH
+#ifndef KTH_CURRENCY_BCH
     block->transactions()[0].inputs()[0].set_witness(libbitcoin::chain::witness(stack));
 #endif
 }
 
 template <typename Blockchain>
 bool submitblock(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& incoming_hex, bool use_testnet_rules, Blockchain& chain) {
-    const auto block = std::make_shared<bc::message::block>();
+    auto const block = std::make_shared<bc::message::block>();
     libbitcoin::data_chunk out;
     libbitcoin::decode_base16(out, incoming_hex);
     if (block->from_data(1, out)) {
-#ifndef BITPRIM_CURRENCY_BCH
+#ifndef KTH_CURRENCY_BCH
         if(!block->transactions()[0].is_segregated())
             setcoinbasereserved(block);
 #endif
@@ -81,7 +81,7 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
         });
     }
     else {
-        error = bitprim::RPC_DESERIALIZATION_ERROR;
+        error = knuth::RPC_DESERIALIZATION_ERROR;
         error_code = "Block decode failed";
     }
 
@@ -109,7 +109,7 @@ nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& ch
     if (!json_in_submitblock(json_in, block_str)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = bitprim::RPC_MISC_ERROR;
+        container["error"]["code"] = knuth::RPC_MISC_ERROR;
         container["error"]["message"] = "submitblock \"hexdata\" ( \"jsonparametersobject\" )\n\nAttempts to submit new block to network.\nThe 'jsonparametersobject' parameter is currently ignored.\nSee https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n\nArguments\n1. \"hexdata\"    (string, required) the hex-encoded block data to submit\n2. \"jsonparametersobject\"     (string, optional) object of optional parameters\n    {\n      \"workid\" : \"id\"    (string, optional) if the server provided a workid, it MUST be included with submissions\n    }\n\nResult:\n\nExamples:\n> bitcoin-cli submitblock \"mydata\"\n> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"submitblock\", \"params\": [\"mydata\"] }' -H 'content-type: text/plain;' http://127.0.0.1:8332/\n";
         return container;
     }
@@ -129,4 +129,4 @@ nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& ch
 
 } //namespace bitprim
 
-#endif // BITPRIM_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
+#endif // KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_

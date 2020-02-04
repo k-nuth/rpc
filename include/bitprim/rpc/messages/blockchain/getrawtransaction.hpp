@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/blockchain/getspentinfo.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/blockchain/getspentinfo.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -94,7 +94,7 @@ template <typename Blockchain>
 bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, Blockchain const& chain, bool use_testnet_rules) {
     libbitcoin::hash_digest hash;
 
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;
@@ -116,7 +116,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     json_object["locktime"] = tx_ptr->locktime();
 
                     int vin = 0;
-                    for (const auto & in : tx_ptr->inputs()) {
+                    for (auto const & in : tx_ptr->inputs()) {
                         if (tx_ptr->is_coinbase()) {
                             json_object["vin"][vin]["coinbase"] = libbitcoin::encode_base16(in.script().to_data(0));
                         }
@@ -145,7 +145,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     }
 
                     int i = 0;
-                    for (const auto & out : tx_ptr->outputs()) {
+                    for (auto const & out : tx_ptr->outputs()) {
                         json_object["vout"][i]["value"] = out.value() / (double)100000000;
                         json_object["vout"][i]["valueSat"] = out.value();
                         json_object["vout"][i]["n"] = i;
@@ -183,7 +183,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                         ++i;
                     }
 
-#if defined(BITPRIM_DB_NEW)
+#if defined(KTH_DB_NEW)
                     if (index != libbitcoin::database::position_max) {
 #else
                     if (index != libbitcoin::database::transaction_database::unconfirmed) {
@@ -216,7 +216,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     }
                 }
                 else {
-                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available about transaction";
                 }
                 latch.count_down();
@@ -233,7 +233,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     json_object = libbitcoin::encode_base16(tx_ptr->to_data(/*version is not used*/ 0));
                 }
                 else {
-                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available about transaction";
                 }
                 latch.count_down();
@@ -242,7 +242,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
         }
     }
     else {
-        error = bitprim::RPC_INVALID_PARAMETER;
+        error = knuth::RPC_INVALID_PARAMETER;
         error_code = "Invalid transaction hash";
     }
 
@@ -264,7 +264,7 @@ nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, Blockcha
     bool verbose;
     if (!json_in_getrawtransaction(json_in, tx_id, verbose)) //if false return error
     {
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getrawtransaction \"txid\" ( verbose )\n"
 
             "\nNOTE: By default this function only works for mempool "
@@ -354,4 +354,4 @@ nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, Blockcha
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
+#endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_

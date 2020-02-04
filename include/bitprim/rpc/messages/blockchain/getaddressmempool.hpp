@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,13 +18,13 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 #include <boost/thread/latch.hpp>
-#include <bitprim/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
 
 namespace bitprim {
 
@@ -37,13 +37,13 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
         return false;
 
     // TODO: if the payment_address are invalid return
-    //       error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+    //       error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
     //       error_code = "No information available for address";
     // instead of calling getaddressmempool and returning an empty json
     try {
         auto temp = json_object["params"][0];
         if (temp.is_object()){
-            for (const auto & addr : temp["addresses"]){
+            for (auto const & addr : temp["addresses"]){
                 payment_address.push_back(addr);
             }
         } else {
@@ -59,14 +59,14 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
 
 template <typename Blockchain>
 bool getaddressmempool(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, Blockchain const& chain, bool use_testnet_rules) {
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;
 #endif
 
     json_object = nlohmann::json::array();
-    const auto res = chain.get_mempool_transactions(payment_addresses, use_testnet_rules, witness);
+    auto const res = chain.get_mempool_transactions(payment_addresses, use_testnet_rules, witness);
 
     size_t i = 0;
     for (auto const& r : res) {
@@ -96,7 +96,7 @@ nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, Blockcha
     std::vector<std::string> payment_addresses;
     if (!json_in_getaddressmempool(json_in, payment_addresses))
     {
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressmempool\n"
                 "\nReturns all mempool deltas for an address (requires addressindex to be enabled).\n"
                 "\nArguments:\n"
@@ -137,4 +137,4 @@ nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, Blockcha
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_
+#endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_

@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,7 +18,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <bitprim/rpc/manager.hpp>
+#include <knuth/rpc/manager.hpp>
 
 namespace bitprim { namespace rpc {
 
@@ -26,14 +26,14 @@ manager::manager(bool use_testnet_rules
         , libbitcoin::node::full_node& node
         , uint32_t rpc_port
         , uint32_t subscriber_port
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
         , size_t keoken_genesis_height
 #endif
         , std::unordered_set<std::string> const& rpc_allowed_ips
         , bool rpc_allow_all_ips)
    : stopped_(false)
    , zmq_(subscriber_port, node.chain_bitprim())
-#ifdef BITPRIM_WITH_KEOKEN
+#ifdef KTH_WITH_KEOKEN
    , http_(use_testnet_rules, node, rpc_port, keoken_genesis_height, rpc_allowed_ips, rpc_allow_all_ips)
 #else
    , http_(use_testnet_rules, node, rpc_port, rpc_allowed_ips, rpc_allow_all_ips)
@@ -62,4 +62,4 @@ bool manager::is_stopped() const {
     return stopped_;
 }
 
-}} //namespace bitprim::rpc
+}} //namespace knuth::rpc

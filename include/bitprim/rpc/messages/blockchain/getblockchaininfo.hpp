@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,13 +18,13 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKCHAININFO_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKCHAININFO_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKCHAININFO_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKCHAININFO_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -32,7 +32,7 @@ namespace bitprim {
     bool getblockchaininfo(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
     {
 
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;

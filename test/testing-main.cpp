@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -20,7 +20,7 @@
 
 #include <iostream>
 #include <bitcoin/blockchain.hpp>
-#include <bitprim/rpc/zmq/zmq_helper.hpp>
+#include <knuth/rpc/zmq/zmq_helper.hpp>
 
 int main () {
     libbitcoin::threadpool t(0);
@@ -28,7 +28,7 @@ int main () {
     const libbitcoin::database::settings d;
     libbitcoin::blockchain::block_chain chain(t, s, d);
 
-    bitprim::rpc::zmq zmq_object(5556, chain);
+    knuth::rpc::zmq zmq_object(5556, chain);
 
     size_t i = 1;
     while (i<=5){

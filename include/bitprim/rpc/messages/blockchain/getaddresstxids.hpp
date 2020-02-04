@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,13 +18,13 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_
-#define BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_
+#ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_
+#define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -46,7 +46,7 @@ bool json_in_getaddresstxids(nlohmann::json const& json_object, std::vector<std:
                 end_height = temp["end"];
             }
 
-            for (const auto & addr : temp["addresses"]) {
+            for (auto const & addr : temp["addresses"]) {
                 payment_address.push_back(addr);
             }
         }
@@ -65,7 +65,7 @@ template <typename Blockchain>
 bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, size_t const& start_height, size_t const& end_height, Blockchain const& chain)
 {
     int i = 0;
-    for (const auto & payment_address : payment_addresses) {
+    for (auto const & payment_address : payment_addresses) {
         libbitcoin::wallet::payment_address address(payment_address);
         if (address)
         {
@@ -74,7 +74,7 @@ bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error
                 [&](const libbitcoin::code &ec, const std::vector<libbitcoin::hash_digest>& history_list) {
                 if (ec == libbitcoin::error::success) {
                     // TODO: remove this if the new code pass the tests
-                    //                                    for (const auto & history : history_list) {
+                    //                                    for (auto const & history : history_list) {
                     //                                        libbitcoin::hash_digest temp;
                     //                                        if (history.height < end_height) {
                     //                                            // If a txns spend more than one utxo from the address, just add the first one
@@ -91,7 +91,7 @@ bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error
                 }
                 else
                 {
-                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
                 latch.count_down();
@@ -99,7 +99,7 @@ bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error
             latch.count_down_and_wait();
         }
         else {
-            error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+            error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
             error_code = "Invalid address";
         }
     }
@@ -125,7 +125,7 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, Blockchain
     size_t end_height;
     if (!json_in_getaddresstxids(json_in, payment_address, start_height, end_height))
     {
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddresstxids\n"
             "\nReturns the txids for an address(es) (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -161,4 +161,4 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, Blockchain
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_
+#endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_

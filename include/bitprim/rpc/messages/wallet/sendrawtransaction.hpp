@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,14 +18,14 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
-#define BITPRIM_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
+#ifndef KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
+#define KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
 namespace bitprim {
@@ -52,14 +52,14 @@ template <typename Blockchain>
 bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& error_code, std::string const & incoming_hex, bool allowhighfees, bool use_testnet_rules, Blockchain& chain)
 {
     //TODO: use allowhighfees
-    const auto tx = std::make_shared<bc::message::transaction>();
+    auto const tx = std::make_shared<bc::message::transaction>();
     libbitcoin::data_chunk out;
     libbitcoin::decode_base16(out, incoming_hex);
     if (tx->from_data(1, out)) {
         boost::latch latch(2);
         chain.organize(tx, [&](const libbitcoin::code & ec) {
             if (ec) {
-                // error = bitprim::RPC_VERIFY_ERROR;
+                // error = knuth::RPC_VERIFY_ERROR;
                 error = ec.value();
                 error_code = "Failed to submit transaction.";
                 json_object;
@@ -70,7 +70,7 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
         });
         latch.count_down_and_wait();
     } else {
-        error = bitprim::RPC_DESERIALIZATION_ERROR;
+        error = knuth::RPC_DESERIALIZATION_ERROR;
         error_code = "TX decode failed.";
     }
 
@@ -96,7 +96,7 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, Blockch
     if (!json_in_sendrawtransaction(json_in, tx_str, allowhighfees)) //if false return error
     {
         container["result"];
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "sendrawtransaction \"hexstring\" ( allowhighfees )\n"
             "\nSubmits raw transaction (serialized, hex-encoded) to local node "
             "and network.\n"
@@ -126,4 +126,4 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, Blockch
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
+#endif //KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_

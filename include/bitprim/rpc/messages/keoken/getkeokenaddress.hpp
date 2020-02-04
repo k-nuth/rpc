@@ -1,9 +1,9 @@
 /**
-* Copyright (c) 2017-2018 Bitprim Inc.
+* Copyright (c) 2016-2020 Knuth Project developers.
 *
-* This file is part of bitprim-node.
+* This file is part of kth-node.
 *
-* bitprim-node is free software: you can redistribute it and/or
+* kth-node is free software: you can redistribute it and/or
 * modify it under the terms of the GNU Affero General Public License with
 * additional permissions to the one published by the Free Software
 * Foundation, either version 3 of the License, or (at your option)
@@ -18,17 +18,17 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BITPRIM_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
-#define BITPRIM_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
+#ifndef KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
+#define KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
 
-#include <bitprim/rpc/json/json.hpp>
+#include <knuth/rpc/json/json.hpp>
 #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-#include <bitprim/rpc/messages/error_codes.hpp>
-#include <bitprim/rpc/messages/utils.hpp>
+#include <knuth/rpc/messages/error_codes.hpp>
+#include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-#include <bitprim/rpc/messages/keoken/keokenutils.hpp>
+#include <knuth/rpc/messages/keoken/keokenutils.hpp>
 
 namespace bitprim {
 
@@ -72,7 +72,7 @@ bool json_in_getkeokenaddress(nlohmann::json const& json_object, std::string& pa
 template <typename Blockchain>
 bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& payment_address, size_t& index_start, size_t& index_end, size_t keoken_start, Blockchain const& chain, bool use_testnet_rules)
 {
-#ifdef BITPRIM_CURRENCY_BCH
+#ifdef KTH_CURRENCY_BCH
     bool witness = false;
 #else
     bool witness = true;
@@ -90,14 +90,14 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
                     size_t limit = index_end > (*keoken_txs).size() ? (*keoken_txs).size() : index_end;
                     size_t j = 0;
                     for(size_t i = index_start; i < limit; ++i){
-                        json_object["transactions"][j] = bitprim::decode_keoken(chain, (*keoken_txs)[i], use_testnet_rules);
+                        json_object["transactions"][j] = knuth::decode_keoken(chain, (*keoken_txs)[i], use_testnet_rules);
                         ++j;
                     }
 
                     json_object["count"] = (*keoken_txs).size();
                 }
                 else {
-                    error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+                    error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "No information available for address " + address;
                 }
             latch.count_down();
@@ -105,7 +105,7 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
         latch.count_down_and_wait();
     }
     else {
-        error = bitprim::RPC_INVALID_ADDRESS_OR_KEY;
+        error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
         error_code = "Invalid address";
     }
 
@@ -130,7 +130,7 @@ nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchai
     size_t index_end;
     if (!json_in_getkeokenaddress(json_in, payment_address, index_start, index_end))
     {
-        container["error"]["code"] = bitprim::RPC_PARSE_ERROR;
+        container["error"]["code"] = knuth::RPC_PARSE_ERROR;
         container["error"]["message"] = "";
         return container;
     }
@@ -150,4 +150,4 @@ nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchai
 
 } //namespace bitprim
 
-#endif //BITPRIM_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
+#endif //KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
