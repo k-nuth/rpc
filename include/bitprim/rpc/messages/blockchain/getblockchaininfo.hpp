@@ -27,7 +27,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
     template <typename Blockchain>
     bool getblockchaininfo(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
     {
@@ -40,17 +40,17 @@ namespace bitprim {
         json_object["chain"] = "main";
 
         size_t top_height;
-        libbitcoin::message::header::ptr top;
+        kth::message::header::ptr top;
         chain.get_last_height(top_height);
 
         boost::latch latch(2);
         
-        // chain.fetch_block(top_height, witness, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t height) {
-        chain.fetch_block_header(top_height, [&](const libbitcoin::code &ec, libbitcoin::header_ptr header, size_t height) {
-            if (ec == libbitcoin::error::success) {
+        // chain.fetch_block(top_height, witness, [&](const kth::code &ec, kth::block_const_ptr block, size_t height) {
+        chain.fetch_block_header(top_height, [&](const kth::code &ec, kth::header_ptr header, size_t height) {
+            if (ec == kth::error::success) {
                 json_object["blocks"] = height;
                 json_object["headers"] = height;
-                json_object["bestblockhash"] = libbitcoin::encode_hash(header->hash());
+                json_object["bestblockhash"] = kth::encode_hash(header->hash());
                 json_object["difficulty"] = bits_to_difficulty(header->bits());
                 json_object["mediantime"] = header->timestamp(); //TODO Get medianpasttime
                 json_object["verificationprogress"] = 1;

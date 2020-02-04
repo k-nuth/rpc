@@ -27,7 +27,7 @@
 #include <knuth/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getaddressbalance(nlohmann::json const& json_object, std::vector<std::string>& address)
@@ -61,18 +61,18 @@ bool getaddressbalance(nlohmann::json& json_result, int& error, std::string& err
     uint64_t balance = 0;
     uint64_t received = 0;
     for (auto const & address : addresses) {
-        libbitcoin::wallet::payment_address payment_address(address);
+        kth::wallet::payment_address payment_address(address);
         if (payment_address)
         {
             boost::latch latch(2);
-            chain.fetch_history(payment_address, INT_MAX, 0, [&](const libbitcoin::code &ec, libbitcoin::chain::history_compact::list history_compact_list) {
-                if (ec == libbitcoin::error::success) {
+            chain.fetch_history(payment_address, INT_MAX, 0, [&](const kth::code &ec, kth::chain::history_compact::list history_compact_list) {
+                if (ec == kth::error::success) {
                     for (auto const & history : history_compact_list) {
-                        if (history.kind == libbitcoin::chain::point_kind::output) {
+                        if (history.kind == kth::chain::point_kind::output) {
                             received += history.value;
                             boost::latch latch2(2);
-                            chain.fetch_spend(history.point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
-                                if (ec == libbitcoin::error::not_found) {
+                            chain.fetch_spend(history.point, [&](const kth::code &ec, kth::chain::input_point input) {
+                                if (ec == kth::error::not_found) {
                                     // Output not spent
                                     balance += history.value;
                                 }
@@ -148,6 +148,6 @@ nlohmann::json process_getaddressbalance(nlohmann::json const& json_in, Blockcha
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSBALANCE_HPP_

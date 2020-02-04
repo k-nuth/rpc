@@ -28,7 +28,7 @@
 #include <bitcoin/bitcoin/multi_crypto_support.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
     template <typename Blockchain>
     bool getmininginfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Blockchain const& chain)
@@ -43,8 +43,8 @@ namespace bitprim {
         //TODO: check size and weight on mainnet, testnet is sending 0s
         //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
 
-        json_object["currentblocksize"] = libbitcoin::get_max_block_size();
-        json_object["currentblockweight"] = libbitcoin::get_max_block_size();
+        json_object["currentblocksize"] = kth::get_max_block_size();
+        json_object["currentblockweight"] = kth::get_max_block_size();
         json_object["currentblocktx"] = 0;
 
         json_object["difficulty"] = std::get<2>(last_block_data);
@@ -58,11 +58,10 @@ namespace bitprim {
 
         json_object["testnet"] = use_testnet_rules;
 
-        //TODO: libbitcoin does not support regtest
+        //TODO(fernando): Legacy does not support regtest
         if (use_testnet_rules) {
             json_object["chain"] = "test";
-        }
-        else {
+        } else {
             json_object["chain"] = "main";
         }
         return true;

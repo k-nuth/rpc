@@ -22,10 +22,10 @@
 
 #include <iostream>
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 
 rpc_server::rpc_server(bool use_testnet_rules
-        , libbitcoin::node::full_node& node
+        , kth::node::full_node& node
         , uint32_t rpc_port
 #ifdef KTH_WITH_KEOKEN
         , size_t keoken_genesis_height
@@ -37,11 +37,11 @@ rpc_server::rpc_server(bool use_testnet_rules
     , rpc_allow_all_ips_(true)
     , node_(node)
 #ifdef KTH_WITH_KEOKEN
-    , keoken_manager_(node.chain_bitprim(), keoken_genesis_height)
+    , keoken_manager_(node.chain_kth(), keoken_genesis_height)
 #endif
     , rpc_allowed_ips_(rpc_allowed_ips)
-    , signature_map_(load_signature_map<libbitcoin::blockchain::block_chain>())
-    , signature_map_no_params_(load_signature_map_no_params<libbitcoin::blockchain::block_chain>())
+    , signature_map_(load_signature_map<kth::blockchain::block_chain>())
+    , signature_map_no_params_(load_signature_map_no_params<kth::blockchain::block_chain>())
 {
     server_.config.port = rpc_port;
     configure_server();

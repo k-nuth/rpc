@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/blockchain/getspentinfo.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
     
 
 // RPC CODE
@@ -36,34 +36,34 @@ namespace bitprim {
 // TODO: move this code to a better place
 
 inline
-std::string get_txn_type(const libbitcoin::chain::script& script) {
+std::string get_txn_type(const kth::chain::script& script) {
     auto pattern = script.pattern();
     // The first operations access must be method-based to guarantee the cache.
-    if (pattern == libbitcoin::machine::script_pattern::null_data)
+    if (pattern == kth::machine::script_pattern::null_data)
         return "nulldata";
 
-    if (pattern == libbitcoin::machine::script_pattern::pay_multisig)
+    if (pattern == kth::machine::script_pattern::pay_multisig)
         return "pay_multisig";
 
-    if (pattern == libbitcoin::machine::script_pattern::pay_public_key)
+    if (pattern == kth::machine::script_pattern::pay_public_key)
         return "pay_public_key";
 
-    if (pattern == libbitcoin::machine::script_pattern::pay_key_hash)
+    if (pattern == kth::machine::script_pattern::pay_key_hash)
         return "pay_key_hash";
 
-    if (pattern == libbitcoin::machine::script_pattern::pay_script_hash)
+    if (pattern == kth::machine::script_pattern::pay_script_hash)
         return "pay_script_hash";
 
-    if (pattern == libbitcoin::machine::script_pattern::sign_multisig)
+    if (pattern == kth::machine::script_pattern::sign_multisig)
         return "sign_multisig";
 
-    if (pattern == libbitcoin::machine::script_pattern::sign_public_key)
+    if (pattern == kth::machine::script_pattern::sign_public_key)
         return "sign_public_key";
 
-    if (pattern == libbitcoin::machine::script_pattern::sign_key_hash)
+    if (pattern == kth::machine::script_pattern::sign_key_hash)
         return "sign_key_hash";
 
-    if (pattern == libbitcoin::machine::script_pattern::sign_script_hash)
+    if (pattern == kth::machine::script_pattern::sign_script_hash)
         return "sign_script_hash";
 
     return "non_standard";
@@ -92,7 +92,7 @@ bool json_in_getrawtransaction(nlohmann::json const& json_object, std::string& t
 
 template <typename Blockchain>
 bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, const bool verbose, Blockchain const& chain, bool use_testnet_rules) {
-    libbitcoin::hash_digest hash;
+    kth::hash_digest hash;
 
 #ifdef KTH_CURRENCY_BCH
     bool witness = false;
@@ -100,15 +100,15 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
     bool witness = true;
 #endif
 
-    if (libbitcoin::decode_hash(hash, txid)) {
+    if (kth::decode_hash(hash, txid)) {
 
         if (verbose) {
             boost::latch latch(2);
             chain.fetch_transaction(hash, false, witness,
-                [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                [&](const kth::code &ec, kth::transaction_const_ptr tx_ptr, size_t index,
                     size_t height) {
-                if (ec == libbitcoin::error::success) {
-                    json_object["hex"] = libbitcoin::encode_base16(tx_ptr->to_data(/*version is not used*/ 0));
+                if (ec == kth::error::success) {
+                    json_object["hex"] = kth::encode_base16(tx_ptr->to_data(/*version is not used*/ 0));
                     json_object["txid"] = txid;
                     json_object["hash"] = txid;
                     json_object["size"] = tx_ptr->serialized_size(/*version is not used*/ 0);
@@ -118,19 +118,19 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     int vin = 0;
                     for (auto const & in : tx_ptr->inputs()) {
                         if (tx_ptr->is_coinbase()) {
-                            json_object["vin"][vin]["coinbase"] = libbitcoin::encode_base16(in.script().to_data(0));
+                            json_object["vin"][vin]["coinbase"] = kth::encode_base16(in.script().to_data(0));
                         }
                         else {
-                            json_object["vin"][vin]["txid"] = libbitcoin::encode_hash(in.previous_output().hash());
+                            json_object["vin"][vin]["txid"] = kth::encode_hash(in.previous_output().hash());
                             json_object["vin"][vin]["vout"] = in.previous_output().index();
                             json_object["vin"][vin]["scriptSig"]["asm"] = in.script().to_string(0);
-                            json_object["vin"][vin]["scriptSig"]["hex"] = libbitcoin::encode_base16(in.script().to_data(0));
+                            json_object["vin"][vin]["scriptSig"]["hex"] = kth::encode_base16(in.script().to_data(0));
 
                             boost::latch latch_address(2);
                             chain.fetch_transaction(in.previous_output().hash(), false, witness,
-                                [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                                [&](const kth::code &ec, kth::transaction_const_ptr tx_ptr, size_t index,
                                     size_t height) {
-                                if (ec == libbitcoin::error::success) {
+                                if (ec == kth::error::success) {
                                     auto const & output = tx_ptr->outputs()[in.previous_output().index()];
                                     json_object["vin"][vin]["address"] = output.address(use_testnet_rules).encoded();
                                     json_object["vin"][vin]["value"] = output.value() / (double)100000000;
@@ -150,7 +150,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                         json_object["vout"][i]["valueSat"] = out.value();
                         json_object["vout"][i]["n"] = i;
                         json_object["vout"][i]["scriptPubKey"]["asm"] = out.script().to_string(0);
-                        json_object["vout"][i]["scriptPubKey"]["hex"] = libbitcoin::encode_base16(out.script().to_data(0));
+                        json_object["vout"][i]["scriptPubKey"]["hex"] = kth::encode_base16(out.script().to_data(0));
 
                         uint8_t reqsig = 1;
                         std::string type = get_txn_type(out.script());
@@ -169,8 +169,8 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                         // SPENT INFO
                         nlohmann::json spent;
                         boost::latch latch2(2);
-                        chain.fetch_spend(libbitcoin::chain::output_point(tx_ptr->hash(), i), [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
-                            if (ec == libbitcoin::error::not_found) {
+                        chain.fetch_spend(kth::chain::output_point(tx_ptr->hash(), i), [&](const kth::code &ec, kth::chain::input_point input) {
+                            if (ec == kth::error::not_found) {
                                 // Output not spent
                                 json_object["vout"][i]["spentTxId"] = spent["txid"];
                                 json_object["vout"][i]["spentIndex"] = spent["index"];
@@ -184,15 +184,15 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                     }
 
 #if defined(KTH_DB_NEW)
-                    if (index != libbitcoin::database::position_max) {
+                    if (index != kth::database::position_max) {
 #else
-                    if (index != libbitcoin::database::transaction_database::unconfirmed) {
+                    if (index != kth::database::transaction_database::unconfirmed) {
 #endif
                         //confirmed txn
                         boost::latch latch(2);
-                        chain.fetch_block_hash_timestamp(height, [&](const libbitcoin::code &ec, const libbitcoin::hash_digest& h, uint32_t time, size_t block_height) {
-                            if (ec == libbitcoin::error::success) {
-                                json_object["blockhash"] = libbitcoin::encode_hash(h);
+                        chain.fetch_block_hash_timestamp(height, [&](const kth::code &ec, const kth::hash_digest& h, uint32_t time, size_t block_height) {
+                            if (ec == kth::error::success) {
+                                json_object["blockhash"] = kth::encode_hash(h);
                                 json_object["height"] = height;
                                 json_object["time"] = time;
                                 json_object["blocktime"] = time;
@@ -227,10 +227,10 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
             // No verbose
             boost::latch latch(2);
             chain.fetch_transaction(hash, false, witness, 
-                [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                [&](const kth::code &ec, kth::transaction_const_ptr tx_ptr, size_t index,
                     size_t height) {
-                if (ec == libbitcoin::error::success) {
-                    json_object = libbitcoin::encode_base16(tx_ptr->to_data(/*version is not used*/ 0));
+                if (ec == kth::error::success) {
+                    json_object = kth::encode_base16(tx_ptr->to_data(/*version is not used*/ 0));
                 }
                 else {
                     error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
@@ -352,6 +352,6 @@ nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, Blockcha
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_

@@ -40,7 +40,7 @@ public:
     //bool get_block_exists(const hash_digest& block_hash) const;
 
     /// Get the hash of the block if it exists.
-    bool get_block_hash(libbitcoin::hash_digest& out_hash, size_t height) const {
+    bool get_block_hash(kth::hash_digest& out_hash, size_t height) const {
         return true;
     }
 
@@ -118,8 +118,8 @@ public:
     //// ------------------------------------------------------------------------
 
     /// Get forks chain state relative to chain top.
-    libbitcoin::chain::chain_state::ptr chain_state() const {
-        return  libbitcoin::chain::chain_state::ptr();
+    kth::chain::chain_state::ptr chain_state() const {
+        return  kth::chain::chain_state::ptr();
     }
 
     ///// Get full chain state relative to the branch top.
@@ -149,18 +149,18 @@ public:
 
     /// fetch a block by height.
     // virtual      // OLD previo a merge de Feb2017
-    void fetch_block(size_t height, bool witness, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
+    void fetch_block(size_t height, bool witness, kth::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch a block by hash.
-    void fetch_block(const libbitcoin::hash_digest& hash, bool witness, libbitcoin::blockchain::safe_chain::block_fetch_handler handler) const {}
+    void fetch_block(const kth::hash_digest& hash, bool witness, kth::blockchain::safe_chain::block_fetch_handler handler) const {}
 
     /// fetch block header by height.
     // virtual      // OLD previo a merge de Feb2017 
-    void fetch_block_header(size_t height, libbitcoin::blockchain::safe_chain::block_header_fetch_handler handler) const {}
+    void fetch_block_header(size_t height, kth::blockchain::safe_chain::block_header_fetch_handler handler) const {}
 
-    void fetch_block_header_txs_size(libbitcoin::hash_digest const& hash, libbitcoin::blockchain::safe_chain::block_header_txs_size_fetch_handler handler) const {}
+    void fetch_block_header_txs_size(kth::hash_digest const& hash, kth::blockchain::safe_chain::block_header_txs_size_fetch_handler handler) const {}
 
-    void fetch_block_hash_timestamp(size_t height, libbitcoin::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {}
+    void fetch_block_hash_timestamp(size_t height, kth::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {}
 
     ///// fetch block header by hash.
     //void fetch_block_header(const hash_digest& hash,
@@ -189,27 +189,27 @@ public:
     //	block_height_fetch_handler handler) const;
 
     /// fetch height of latest block.
-    void fetch_last_height(libbitcoin::blockchain::safe_chain::last_height_fetch_handler handler) const {}
+    void fetch_last_height(kth::blockchain::safe_chain::last_height_fetch_handler handler) const {}
 
     /// fetch transaction by hash.
-    void fetch_transaction(const libbitcoin::hash_digest& hash, bool require_confirmed, bool witness, libbitcoin::blockchain::safe_chain::transaction_fetch_handler handler) const {}
+    void fetch_transaction(const kth::hash_digest& hash, bool require_confirmed, bool witness, kth::blockchain::safe_chain::transaction_fetch_handler handler) const {}
 
     ///// Generate fees for mining
-    //std::pair<bool, uint64_t> total_input_value(libbitcoin::chain::transaction const& tx) const;
-    //std::pair<bool, uint64_t> fees(libbitcoin::chain::transaction const& tx) const;
+    //std::pair<bool, uint64_t> total_input_value(kth::chain::transaction const& tx) const;
+    //std::pair<bool, uint64_t> fees(kth::chain::transaction const& tx) const;
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
 // #ifdef KTH_WITH_MINING
 //     //std::pair<bool, size_t> validate_tx(chain::transaction const& tx) const;
-//     std::vector<libbitcoin::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
-//         return std::vector<libbitcoin::blockchain::block_chain::tx_benefit>();
+//     std::vector<kth::blockchain::block_chain::tx_benefit> get_gbt_tx_list() const {
+//         return std::vector<kth::blockchain::block_chain::tx_benefit>();
 //     }
 
-//     void remove_mined_txs_from_chosen_list(libbitcoin::block_const_ptr blk) {
+//     void remove_mined_txs_from_chosen_list(kth::block_const_ptr blk) {
 //     }
 
-//     bool add_to_chosen_list(libbitcoin::transaction_const_ptr tx){
+//     bool add_to_chosen_list(kth::transaction_const_ptr tx){
 //         return true;
 //     }
 // #endif // KTH_WITH_MINING
@@ -240,35 +240,35 @@ public:
     ////-------------------------------------------------------------------------
 
     ///// fetch the inpoint (spender) of an outpoint.
-    void fetch_spend(const libbitcoin::chain::output_point& outpoint, libbitcoin::blockchain::safe_chain::spend_fetch_handler handler) const {}
+    void fetch_spend(const kth::chain::output_point& outpoint, kth::blockchain::safe_chain::spend_fetch_handler handler) const {}
 
     /// fetch outputs, values and spends for an address_hash.
-    void fetch_history(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::history_fetch_handler handler) const {}
+    void fetch_history(const kth::short_hash& address_hash, size_t limit, size_t from_height, kth::blockchain::safe_chain::history_fetch_handler handler) const {}
 
     /// Fetch all the txns used by the wallet
-    void fetch_confirmed_transactions(const libbitcoin::short_hash& address_hash, size_t limit, size_t from_height, libbitcoin::blockchain::safe_chain::confirmed_transactions_fetch_handler handler) const {}
+    void fetch_confirmed_transactions(const kth::short_hash& address_hash, size_t limit, size_t from_height, kth::blockchain::safe_chain::confirmed_transactions_fetch_handler handler) const {}
 
-    std::vector<libbitcoin::blockchain::mempool_transaction_summary> get_mempool_transactions(std::vector<std::string> const& payment_addresses, bool use_testnet_rules, bool witness) const {
-        return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
+    std::vector<kth::blockchain::mempool_transaction_summary> get_mempool_transactions(std::vector<std::string> const& payment_addresses, bool use_testnet_rules, bool witness) const {
+        return std::vector<kth::blockchain::mempool_transaction_summary> ();
     }
 
-    std::vector<libbitcoin::blockchain::mempool_transaction_summary> get_mempool_transactions(std::string const& payment_addresses, bool use_testnet_rules, bool witness) const {
-       return std::vector<libbitcoin::blockchain::mempool_transaction_summary> ();
+    std::vector<kth::blockchain::mempool_transaction_summary> get_mempool_transactions(std::string const& payment_addresses, bool use_testnet_rules, bool witness) const {
+       return std::vector<kth::blockchain::mempool_transaction_summary> ();
     }
 
 #ifdef KTH_WITH_KEOKEN
-    void fetch_keoken_history(const libbitcoin::short_hash& address_hash, size_t limit,
-        size_t from_height, libbitcoin::blockchain::safe_chain::keoken_history_fetch_handler handler) const {
+    void fetch_keoken_history(const kth::short_hash& address_hash, size_t limit,
+        size_t from_height, kth::blockchain::safe_chain::keoken_history_fetch_handler handler) const {
     }
 
-    void fetch_block_keoken(const libbitcoin::hash_digest& hash, bool witness,
-        libbitcoin::blockchain::safe_chain::block_keoken_fetch_handler handler) const {
+    void fetch_block_keoken(const kth::hash_digest& hash, bool witness,
+        kth::blockchain::safe_chain::block_keoken_fetch_handler handler) const {
     }
 #endif
 
-  bool get_output(libbitcoin::chain::output& out_output, size_t& out_height,
+  bool get_output(kth::chain::output& out_output, size_t& out_height,
                           uint32_t& out_median_time_past, bool& out_coinbase,
-                          const libbitcoin::chain::output_point& outpoint, size_t branch_height,
+                          const kth::chain::output_point& outpoint, size_t branch_height,
                           bool require_confirmed) const {
         return true;
     }
@@ -314,10 +314,10 @@ public:
     ////-------------------------------------------------------------------------
 
     ///// Organize a block into the block pool if valid and sufficient.
-    void organize(libbitcoin::block_const_ptr block, libbitcoin::blockchain::safe_chain::result_handler handler) {}
+    void organize(kth::block_const_ptr block, kth::blockchain::safe_chain::result_handler handler) {}
 
     ///// Store a transaction to the pool if valid.
-    void organize(libbitcoin::transaction_const_ptr tx, libbitcoin::blockchain::safe_chain::result_handler handler) {}
+    void organize(kth::transaction_const_ptr tx, kth::blockchain::safe_chain::result_handler handler) {}
 
     //// Properties.
     ////-------------------------------------------------------------------------
@@ -347,15 +347,15 @@ public:
 
 class full_node_dummy {
 public:
-    // libbitcoin::network::settings p2p_settings_;
-    // libbitcoin::node::settings node_settings_;
+    // kth::network::settings p2p_settings_;
+    // kth::node::settings node_settings_;
 
 #ifdef KTH_WITH_KEOKEN
     keoken_manager_dummy keoken_manager_;
 #endif    
     block_chain_dummy blockchain_;
 
-    block_chain_dummy& chain_bitprim() {
+    block_chain_dummy& chain_kth() {
         return blockchain_;
     }
 
@@ -363,11 +363,11 @@ public:
         return 0;
     }
 
-    const libbitcoin::network::settings& network_settings() const {
+    const kth::network::settings& network_settings() const {
         return network_settings_;
     }
 
-    const libbitcoin::node::settings& node_settings() const {
+    const kth::node::settings& node_settings() const {
         return node_settings_;
     }
 
@@ -378,13 +378,13 @@ public:
 // #endif   
 
 private:
-    libbitcoin::network::settings network_settings_;
-    libbitcoin::node::settings node_settings_;
+    kth::network::settings network_settings_;
+    kth::node::settings node_settings_;
 };
 
 // TEST_CASE("[load_signature_map] validate map keys") {
 
-//     auto map = knuth::load_signature_map<libbitcoin::blockchain::block_chain>();
+//     auto map = knuth::load_signature_map<kth::blockchain::block_chain>();
 
 // #if defined(KTH_DB_LEGACY) && defined(KTH_DB_SPENDS)
 //     CHECK(map.count("getrawtransaction") == 1);
@@ -449,7 +449,7 @@ private:
 
 // TEST_CASE("[process_data] invalid key") {
 
-//     //using blk_t = libbitcoin::blockchain::block_chain;
+//     //using blk_t = kth::blockchain::block_chain;
 //     using blk_t = block_chain_dummy;
 
 //     auto map = knuth::load_signature_map<blk_t>();
@@ -458,11 +458,11 @@ private:
 
 //     input["method"] = "invalid_key";
 
-//     //libbitcoin::threadpool threadpool;
-//     //libbitcoin::blockchain::settings chain_settings;
-//     //libbitcoin::database::settings database_settings;
+//     //kth::threadpool threadpool;
+//     //kth::blockchain::settings chain_settings;
+//     //kth::database::settings database_settings;
 
-//     //libbitcoin::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
+//     //kth::blockchain::block_chain chain(threadpool, chain_settings, database_settings, true);
 
 //     //blk_t chain(threadpool, chain_settings, database_settings, true);
 //     full_node_dummy node;

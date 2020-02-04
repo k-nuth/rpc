@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_submitblock(nlohmann::json const& json_object, std::string& block_hex_str) {
@@ -44,7 +44,7 @@ bool json_in_submitblock(nlohmann::json const& json_object, std::string& block_h
 }
 
 inline
-void handle_organize(const libbitcoin::code& ec) {
+void handle_organize(const kth::code& ec) {
     if (ec)
         std::cout << "Failed to submit block" << std::endl;
     else std::cout << "Block submited successfully" << std::endl;
@@ -52,28 +52,28 @@ void handle_organize(const libbitcoin::code& ec) {
 
 static
 void setcoinbasereserved(std::shared_ptr<bc::message::block> block){
-    libbitcoin::data_chunk stack_s(32);
+    kth::data_chunk stack_s(32);
     for(auto& data : stack_s){
         data = (uint8_t)0;
     }
-    libbitcoin::data_stack stack{};
+    kth::data_stack stack{};
     stack.insert(stack.begin(), stack_s);
 #ifndef KTH_CURRENCY_BCH
-    block->transactions()[0].inputs()[0].set_witness(libbitcoin::chain::witness(stack));
+    block->transactions()[0].inputs()[0].set_witness(kth::chain::witness(stack));
 #endif
 }
 
 template <typename Blockchain>
 bool submitblock(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& incoming_hex, bool use_testnet_rules, Blockchain& chain) {
     auto const block = std::make_shared<bc::message::block>();
-    libbitcoin::data_chunk out;
-    libbitcoin::decode_base16(out, incoming_hex);
+    kth::data_chunk out;
+    kth::decode_base16(out, incoming_hex);
     if (block->from_data(1, out)) {
 #ifndef KTH_CURRENCY_BCH
         if(!block->transactions()[0].is_segregated())
             setcoinbasereserved(block);
 #endif
-       chain.organize(block, [&](const libbitcoin::code & ec) {
+       chain.organize(block, [&](const kth::code & ec) {
             if (ec) {
                 error = ec.value();
                 error_code = "Failed to submit block.";
@@ -92,7 +92,7 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
     }
 
     LOG_INFO("rpc")
-        << "Block submitted successfully [" << libbitcoin::encode_hash(block->hash()) << "]" ;
+        << "Block submitted successfully [" << kth::encode_hash(block->hash()) << "]" ;
 
     return true;
 }
@@ -127,6 +127,6 @@ nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& ch
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif // KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_

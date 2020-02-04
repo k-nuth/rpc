@@ -4,11 +4,11 @@
 
 #include <bitcoin/network/user_agent.hpp>
 
-namespace libbitcoin {
+namespace kth {
 namespace network {
 
 std::string get_user_agent() {
-    //return "/bitprim:" KTH_VERSION "/";
+    //return "/kth:" KTH_VERSION "/";
     return "/bitprim:0.0.0/";
 }
 

@@ -42,7 +42,7 @@
 #include <zmq.h>
 
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 
 class rpc_server {
     using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
@@ -52,7 +52,7 @@ public:
 #endif
 
     rpc_server(bool use_testnet_rules
-            , libbitcoin::node::full_node& node
+            , kth::node::full_node& node
             , uint32_t rpc_port
 #ifdef KTH_WITH_KEOKEN
             , size_t keoken_genesis_height
@@ -78,14 +78,14 @@ private:
     HttpServer server_;
 
     // If the subscribe methods are removed from here the chain_ can be const
-    libbitcoin::node::full_node& node_;
+    kth::node::full_node& node_;
 
 #ifdef KTH_WITH_KEOKEN
     keoken_manager_t keoken_manager_;
 #endif
 
-    signature_map<libbitcoin::blockchain::block_chain> signature_map_;
-    signature_map<libbitcoin::blockchain::block_chain> signature_map_no_params_;
+    signature_map<kth::blockchain::block_chain> signature_map_;
+    signature_map<kth::blockchain::block_chain> signature_map_no_params_;
     std::unordered_set<std::string> rpc_allowed_ips_;
 
 };

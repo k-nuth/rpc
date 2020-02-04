@@ -23,10 +23,10 @@
 #include <knuth/rpc/zmq/zmq_helper.hpp>
 
 int main () {
-    libbitcoin::threadpool t(0);
-    const libbitcoin::blockchain::settings s;
-    const libbitcoin::database::settings d;
-    libbitcoin::blockchain::block_chain chain(t, s, d);
+    kth::threadpool t(0);
+    const kth::blockchain::settings s;
+    const kth::database::settings d;
+    kth::blockchain::block_chain chain(t, s, d);
 
     knuth::rpc::zmq zmq_object(5556, chain);
 

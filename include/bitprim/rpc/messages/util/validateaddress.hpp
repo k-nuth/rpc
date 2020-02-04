@@ -29,7 +29,7 @@
 #include <boost/thread/latch.hpp>
 
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_validateaddress(nlohmann::json const& json_object, std::string& raw_address) {
@@ -45,19 +45,19 @@ bool json_in_validateaddress(nlohmann::json const& json_object, std::string& raw
 
 template <typename Blockchain>
 bool validateaddress(nlohmann::json& json_object, int& error, std::string& error_code, std::string& raw_address, Blockchain const& chain) {
-    libbitcoin::wallet::payment_address payment_address(raw_address);
+    kth::wallet::payment_address payment_address(raw_address);
 
     int ver = (int)payment_address.version();
     if (ver == 111 /*testnet*/ || ver == 0 /*mainnet btc*/ || ver == 48 /*mainnet ltc*/) {
         //PAY TO PUBLIC KEY HASH
         json_object["isvalid"] = true;
         json_object["address"] = raw_address;
-        json_object["scriptPubKey"] = "76a914" + libbitcoin::encode_base16(payment_address.hash()) + "88ac";
+        json_object["scriptPubKey"] = "76a914" + kth::encode_base16(payment_address.hash()) + "88ac";
     } else if (ver == 196 /*testnet*/ || ver == 5 /*mainnet btc*/ || ver == 5 /*mainnet ltc*/) {
         //PAY TO SCRIPT HASH
         json_object["isvalid"] = true;
         json_object["address"] = raw_address;
-        json_object["scriptPubKey"] = "a914" + libbitcoin::encode_base16(payment_address.hash()) + "87";
+        json_object["scriptPubKey"] = "a914" + kth::encode_base16(payment_address.hash()) + "87";
     } else {
         //TODO: VALIDATE WIF
         json_object["isvalid"] = false;
@@ -107,6 +107,6 @@ nlohmann::json process_validateaddress(nlohmann::json const& json_in, Blockchain
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_UTIL_VALIDATEADDRESS_HPP_

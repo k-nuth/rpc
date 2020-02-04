@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std::string>& payment_address, size_t& start_height, size_t& end_height, bool& include_chain_info)
@@ -40,7 +40,7 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
         return false;
 
     start_height = 0;
-    end_height = libbitcoin::max_size_t;
+    end_height = kth::max_size_t;
     include_chain_info = false;
     try {
         auto temp = json_object["params"][0];
@@ -82,26 +82,26 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
 
     int i = 0;
     for (auto const & payment_address : payment_addresses) {
-        libbitcoin::wallet::payment_address address(payment_address);
+        kth::wallet::payment_address address(payment_address);
         if (address)
         {
             boost::latch latch(2);
-            chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
-                libbitcoin::chain::history_compact::list history_compact_list) {
-                if (ec == libbitcoin::error::success) {
+            chain.fetch_history(address, INT_MAX, 0, [&](const kth::code &ec,
+                kth::chain::history_compact::list history_compact_list) {
+                if (ec == kth::error::success) {
                     for (auto const & history : history_compact_list) {
-                        if (history.kind == libbitcoin::chain::point_kind::output &&
+                        if (history.kind == kth::chain::point_kind::output &&
                             history.height >= start_height && history.height <= end_height) {
                             //It's an output
                             boost::latch latch2(2);
                             //Fetch txn to get the blockindex and height
                             chain.fetch_transaction(history.point.hash(), false, witness,
-                                [&](const libbitcoin::code &ec,
-                                    libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                                [&](const kth::code &ec,
+                                    kth::transaction_const_ptr tx_ptr, size_t index,
                                     size_t height) {
-                                if (ec == libbitcoin::error::success) {
+                                if (ec == kth::error::success) {
                                     if (height >= start_height && height <= end_height) {
-                                        json_object[i]["txid"] = libbitcoin::encode_hash(
+                                        json_object[i]["txid"] = kth::encode_hash(
                                             history.point.hash());
                                         json_object[i]["index"] = history.point.index();
                                         json_object[i]["address"] = address.encoded();
@@ -121,19 +121,19 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
 
                             //Check if it was spent and get the txn data
                             boost::latch latch3(2);
-                            chain.fetch_spend(history.point, [&](const libbitcoin::code &ec,
-                                libbitcoin::chain::input_point input) {
-                                if (ec == libbitcoin::error::success) {
+                            chain.fetch_spend(history.point, [&](const kth::code &ec,
+                                kth::chain::input_point input) {
+                                if (ec == kth::error::success) {
                                     boost::latch latch4(2);
                                     chain.fetch_transaction(input.hash(), false, witness,
-                                        [&](const libbitcoin::code &ec,
-                                            libbitcoin::transaction_const_ptr tx_ptr,
+                                        [&](const kth::code &ec,
+                                            kth::transaction_const_ptr tx_ptr,
                                             size_t index,
                                             size_t height) {
-                                        if (ec == libbitcoin::error::success) {
+                                        if (ec == kth::error::success) {
                                             if (height >= start_height &&
                                                 height <= end_height) {
-                                                json_object[i]["txid"] = libbitcoin::encode_hash(
+                                                json_object[i]["txid"] = kth::encode_hash(
                                                     input.hash());
                                                 json_object[i]["index"] = input.index();
                                                 json_object[i]["address"] = address.encoded();
@@ -234,6 +234,6 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, Blockchai
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_

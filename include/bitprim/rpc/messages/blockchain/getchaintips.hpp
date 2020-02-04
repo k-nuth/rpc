@@ -27,7 +27,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
     template <typename Blockchain>
     bool getchaintips(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
@@ -73,13 +73,13 @@ namespace bitprim {
 
         nlohmann::json active;
         size_t top_height;
-        libbitcoin::message::header::ptr top;
+        kth::message::header::ptr top;
         chain.get_last_height(top_height);
-        if (getblockheader(top_height, top, chain) != libbitcoin::error::success) {
+        if (getblockheader(top_height, top, chain) != kth::error::success) {
             return false;
         }
         active["height"] = top_height;
-        active["hash"] = libbitcoin::encode_hash(top->hash());
+        active["hash"] = kth::encode_hash(top->hash());
         active["branchlen"] = 0;
         active["status"] = "active";
         json_object[0] = active;

@@ -20,9 +20,9 @@
 
 #include <knuth/rpc/zmq/zmq_helper.hpp>
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 
-zmq::zmq(uint32_t subscriber_port, libbitcoin::blockchain::block_chain & chain) :
+zmq::zmq(uint32_t subscriber_port, kth::blockchain::block_chain & chain) :
         nSequence(0),
         chain_(chain){
     std::string str_port = "tcp://*:" + std::to_string (subscriber_port);
@@ -55,9 +55,9 @@ void zmq::start(){
         start_sending_messages();
     } else {
         // Check until the chain is no longer stale
-        chain_.subscribe_blockchain([&](libbitcoin::code ec, size_t height,
-                                        libbitcoin::block_const_ptr_list_const_ptr incoming,
-                                        libbitcoin::block_const_ptr_list_const_ptr outgoing) {
+        chain_.subscribe_blockchain([&](kth::code ec, size_t height,
+                                        kth::block_const_ptr_list_const_ptr incoming,
+                                        kth::block_const_ptr_list_const_ptr outgoing) {
             if (chain_.is_stale()){
                 return true;
             } else {
@@ -69,9 +69,9 @@ void zmq::start(){
 }
 
 void zmq::start_sending_messages(){
-    chain_.subscribe_blockchain([&](libbitcoin::code ec, size_t height,
-                                    libbitcoin::block_const_ptr_list_const_ptr incoming,
-                                    libbitcoin::block_const_ptr_list_const_ptr outgoing) {
+    chain_.subscribe_blockchain([&](kth::code ec, size_t height,
+                                    kth::block_const_ptr_list_const_ptr incoming,
+                                    kth::block_const_ptr_list_const_ptr outgoing) {
                                     if (context_){
                                         return send_hash_block_handler(ec, height, incoming, outgoing);
                                     } else {
@@ -80,7 +80,7 @@ void zmq::start_sending_messages(){
                                     }
                                 }
     );
-    chain_.subscribe_transaction([&](libbitcoin::code ec, libbitcoin::transaction_const_ptr tx) {
+    chain_.subscribe_transaction([&](kth::code ec, kth::transaction_const_ptr tx) {
         if (context_){
             return send_raw_transaction_handler(ec, tx);
         } else {
@@ -125,7 +125,7 @@ static int zmq_send_multipart(void *sock, const void *data, size_t size, ...) {
 bool zmq::send_message(const char *command, const void *data, size_t size) {
     /* send three parts, command & data & a LE 4byte sequence number */
     uint8_t msgseq[sizeof(uint32_t)];
-    auto temp_msgseq = libbitcoin::to_little_endian(nSequence);
+    auto temp_msgseq = kth::to_little_endian(nSequence);
     std::copy(temp_msgseq.begin(), temp_msgseq.end(), msgseq);
 
     int rc = zmq_send_multipart(publisher_, command, strlen(command), data, size,
@@ -138,9 +138,9 @@ bool zmq::send_message(const char *command, const void *data, size_t size) {
     return true;
 }
 
-bool zmq::send_hash_block_handler(libbitcoin::code ec, size_t height,
-                                         libbitcoin::block_const_ptr_list_const_ptr incoming,
-                                         libbitcoin::block_const_ptr_list_const_ptr outgoing) {
+bool zmq::send_hash_block_handler(kth::code ec, size_t height,
+                                         kth::block_const_ptr_list_const_ptr incoming,
+                                         kth::block_const_ptr_list_const_ptr outgoing) {
 
     bool success = true;
 
@@ -169,7 +169,7 @@ bool zmq::send_hash_block_handler(libbitcoin::code ec, size_t height,
     return success;
 }
 
-bool zmq::send_raw_transaction_handler(libbitcoin::code ec, libbitcoin::transaction_const_ptr incoming) {
+bool zmq::send_raw_transaction_handler(kth::code ec, kth::transaction_const_ptr incoming) {
 
     if (incoming) {
         const char *MSG_RAWTX = "rawtx";

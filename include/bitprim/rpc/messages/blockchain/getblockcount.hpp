@@ -27,7 +27,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
     template <typename Blockchain>
     bool getblockcount(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)

@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 template <typename Node>
 bool getinfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Node & node)
@@ -48,7 +48,7 @@ bool getinfo(nlohmann::json& json_object, int& error, std::string& error_code, b
 
     json_object["protocolversion"] = 70013;
 
-    auto last_block_data = get_last_block_difficulty(node.chain_bitprim());
+    auto last_block_data = get_last_block_difficulty(node.chain_kth());
 
     if (std::get<0>(last_block_data)) {
         json_object["blocks"] = std::get<1>(last_block_data);

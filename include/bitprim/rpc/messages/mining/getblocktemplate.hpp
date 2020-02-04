@@ -28,10 +28,10 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 template <typename Blockchain>
-bool get_last_block_header(size_t& out_height, libbitcoin::message::header& out_header, Blockchain const& chain) {
+bool get_last_block_header(size_t& out_height, kth::message::header& out_header, Blockchain const& chain) {
     //size_t out_height;
     if (chain.get_last_height(out_height)) {
         return chain.get_header(out_header, out_height);
@@ -48,19 +48,19 @@ uint32_t get_clock_now() {
 /*constexpr*/
 inline
 uint64_t get_block_reward(uint32_t height, bool retarget=true) {
-    auto subsidy = libbitcoin::initial_block_subsidy_satoshi();
-    subsidy >>= (height / libbitcoin::subsidy_interval(retarget));
+    auto subsidy = kth::initial_block_subsidy_satoshi();
+    subsidy >>= (height / kth::subsidy_interval(retarget));
     return subsidy;
 }
 
 static
-libbitcoin::hash_digest generate_merkle_root(std::vector<libbitcoin::hash_digest>& merkle)
+kth::hash_digest generate_merkle_root(std::vector<kth::hash_digest>& merkle)
 {
     if (merkle.empty())
-        return libbitcoin::null_hash;
+        return kth::null_hash;
 
-    libbitcoin::hash_list update;
-    merkle.insert(merkle.begin(),libbitcoin::hash_digest{});
+    kth::hash_list update;
+    merkle.insert(merkle.begin(),kth::hash_digest{});
 
     // Initial capacity is half of the original list (clear doesn't reset).
     update.reserve((merkle.size() + 1) / 2);
@@ -72,7 +72,7 @@ libbitcoin::hash_digest generate_merkle_root(std::vector<libbitcoin::hash_digest
             merkle.push_back(merkle.back());
 
         for (auto it = merkle.begin(); it != merkle.end(); it += 2)
-            update.push_back(libbitcoin::bitcoin_hash(libbitcoin::build_chunk({ it[0], it[1] })));
+            update.push_back(kth::bitcoin_hash(kth::build_chunk({ it[0], it[1] })));
 
         std::swap(merkle, update);
         update.clear();
@@ -83,8 +83,8 @@ libbitcoin::hash_digest generate_merkle_root(std::vector<libbitcoin::hash_digest
 }
 
 static
-std::vector<uint8_t> create_default_witness_commitment(std::vector<libbitcoin::hash_digest>& merkle){
-    libbitcoin::byte_array<6> scriptPubKey;
+std::vector<uint8_t> create_default_witness_commitment(std::vector<kth::hash_digest>& merkle){
+    kth::byte_array<6> scriptPubKey;
     scriptPubKey[0] = 0x6a;
     scriptPubKey[1] = 0x24;
     scriptPubKey[2] = 0xaa;
@@ -94,7 +94,7 @@ std::vector<uint8_t> create_default_witness_commitment(std::vector<libbitcoin::h
 
     std::vector<uint8_t> bytes{};
     bytes.reserve(38);
-    auto hash = libbitcoin::bitcoin_hash(libbitcoin::build_chunk({ generate_merkle_root(merkle), libbitcoin::hash_digest{} }));//libbitcoin::encode_base16(generate_merkle_root(witness_gen));
+    auto hash = kth::bitcoin_hash(kth::build_chunk({ generate_merkle_root(merkle), kth::hash_digest{} }));//kth::encode_base16(generate_merkle_root(witness_gen));
     bytes.insert(bytes.begin(), hash.begin(), hash.end());
     bytes.insert(bytes.begin(), scriptPubKey.begin(), scriptPubKey.end());
     return bytes;
@@ -122,11 +122,11 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     static bool first_time = true;
     static size_t old_height = 0;
-    static std::pair<std::vector<libbitcoin::mining::transaction_element>, uint64_t> get_block_template_data;
+    static std::pair<std::vector<kth::mining::transaction_element>, uint64_t> get_block_template_data;
     static std::chrono::time_point<std::chrono::high_resolution_clock> cache_timestamp = std::chrono::high_resolution_clock::now();
 
     size_t last_height;
-    libbitcoin::message::header header;
+    kth::message::header header;
     if ( ! get_last_block_header(last_height, header, chain)) {
         return false;
     }
@@ -141,18 +141,18 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     auto const bits = chain.chain_state()->get_next_work_required(time_now);
     auto const height = last_height + 1;
 
-    json_object["previousblockhash"] = libbitcoin::encode_hash(header.hash());
+    json_object["previousblockhash"] = kth::encode_hash(header.hash());
 
 #ifdef KTH_CURRENCY_BCH
-    json_object["sigoplimit"] = libbitcoin::get_max_block_sigops();
+    json_object["sigoplimit"] = kth::get_max_block_sigops();
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
-    json_object["sizelimit"] = libbitcoin::get_max_block_size();
-    json_object["weightlimit"] = libbitcoin::get_max_block_size();
+    json_object["sizelimit"] = kth::get_max_block_size();
+    json_object["weightlimit"] = kth::get_max_block_size();
 #else
-    json_object["sigoplimit"] = libbitcoin::max_fast_sigops;
+    json_object["sigoplimit"] = kth::max_fast_sigops;
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
-    json_object["sizelimit"] = libbitcoin::max_block_weight;
-    json_object["weightlimit"] = libbitcoin::max_block_weight;
+    json_object["sizelimit"] = kth::max_block_weight;
+    json_object["weightlimit"] = kth::max_block_weight;
 #endif
 
     auto now = std::chrono::high_resolution_clock::now();
@@ -168,20 +168,20 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     nlohmann::json transactions_json = nlohmann::json::array();
 
 #if ! defined(KTH_CURRENCY_BCH)
-    std::vector<libbitcoin::hash_digest> witness_gen;
+    std::vector<kth::hash_digest> witness_gen;
     witness_gen.reserve(get_block_template_data.first.size());
 #endif
 
     uint64_t fees = 0;
     for (size_t i = 0; i < get_block_template_data.first.size(); ++i) {
         auto const& tx_mem = get_block_template_data.first[i];
-        transactions_json[i]["data"] = libbitcoin::encode_base16(tx_mem.raw());
-        transactions_json[i]["txid"] = libbitcoin::encode_hash(tx_mem.txid());
+        transactions_json[i]["data"] = kth::encode_base16(tx_mem.raw());
+        transactions_json[i]["txid"] = kth::encode_hash(tx_mem.txid());
 
 #ifdef KTH_CURRENCY_BCH
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.txid());
+        transactions_json[i]["hash"] = kth::encode_hash(tx_mem.txid());
 #else
-        transactions_json[i]["hash"] = libbitcoin::encode_hash(tx_mem.hash());
+        transactions_json[i]["hash"] = kth::encode_hash(tx_mem.hash());
         if (witness) {
             // witness_gen.insert(witness_gen.end(), tx_mem.hash());
             witness_gen.push_back(tx_mem.hash());
@@ -196,7 +196,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     }
 #ifndef KTH_CURRENCY_BCH
     if (witness) {
-        json_object["default_witness_commitment"] = libbitcoin::encode_base16(create_default_witness_commitment(witness_gen));
+        json_object["default_witness_commitment"] = kth::encode_base16(create_default_witness_commitment(witness_gen));
     }
 #endif
 
@@ -206,8 +206,8 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     json_object["coinbasevalue"] = coinbase_reward + get_block_template_data.second /* acum fees*/;
     json_object["coinbaseaux"]["flags"] = "";
 
-    auto const header_bits = libbitcoin::chain::compact(bits);
-    libbitcoin::uint256_t target(header_bits);
+    auto const header_bits = kth::chain::compact(bits);
+    kth::uint256_t target(header_bits);
 
     std::ostringstream target_stream;
     target_stream << std::setfill('0') << std::setw(64) << std::hex << target << "\0" << std::dec;
@@ -249,6 +249,6 @@ nlohmann::json process_getblocktemplate(nlohmann::json const& json_in, Blockchai
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_

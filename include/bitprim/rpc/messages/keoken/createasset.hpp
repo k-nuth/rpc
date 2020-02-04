@@ -30,12 +30,12 @@
 
 // #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_createasset(nlohmann::json const& json_object, 
-                        std::vector<libbitcoin::chain::input_point>& outputs_to_spend,  
-                        libbitcoin::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
+                        std::vector<kth::chain::input_point>& outputs_to_spend,  
+                        kth::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
                         std::string& asset_name, uint64_t& asset_amount) {
 
     auto const & size = json_object["params"].size();
@@ -45,14 +45,14 @@ bool json_in_createasset(nlohmann::json const& json_object,
     }
 
     try {
-        libbitcoin::hash_digest hash_to_spend;
+        kth::hash_digest hash_to_spend;
         for (auto const& o : json_object["params"]["origin"]) {
-          libbitcoin::decode_hash(hash_to_spend, o["output_hash"]);
+          kth::decode_hash(hash_to_spend, o["output_hash"]);
           outputs_to_spend.push_back({hash_to_spend, o["output_index"]});
         }
 
         std::string wallet = json_object["params"]["asset_owner"];
-        libbitcoin::wallet::payment_address read(wallet);
+        kth::wallet::payment_address read(wallet);
         asset_owner = read;
         utxo_satoshis = json_object["params"]["utxo_satoshis"];
         asset_name = json_object["params"]["asset_name"];
@@ -68,10 +68,10 @@ bool json_in_createasset(nlohmann::json const& json_object,
 // template <typename Blockchain>
 inline
 bool createasset(nlohmann::json& json_object, int& error, std::string& error_code,
-                        std::vector<libbitcoin::chain::input_point>& outputs_to_spend,  
-                        libbitcoin::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
+                        std::vector<kth::chain::input_point>& outputs_to_spend,  
+                        kth::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
                         std::string& asset_name, uint64_t& asset_amount, bool use_testnet_rules) {
-    json_object = libbitcoin::encode_base16(knuth::keoken::wallet::tx_encode_create_asset(outputs_to_spend, asset_owner, utxo_satoshis, asset_name, asset_amount).second.to_data(true));
+    json_object = kth::encode_base16(knuth::keoken::wallet::tx_encode_create_asset(outputs_to_spend, asset_owner, utxo_satoshis, asset_name, asset_amount).second.to_data(true));
     return true;
 }
 
@@ -85,8 +85,8 @@ nlohmann::json process_createasset(nlohmann::json const& json_in, bool use_testn
     std::string error_code;
 
 
-    std::vector<libbitcoin::chain::input_point> outputs_to_spend;
-    libbitcoin::wallet::payment_address asset_owner;
+    std::vector<kth::chain::input_point> outputs_to_spend;
+    kth::wallet::payment_address asset_owner;
     uint64_t utxo_satoshis; 
     std::string asset_name;
     uint64_t asset_amount;
@@ -109,6 +109,6 @@ nlohmann::json process_createasset(nlohmann::json const& json_in, bool use_testn
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_WALLET_CREATEASSET_HPP_

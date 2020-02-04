@@ -30,13 +30,13 @@
 
 // #include <bitcoin/blockchain/interface/block_chain.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_sendtoken(nlohmann::json const& json_object, 
-                        std::vector<libbitcoin::chain::input_point>& outputs_to_spend,  
-                        libbitcoin::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis,
-                        libbitcoin::wallet::payment_address& token_receiver, uint64_t& dust,
+                        std::vector<kth::chain::input_point>& outputs_to_spend,  
+                        kth::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis,
+                        kth::wallet::payment_address& token_receiver, uint64_t& dust,
                         knuth::keoken::asset_id_t& asset_id,
                         knuth::keoken::amount_t& asset_amount) {
 
@@ -46,19 +46,19 @@ bool json_in_sendtoken(nlohmann::json const& json_object,
     }
 
     try {
-        libbitcoin::hash_digest hash_to_spend;
+        kth::hash_digest hash_to_spend;
         for (auto const& o : json_object["params"]["origin"]) {
-          libbitcoin::decode_hash(hash_to_spend, o["output_hash"]);
+          kth::decode_hash(hash_to_spend, o["output_hash"]);
           outputs_to_spend.push_back({hash_to_spend, o["output_index"]});
         }
 
         std::string wallet = json_object["params"]["asset_owner"];
-        libbitcoin::wallet::payment_address read(wallet);
+        kth::wallet::payment_address read(wallet);
         asset_owner = read;
         utxo_satoshis = json_object["params"]["utxo_satoshis"];
 
         std::string wallet_receiver = json_object["params"]["token_receiver"];
-        libbitcoin::wallet::payment_address read_receiver(wallet_receiver);
+        kth::wallet::payment_address read_receiver(wallet_receiver);
         token_receiver = read_receiver;
         dust = json_object["params"]["dust"];
 
@@ -74,12 +74,12 @@ bool json_in_sendtoken(nlohmann::json const& json_object,
 // template <typename Blockchain>
 inline
 bool sendtoken(nlohmann::json& json_object, int& error, std::string& error_code,
-                        std::vector<libbitcoin::chain::input_point>& outputs_to_spend,  
-                        libbitcoin::wallet::payment_address const& asset_owner, uint64_t& utxo_satoshis,
-                        libbitcoin::wallet::payment_address const& token_receiver, uint64_t const& dust,
+                        std::vector<kth::chain::input_point>& outputs_to_spend,  
+                        kth::wallet::payment_address const& asset_owner, uint64_t& utxo_satoshis,
+                        kth::wallet::payment_address const& token_receiver, uint64_t const& dust,
                         knuth::keoken::asset_id_t& asset_id,
                         knuth::keoken::amount_t& asset_amount, bool use_testnet_rules) {
-    json_object = libbitcoin::encode_base16(knuth::keoken::wallet::tx_encode_send_token(outputs_to_spend, asset_owner, utxo_satoshis, token_receiver, dust, asset_id, asset_amount).second.to_data(true));
+    json_object = kth::encode_base16(knuth::keoken::wallet::tx_encode_send_token(outputs_to_spend, asset_owner, utxo_satoshis, token_receiver, dust, asset_id, asset_amount).second.to_data(true));
     return true;
 }
 
@@ -93,10 +93,10 @@ nlohmann::json process_sendtoken(nlohmann::json const& json_in, bool use_testnet
     std::string error_code;
 
 
-    std::vector<libbitcoin::chain::input_point> outputs_to_spend;
-    libbitcoin::wallet::payment_address asset_owner;
+    std::vector<kth::chain::input_point> outputs_to_spend;
+    kth::wallet::payment_address asset_owner;
     uint64_t utxo_satoshis;
-    libbitcoin::wallet::payment_address token_receiver;
+    kth::wallet::payment_address token_receiver;
     uint64_t dust;
     knuth::keoken::asset_id_t asset_id;
     knuth::keoken::amount_t asset_amount;
@@ -118,6 +118,6 @@ nlohmann::json process_sendtoken(nlohmann::json const& json_in, bool use_testnet
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_WALLET_SENDTOKEN_HPP_

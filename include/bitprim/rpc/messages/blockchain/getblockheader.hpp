@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getblockheader(nlohmann::json const& json_object, std::string & hash, bool & verbose) {
@@ -49,15 +49,15 @@ bool json_in_getblockheader(nlohmann::json const& json_object, std::string & has
 
 template <typename Blockchain>
 bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& error_code, const std::string & block_hash, bool verbose, Blockchain const& chain) {
-    libbitcoin::hash_digest hash;
-    if (libbitcoin::decode_hash(hash, block_hash)) {
+    kth::hash_digest hash;
+    if (kth::decode_hash(hash, block_hash)) {
 
         boost::latch latch(2);
-        chain.fetch_block_header_txs_size(hash, [&](const libbitcoin::code &ec, libbitcoin::header_const_ptr header, 
-            size_t height, const std::shared_ptr<libbitcoin::hash_list> txs, uint64_t serialized_size) {
-            if (ec == libbitcoin::error::success) {
+        chain.fetch_block_header_txs_size(hash, [&](const kth::code &ec, kth::header_const_ptr header, 
+            size_t height, const std::shared_ptr<kth::hash_list> txs, uint64_t serialized_size) {
+            if (ec == kth::error::success) {
                 if (!verbose) {
-                    json_object = libbitcoin::encode_base16(header->to_data(0));
+                    json_object = kth::encode_base16(header->to_data(0));
                 }
                 else {
                     json_object["hash"] = block_hash;
@@ -71,7 +71,7 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
                     json_object["version"] = header->version();
                     // TODO: encode the version to base 16
                     json_object["versionHex"] = header->version();
-                    json_object["merkleroot"] = libbitcoin::encode_hash(header->merkle());
+                    json_object["merkleroot"] = kth::encode_hash(header->merkle());
                     json_object["time"] = header->timestamp();
                     // TODO: get real median time
                     json_object["mediantime"] = header->timestamp();
@@ -87,16 +87,16 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
                         << std::hex
                         << header->proof();
                     json_object["chainwork"] = ss.str();
-                    json_object["previousblockhash"] = libbitcoin::encode_hash(header->previous_block_hash());
+                    json_object["previousblockhash"] = kth::encode_hash(header->previous_block_hash());
 
                     json_object["nextblockhash"];
 
-                    libbitcoin::hash_digest nexthash;
+                    kth::hash_digest nexthash;
                     if(chain.get_block_hash(nexthash, height+1))
-                        json_object["nextblockhash"] = libbitcoin::encode_hash(nexthash);
+                        json_object["nextblockhash"] = kth::encode_hash(nexthash);
                 }
             } else {
-                if (ec == libbitcoin::error::not_found) {
+                if (ec == kth::error::not_found) {
                     error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "Block not found";
                 } else {
@@ -183,6 +183,6 @@ nlohmann::json process_getblockheader(nlohmann::json const& json_in, Blockchain 
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_

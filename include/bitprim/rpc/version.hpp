@@ -12,7 +12,7 @@
 #define KTH_RPC_VERSION "0.0.0"
 #endif
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 char const* version();
 }} /*namespace knuth::rpc*/
  

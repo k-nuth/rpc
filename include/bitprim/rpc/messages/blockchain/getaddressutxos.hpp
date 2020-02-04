@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std::string>& payment_address, bool& chain_info) {
@@ -74,31 +74,31 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
     nlohmann::json temp_utxos, utxos;
     int i = 0;
     for (auto const & payment_address : payment_addresses) {
-        libbitcoin::wallet::payment_address address(payment_address);
+        kth::wallet::payment_address address(payment_address);
         if (address)
         {
-            chain.fetch_history(address, INT_MAX, 0, [&](const libbitcoin::code &ec,
-                libbitcoin::chain::history_compact::list history_compact_list) {
-                if (ec == libbitcoin::error::success) {
+            chain.fetch_history(address, INT_MAX, 0, [&](const kth::code &ec,
+                kth::chain::history_compact::list history_compact_list) {
+                if (ec == kth::error::success) {
                     for (auto const & history : history_compact_list) {
-                        if (history.kind == libbitcoin::chain::point_kind::output) {
+                        if (history.kind == kth::chain::point_kind::output) {
                             // It's outpoint
                             boost::latch latch2(2);
-                            chain.fetch_spend(history.point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
-                                if (ec == libbitcoin::error::not_found) {
+                            chain.fetch_spend(history.point, [&](const kth::code &ec, kth::chain::input_point input) {
+                                if (ec == kth::error::not_found) {
                                     // Output not spent
                                     temp_utxos[i]["address"] = address.encoded();
-                                    temp_utxos[i]["txid"] = libbitcoin::encode_hash(history.point.hash());
+                                    temp_utxos[i]["txid"] = kth::encode_hash(history.point.hash());
                                     temp_utxos[i]["outputIndex"] = history.point.index();
                                     temp_utxos[i]["satoshis"] = history.value;
                                     temp_utxos[i]["height"] = history.height;
                                     // We need to fetch the txn to get the script
                                     boost::latch latch3(2);
                                     chain.fetch_transaction(history.point.hash(), false, witness,
-                                        [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                                        [&](const kth::code &ec, kth::transaction_const_ptr tx_ptr, size_t index,
                                             size_t height) {
-                                        if (ec == libbitcoin::error::success) {
-                                            temp_utxos[i]["script"] = libbitcoin::encode_base16(tx_ptr->outputs().at(history.point.index()).script().to_data(0));
+                                        if (ec == kth::error::success) {
+                                            temp_utxos[i]["script"] = kth::encode_base16(tx_ptr->outputs().at(history.point.index()).script().to_data(0));
                                         }
                                         else {
                                             temp_utxos[i]["script"] = "";
@@ -156,16 +156,16 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
                       utxos[k]["outputIndex"] = r.index();
                       utxos[k]["satoshis"] = r.satoshis();
                       boost::latch latch3(2);
-                      libbitcoin::hash_digest hash;
-                      libbitcoin::decode_hash(hash,r.hash());
+                      kth::hash_digest hash;
+                      kth::decode_hash(hash,r.hash());
                       chain.fetch_transaction(hash, false, witness,
-                                              [&](const libbitcoin::code &ec,
-                                                  libbitcoin::transaction_const_ptr tx_ptr,
+                                              [&](const kth::code &ec,
+                                                  kth::transaction_const_ptr tx_ptr,
                                                   size_t index,
                                                   size_t height) {
-                                                if (ec == libbitcoin::error::success) {
+                                                if (ec == kth::error::success) {
                                                     utxos[k]["script"] =
-                                                    libbitcoin::encode_base16(tx_ptr->outputs().at(r.index()).script().to_data(
+                                                    kth::encode_base16(tx_ptr->outputs().at(r.index()).script().to_data(
                                                     0));
                                                 } else {
                                                     utxos[k]["script"] = "";
@@ -189,8 +189,8 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
 
         size_t height;
         boost::latch latch2(2);
-        chain.fetch_last_height([&](const libbitcoin::code &ec, size_t last_height) {
-            if (ec == libbitcoin::error::success) {
+        chain.fetch_last_height([&](const kth::code &ec, size_t last_height) {
+            if (ec == kth::error::success) {
                 height = last_height;
             }
             latch2.count_down();
@@ -198,10 +198,10 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
         latch2.count_down_and_wait();
 
         boost::latch latch3(2);
-        chain.fetch_block(height, witness, [&](const libbitcoin::code &ec, libbitcoin::block_const_ptr block, size_t) {
-            if (ec == libbitcoin::error::success) {
+        chain.fetch_block(height, witness, [&](const kth::code &ec, kth::block_const_ptr block, size_t) {
+            if (ec == kth::error::success) {
                 json_object["height"] = height;
-                json_object["hash"] = libbitcoin::encode_hash(block->hash());
+                json_object["hash"] = kth::encode_hash(block->hash());
             }
             latch3.count_down();
         });
@@ -274,6 +274,6 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, Blockchain
 
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_

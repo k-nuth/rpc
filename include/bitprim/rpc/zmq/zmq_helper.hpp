@@ -28,11 +28,11 @@
 
 #include <zmq.h>
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 
 class zmq {
 public:
-    zmq(uint32_t subscriber_port, libbitcoin::blockchain::block_chain & chain);
+    zmq(uint32_t subscriber_port, kth::blockchain::block_chain & chain);
     //non-copyable
     zmq(zmq const&) = delete;
     zmq& operator=(zmq const&) = delete;
@@ -45,9 +45,9 @@ public:
     bool send_message(const char *command, const void *data, size_t size);
 
     //Publisher methods
-    bool send_hash_block_handler(libbitcoin::code ec, size_t height, libbitcoin::block_const_ptr_list_const_ptr incoming,
-                                 libbitcoin::block_const_ptr_list_const_ptr outgoing);
-    bool send_raw_transaction_handler(libbitcoin::code ec, libbitcoin::transaction_const_ptr incoming);
+    bool send_hash_block_handler(kth::code ec, size_t height, kth::block_const_ptr_list_const_ptr incoming,
+                                 kth::block_const_ptr_list_const_ptr outgoing);
+    bool send_raw_transaction_handler(kth::code ec, kth::transaction_const_ptr incoming);
 
     bool send_random_data () {
         char const* MSG_RAWTX = "rawtx";
@@ -61,7 +61,7 @@ private:
     void *publisher_;
     uint32_t nSequence;
     // BITPRIM
-    libbitcoin::blockchain::block_chain & chain_;
+    kth::blockchain::block_chain & chain_;
 };
 
 }}

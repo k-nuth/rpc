@@ -26,7 +26,7 @@
 #include <boost/thread/latch.hpp>
 #include <knuth/rpc/messages/error_codes.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<std::string>& payment_address) {
@@ -135,6 +135,6 @@ nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, Blockcha
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSMEMPOOL_HPP_

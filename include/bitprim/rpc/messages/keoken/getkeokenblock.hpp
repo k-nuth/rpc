@@ -30,7 +30,7 @@
 
 #include <knuth/rpc/messages/keoken/keokenutils.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getkeokenblock(nlohmann::json const& json_object, std::string & hash) {
@@ -57,12 +57,12 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
 #endif
     nlohmann::json transactions;
 
-    libbitcoin::hash_digest hash;
-    if (libbitcoin::decode_hash(hash, block_hash)) {
+    kth::hash_digest hash;
+    if (kth::decode_hash(hash, block_hash)) {
         boost::latch latch(2);
-        chain.fetch_block_keoken(hash, witness, [&](const libbitcoin::code &ec, libbitcoin::header_const_ptr header, size_t height, std::shared_ptr <std::vector <libbitcoin::transaction_const_ptr>> keoken_txs, uint64_t serialized_size, size_t transactions_total)
+        chain.fetch_block_keoken(hash, witness, [&](const kth::code &ec, kth::header_const_ptr header, size_t height, std::shared_ptr <std::vector <kth::transaction_const_ptr>> keoken_txs, uint64_t serialized_size, size_t transactions_total)
         {
-            if (ec == libbitcoin::error::success) {
+            if (ec == kth::error::success) {
                 //json_object["hash"] = block_hash;
 
                 json_object["hash"] = block_hash;
@@ -76,7 +76,7 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
                 json_object["version"] = header->version();
                 // TODO: encode the version to base 16
                 json_object["versionHex"] = header->version();
-                json_object["merkleroot"] = libbitcoin::encode_hash(header->merkle());
+                json_object["merkleroot"] = kth::encode_hash(header->merkle());
                 json_object["time"] = header->timestamp();
                 // TODO: get real median time
                 json_object["mediantime"] = header->timestamp();
@@ -92,13 +92,13 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
                    << std::hex
                    << header->proof();
                 json_object["chainwork"] = ss.str();
-                json_object["previousblockhash"] = libbitcoin::encode_hash(header->previous_block_hash());
+                json_object["previousblockhash"] = kth::encode_hash(header->previous_block_hash());
 
                 json_object["nextblockhash"] = "";
 
-                libbitcoin::hash_digest nexthash;
+                kth::hash_digest nexthash;
                 if(chain.get_block_hash(nexthash, height+1))
-                  json_object["nextblockhash"] = libbitcoin::encode_hash(nexthash);
+                  json_object["nextblockhash"] = kth::encode_hash(nexthash);
 
                 json_object["totaltransactions"] = transactions_total;
                 int i = 0;
@@ -110,7 +110,7 @@ bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_
 
             }
             else {
-                if (ec == libbitcoin::error::not_found)
+                if (ec == kth::error::not_found)
                 {
                     error = knuth::RPC_INVALID_ADDRESS_OR_KEY;
                     error_code = "Block not found";
@@ -167,6 +167,6 @@ nlohmann::json process_getkeokenblock(nlohmann::json const& json_in, Blockchain 
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETKEOKENBLOCK_HPP_

@@ -30,12 +30,12 @@
 
 #include <bitcoin/bitcoin/wallet/transaction_functions.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_create_signature(nlohmann::json const& json_object, 
-                              libbitcoin::ec_secret& private_key, libbitcoin::chain::script& output_script,
-                              libbitcoin::chain::transaction& tx, uint64_t& amount, uint32_t& index) {
+                              kth::ec_secret& private_key, kth::chain::script& output_script,
+                              kth::chain::transaction& tx, uint64_t& amount, uint32_t& index) {
 
     auto const & size = json_object["params"].size();
     if (size == 0)
@@ -44,12 +44,12 @@ bool json_in_create_signature(nlohmann::json const& json_object,
         // Priv key
         private_key = knuth::create_secret_from_seed(json_object["params"]["seed"]);
         // Script
-        libbitcoin::data_chunk raw_script;
-        libbitcoin::decode_base16(raw_script, json_object["params"]["script"]);
+        kth::data_chunk raw_script;
+        kth::decode_base16(raw_script, json_object["params"]["script"]);
         output_script.from_data(raw_script, false);
         // TX
-        libbitcoin::data_chunk raw_data;
-        libbitcoin::decode_base16(raw_data, json_object["params"]["tx"]);
+        kth::data_chunk raw_data;
+        kth::decode_base16(raw_data, json_object["params"]["tx"]);
         tx.from_data(raw_data);
         // Amount
         amount = json_object["params"]["amount"];
@@ -65,11 +65,11 @@ bool json_in_create_signature(nlohmann::json const& json_object,
 
 template <typename Blockchain>
 bool create_signature(nlohmann::json& json_object, int& error, std::string& error_code,
-                              libbitcoin::ec_secret& private_key, libbitcoin::chain::script& output_script,
-                              libbitcoin::chain::transaction& tx, uint64_t& amount, uint32_t& index, 
+                              kth::ec_secret& private_key, kth::chain::script& output_script,
+                              kth::chain::transaction& tx, uint64_t& amount, uint32_t& index, 
                               bool use_testnet_rules, Blockchain& chain)
 {
-    json_object = libbitcoin::encode_base16(libbitcoin::wallet::input_signature_bch(private_key, output_script, tx, amount, index).second);
+    json_object = kth::encode_base16(kth::wallet::input_signature_bch(private_key, output_script, tx, amount, index).second);
     return true;
 }
 
@@ -82,9 +82,9 @@ nlohmann::json process_createsignature(nlohmann::json const& json_in, Blockchain
     int error = 0;
     std::string error_code;
 
-  libbitcoin::ec_secret private_key;
-  libbitcoin::chain::script output_script;
-  libbitcoin::chain::transaction tx;
+  kth::ec_secret private_key;
+  kth::chain::script output_script;
+  kth::chain::transaction tx;
   uint64_t amount;
   uint32_t index;
     if (!json_in_create_signature(json_in, private_key, output_script, tx, amount, index)) //if false return error
@@ -108,6 +108,6 @@ nlohmann::json process_createsignature(nlohmann::json const& json_in, Blockchain
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_WALLET_CREATESIGNATURE_HPP_

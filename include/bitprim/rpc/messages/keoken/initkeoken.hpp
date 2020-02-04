@@ -31,7 +31,7 @@
 
 // #include <bitcoin/node/full_node.hpp>
 
-namespace bitprim {
+namespace kth {
 
 template <typename KeokenManager>
 bool initkeoken(nlohmann::json& json_object, bool use_testnet_rules, KeokenManager& keoken_manager) {
@@ -59,6 +59,6 @@ nlohmann::json process_initkeoken(nlohmann::json const& json_in, KeokenManager& 
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_INITKEOKEN_HPP_

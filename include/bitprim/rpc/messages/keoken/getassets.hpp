@@ -30,7 +30,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <knuth/rpc/messages/keoken/keokenutils.hpp>
 
-namespace bitprim {
+namespace kth {
 
 template <typename KeokenManager>
 bool getassets(nlohmann::json& json_object, bool use_testnet_rules, KeokenManager const& keoken_manager) {
@@ -66,6 +66,6 @@ nlohmann::json process_getassets(nlohmann::json const& json_in, KeokenManager co
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_GETASSETS_HPP_

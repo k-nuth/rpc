@@ -24,12 +24,12 @@
 #include <knuth/rpc/http/rpc_server.hpp>
 #include <knuth/rpc/zmq/zmq_helper.hpp>
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 
 class manager {
 public:
     manager(bool use_testnet_rules
-            , libbitcoin::node::full_node& node
+            , kth::node::full_node& node
             , uint32_t rpc_port
             , uint32_t subscriber_port
 #ifdef KTH_WITH_KEOKEN

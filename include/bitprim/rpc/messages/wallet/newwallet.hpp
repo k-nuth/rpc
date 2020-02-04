@@ -32,30 +32,30 @@
 // #include <bitcoin/bitcoin/utility/pseudo_random.hpp>
 #include <kth/domain.hpp>
 
-namespace bitprim {
+namespace kth {
 
 
 // TODO:move this function to kth-domain
 inline
-libbitcoin::data_chunk create_new_seed(size_t bit_length = libbitcoin::minimum_seed_bits) {
-  size_t fill_seed_size = bit_length / libbitcoin::byte_bits;
-  libbitcoin::data_chunk seed(fill_seed_size);
-  libbitcoin::pseudo_random_fill(seed);
+kth::data_chunk create_new_seed(size_t bit_length = kth::minimum_seed_bits) {
+  size_t fill_seed_size = bit_length / kth::byte_bits;
+  kth::data_chunk seed(fill_seed_size);
+  kth::pseudo_random_fill(seed);
   return seed;
 };
 
 // TODO:move this function to kth-domain
 inline
-libbitcoin::ec_secret generate_priv_key(libbitcoin::data_chunk const &seed) {
+kth::ec_secret generate_priv_key(kth::data_chunk const &seed) {
 // This check is needed on kth-domain, here we always pass a valid seed.
-//   if (seed.size() < libbitcoin::minimum_seed_size) {
+//   if (seed.size() < kth::minimum_seed_size) {
 //     // Short seed
 //     return {}};
 //   }
-  const libbitcoin::wallet::hd_private key(seed);
-  libbitcoin::ec_secret secret(key.secret());
+  const kth::wallet::hd_private key(seed);
+  kth::ec_secret secret(key.secret());
 // This check is needed on kth-domain, here this validation in called in seed_to_wallet.
-//   if (secret == libbitcoin::null_hash) {
+//   if (secret == kth::null_hash) {
 //     // New invalid key
 //     return {};
 //   }
@@ -64,29 +64,29 @@ libbitcoin::ec_secret generate_priv_key(libbitcoin::data_chunk const &seed) {
 
 // TODO:move this function to kth-domain
 inline
-libbitcoin::wallet::ec_public priv_key_to_public(libbitcoin::ec_secret const &priv_key, bool compress) {
-  libbitcoin::ec_compressed point;
-  libbitcoin::secret_to_public(point, priv_key);
-  return libbitcoin::wallet::ec_public(point, compress);
+kth::wallet::ec_public priv_key_to_public(kth::ec_secret const &priv_key, bool compress) {
+  kth::ec_compressed point;
+  kth::secret_to_public(point, priv_key);
+  return kth::wallet::ec_public(point, compress);
 }
 
 // TODO:move this function to kth-domain
 inline
-libbitcoin::wallet::payment_address pub_key_to_addr(libbitcoin::wallet::ec_public const &pub_key, bool mainnet) {
+kth::wallet::payment_address pub_key_to_addr(kth::wallet::ec_public const &pub_key, bool mainnet) {
   uint8_t version;
   if (mainnet) {
-    version = libbitcoin::wallet::payment_address::mainnet_p2kh;
+    version = kth::wallet::payment_address::mainnet_p2kh;
   } else {
-    version = libbitcoin::wallet::payment_address::testnet_p2kh;
+    version = kth::wallet::payment_address::testnet_p2kh;
   }
-  return libbitcoin::wallet::payment_address(pub_key, version);
+  return kth::wallet::payment_address(pub_key, version);
 }
 
 inline
-std::string seed_to_wallet(libbitcoin::data_chunk const& seed, bool compressed, bool mainnet) {
+std::string seed_to_wallet(kth::data_chunk const& seed, bool compressed, bool mainnet) {
   auto priv_key = generate_priv_key(seed);
   // ec public has the operator bool
-  if (priv_key == libbitcoin::null_hash) return "";
+  if (priv_key == kth::null_hash) return "";
   auto pub_key = priv_key_to_public(priv_key, compressed).encoded();
   auto new_wallet = pub_key_to_addr(pub_key, mainnet);
   return new_wallet.encoded();
@@ -117,7 +117,7 @@ template <typename Node>
 bool newwallet(nlohmann::json& json_object, bool compressed, bool mainnet, bool use_testnet_rules, Node& node)
 {
     auto const seed = create_new_seed();
-    json_object["seed"] = libbitcoin::encode_base16(seed);
+    json_object["seed"] = kth::encode_base16(seed);
     json_object["addr"] = seed_to_wallet(seed, compressed, mainnet);
     return true;
 }
@@ -153,6 +153,6 @@ nlohmann::json process_newwallet(nlohmann::json const& json_in, Node& node, bool
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_NEWWALLET_HPP_

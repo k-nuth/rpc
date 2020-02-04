@@ -20,10 +20,10 @@
 
 #include <knuth/rpc/manager.hpp>
 
-namespace bitprim { namespace rpc {
+namespace kth { namespace rpc {
 
 manager::manager(bool use_testnet_rules
-        , libbitcoin::node::full_node& node
+        , kth::node::full_node& node
         , uint32_t rpc_port
         , uint32_t subscriber_port
 #ifdef KTH_WITH_KEOKEN
@@ -32,7 +32,7 @@ manager::manager(bool use_testnet_rules
         , std::unordered_set<std::string> const& rpc_allowed_ips
         , bool rpc_allow_all_ips)
    : stopped_(false)
-   , zmq_(subscriber_port, node.chain_bitprim())
+   , zmq_(subscriber_port, node.chain_kth())
 #ifdef KTH_WITH_KEOKEN
    , http_(use_testnet_rules, node, rpc_port, keoken_genesis_height, rpc_allowed_ips, rpc_allow_all_ips)
 #else

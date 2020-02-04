@@ -30,13 +30,13 @@
 
 #include <bitcoin/bitcoin/wallet/transaction_functions.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_createtransaction(nlohmann::json const& json_object, 
-                              std::vector<libbitcoin::chain::input_point>& outputs_to_spend,  
-                              std::vector<std::pair<libbitcoin::wallet::payment_address, uint64_t>>& outputs,
-                              libbitcoin::chain::output::list& extra_outputs) {
+                              std::vector<kth::chain::input_point>& outputs_to_spend,  
+                              std::vector<std::pair<kth::wallet::payment_address, uint64_t>>& outputs,
+                              kth::chain::output::list& extra_outputs) {
 
     auto const& size = json_object["params"].size();
     if (size == 0) {
@@ -47,21 +47,21 @@ bool json_in_createtransaction(nlohmann::json const& json_object,
         for (auto const& o : json_object["params"]["origin"]) {
             int index = o["output_index"];
             std::string hash_str = o["output_hash"];
-            libbitcoin::hash_digest hash_to_spend;
-            libbitcoin::decode_hash(hash_to_spend, hash_str);
+            kth::hash_digest hash_to_spend;
+            kth::decode_hash(hash_to_spend, hash_str);
             outputs_to_spend.push_back({hash_to_spend, uint32_t(index)});
         }
 
         for (auto const& d : json_object["params"]["dests"]) {
             // Implicit json to string conversion
             std::string addr = d["addr"];
-            outputs.push_back({libbitcoin::wallet::payment_address(addr), d["amount"]});
+            outputs.push_back({kth::wallet::payment_address(addr), d["amount"]});
         }
 
         for (auto const& extra : json_object["params"]["extra_outputs"]){
-            libbitcoin::data_chunk script_string;
-            libbitcoin::decode_base16(script_string, extra["script"]);
-            libbitcoin::chain::script script;
+            kth::data_chunk script_string;
+            kth::decode_base16(script_string, extra["script"]);
+            kth::chain::script script;
             script.from_data(script_string, false);
             extra_outputs.push_back({extra["amount"], script});
         }
@@ -75,16 +75,16 @@ bool json_in_createtransaction(nlohmann::json const& json_object,
 
 template <typename Blockchain>
 bool createtransaction(nlohmann::json& json_object, int& error, std::string& error_code,
-                       std::vector<libbitcoin::chain::input_point>& outputs_to_spend,
-                       std::vector<std::pair<libbitcoin::wallet::payment_address, uint64_t>>& outputs,
-                       libbitcoin::chain::output::list& extra_outputs, bool use_testnet_rules, Blockchain& chain)
+                       std::vector<kth::chain::input_point>& outputs_to_spend,
+                       std::vector<std::pair<kth::wallet::payment_address, uint64_t>>& outputs,
+                       kth::chain::output::list& extra_outputs, bool use_testnet_rules, Blockchain& chain)
 {
-    auto res = libbitcoin::wallet::tx_encode(outputs_to_spend, outputs, extra_outputs);
-    if (res.first != libbitcoin::error::success) {
+    auto res = kth::wallet::tx_encode(outputs_to_spend, outputs, extra_outputs);
+    if (res.first != kth::error::success) {
         return false;
     }
 
-    auto str = libbitcoin::encode_base16(res.second.to_data(true));
+    auto str = kth::encode_base16(res.second.to_data(true));
     json_object = str;
     return true;
 }
@@ -98,9 +98,9 @@ nlohmann::json process_createtransaction(nlohmann::json const& json_in, Blockcha
     int error = 0;
     std::string error_code;
 
-    std::vector<libbitcoin::chain::input_point> outputs_to_spend;
-    std::vector<std::pair<libbitcoin::wallet::payment_address, uint64_t>> outputs;
-    libbitcoin::chain::output::list extra_outputs;
+    std::vector<kth::chain::input_point> outputs_to_spend;
+    std::vector<std::pair<kth::wallet::payment_address, uint64_t>> outputs;
+    kth::chain::output::list extra_outputs;
 
     if (!json_in_createtransaction(json_in, outputs_to_spend, outputs, extra_outputs)) { //if false return error
         container["result"];
@@ -120,6 +120,6 @@ nlohmann::json process_createtransaction(nlohmann::json const& json_in, Blockcha
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_WALLET_CREATETRANSACTION_HPP_

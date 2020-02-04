@@ -27,7 +27,7 @@
 #include <knuth/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getspentinfo(nlohmann::json const& json_object, std::string& tx_id, size_t& index)
@@ -56,21 +56,21 @@ bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_co
     bool witness = true;
 #endif
 
-    libbitcoin::hash_digest hash;
-    if (libbitcoin::decode_hash(hash, txid)) {
-        libbitcoin::chain::output_point point(hash, index);
+    kth::hash_digest hash;
+    if (kth::decode_hash(hash, txid)) {
+        kth::chain::output_point point(hash, index);
         boost::latch latch(2);
 
-        chain.fetch_spend(point, [&](const libbitcoin::code &ec, libbitcoin::chain::input_point input) {
-            if (ec == libbitcoin::error::success) {
-                json_object["txid"] = libbitcoin::encode_hash(input.hash());
+        chain.fetch_spend(point, [&](const kth::code &ec, kth::chain::input_point input) {
+            if (ec == kth::error::success) {
+                json_object["txid"] = kth::encode_hash(input.hash());
                 json_object["index"] = input.index();
                 {
                     boost::latch latch2(2);
                     chain.fetch_transaction(input.hash(), false, witness,
-                        [&](const libbitcoin::code &ec, libbitcoin::transaction_const_ptr tx_ptr, size_t index,
+                        [&](const kth::code &ec, kth::transaction_const_ptr tx_ptr, size_t index,
                             size_t height) {
-                        if (ec == libbitcoin::error::success) {
+                        if (ec == kth::error::success) {
                             json_object["height"] = height;
                         }
                         latch2.count_down();
@@ -142,6 +142,6 @@ nlohmann::json process_getspentinfo(nlohmann::json const& json_in, Blockchain co
 }
 
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_

@@ -21,7 +21,7 @@
 #ifndef KTH_RPC_MESSAGES_ERROR_CODES_HPP_
 #define KTH_RPC_MESSAGES_ERROR_CODES_HPP_
 
-namespace bitprim {
+namespace kth {
     //! General application defined errors
     //!< std::exception thrown in command handling
     int const RPC_MISC_ERROR = -1;

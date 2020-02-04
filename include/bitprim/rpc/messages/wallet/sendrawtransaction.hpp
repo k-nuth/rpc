@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_sendrawtransaction(nlohmann::json const& json_object, std::string& tx_str, bool & allowhighfees) {
@@ -53,18 +53,18 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
 {
     //TODO: use allowhighfees
     auto const tx = std::make_shared<bc::message::transaction>();
-    libbitcoin::data_chunk out;
-    libbitcoin::decode_base16(out, incoming_hex);
+    kth::data_chunk out;
+    kth::decode_base16(out, incoming_hex);
     if (tx->from_data(1, out)) {
         boost::latch latch(2);
-        chain.organize(tx, [&](const libbitcoin::code & ec) {
+        chain.organize(tx, [&](const kth::code & ec) {
             if (ec) {
                 // error = knuth::RPC_VERIFY_ERROR;
                 error = ec.value();
                 error_code = "Failed to submit transaction.";
                 json_object;
             } else {
-                json_object = libbitcoin::encode_hash(tx->hash());
+                json_object = kth::encode_hash(tx->hash());
             }
             latch.count_down();
         });
@@ -124,6 +124,6 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, Blockch
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_

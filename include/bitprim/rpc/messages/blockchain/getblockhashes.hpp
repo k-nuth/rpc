@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getblockhashes(nlohmann::json const& json_object, uint32_t& time_high, uint32_t& time_low, bool& no_orphans, bool& logical_times) {
@@ -54,7 +54,7 @@ bool json_in_getblockhashes(nlohmann::json const& json_object, uint32_t& time_hi
 }
 
 template <typename Blockchain>
-bool update_mid(size_t top_height, size_t low_height, size_t& mid, libbitcoin::message::header::ptr& header, Blockchain const& chain) {
+bool update_mid(size_t top_height, size_t low_height, size_t& mid, kth::message::header::ptr& header, Blockchain const& chain) {
     size_t temp_mid = (top_height + low_height) / 2;
     if(temp_mid == mid) {
         return false;
@@ -76,7 +76,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
         return false;
     }
 
-    libbitcoin::message::header::ptr genesis, top, mid_header;
+    kth::message::header::ptr genesis, top, mid_header;
     getblockheader(0, genesis, chain);
     uint32_t time_genesis = genesis->timestamp();
 
@@ -119,13 +119,13 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
         return true;
     }
 
-    libbitcoin::message::header::ptr last_header_found = mid_header;
+    kth::message::header::ptr last_header_found = mid_header;
     uint32_t last_time_found = mid_header->timestamp();
     size_t last_height = mid;
 
-    libbitcoin::hash_digest last_hash = last_header_found->hash();
+    kth::hash_digest last_hash = last_header_found->hash();
 
-    std::deque<std::pair<libbitcoin::hash_digest, uint32_t>> hashes;
+    std::deque<std::pair<kth::hash_digest, uint32_t>> hashes;
 
     while (last_time_found <= time_high && last_height < top_height) {
         hashes.push_back(std::make_pair(last_hash, last_time_found));
@@ -134,7 +134,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     }
 
     last_height = mid - 1;
-    if(getblockheader(last_height, last_header_found, chain) == libbitcoin::error::success) {
+    if(getblockheader(last_height, last_header_found, chain) == kth::error::success) {
         last_time_found = last_header_found->timestamp();
         while (last_time_found >= time_low && last_height >= 0) {
             hashes.push_front(std::make_pair(last_hash, last_time_found));
@@ -146,13 +146,13 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     int i = 0;
     if (!logical_times) {
         for (auto const & h : hashes) {
-            json_object[i] = libbitcoin::encode_hash(h.first);
+            json_object[i] = kth::encode_hash(h.first);
             ++i;
         }
     }
     else {
         for (auto const & h : hashes) {
-            json_object[i]["blockhash"] = libbitcoin::encode_hash(h.first);
+            json_object[i]["blockhash"] = kth::encode_hash(h.first);
             json_object[i]["timestamp"] = h.second;
             ++i;
         }
@@ -213,6 +213,6 @@ nlohmann::json process_getblockhashes(nlohmann::json const& json_in, Blockchain 
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASHES_HPP_

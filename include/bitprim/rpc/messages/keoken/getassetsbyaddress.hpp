@@ -30,7 +30,7 @@
 
 #include <knuth/rpc/messages/keoken/keokenutils.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getassetsbyaddress(nlohmann::json const& json_object, 
@@ -51,7 +51,7 @@ bool json_in_getassetsbyaddress(nlohmann::json const& json_object,
 template <typename KeokenManager>
 bool getassetsbyaddress(nlohmann::json& json_object,  int& error, std::string& error_code, std::string& asset_owner, bool use_testnet_rules, KeokenManager const& keoken_manager)
 {
-    libbitcoin::wallet::payment_address wallet = str_to_network_wallet(false, asset_owner);
+    kth::wallet::payment_address wallet = str_to_network_wallet(false, asset_owner);
 
     if(wallet){
         auto assets_list = keoken_manager.get_assets_by_address(wallet);
@@ -102,6 +102,6 @@ nlohmann::json process_getassetsbyaddress(nlohmann::json const& json_in, KeokenM
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_GETASSETSBYADDRESS_HPP_

@@ -27,7 +27,7 @@
 #include <knuth/rpc/messages/error_codes.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getaddresstxids(nlohmann::json const& json_object, std::vector<std::string>& payment_address, size_t& start_height, size_t& end_height) {
@@ -35,7 +35,7 @@ bool json_in_getaddresstxids(nlohmann::json const& json_object, std::vector<std:
         return false;
 
     start_height = 0;
-    end_height = libbitcoin::max_size_t;
+    end_height = kth::max_size_t;
     try {
         auto temp = json_object["params"][0];
         if (temp.is_object()) {
@@ -66,16 +66,16 @@ bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error
 {
     int i = 0;
     for (auto const & payment_address : payment_addresses) {
-        libbitcoin::wallet::payment_address address(payment_address);
+        kth::wallet::payment_address address(payment_address);
         if (address)
         {
             boost::latch latch(2);
             chain.fetch_confirmed_transactions(address, INT_MAX, start_height,
-                [&](const libbitcoin::code &ec, const std::vector<libbitcoin::hash_digest>& history_list) {
-                if (ec == libbitcoin::error::success) {
+                [&](const kth::code &ec, const std::vector<kth::hash_digest>& history_list) {
+                if (ec == kth::error::success) {
                     // TODO: remove this if the new code pass the tests
                     //                                    for (auto const & history : history_list) {
-                    //                                        libbitcoin::hash_digest temp;
+                    //                                        kth::hash_digest temp;
                     //                                        if (history.height < end_height) {
                     //                                            // If a txns spend more than one utxo from the address, just add the first one
                     //                                            temp = history.point.hash();
@@ -85,7 +85,7 @@ bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error
                     //                                        }
                     //                                    }
                     for (auto it = history_list.rbegin(); it != history_list.rend(); ++it) {
-                        json_object[i] = libbitcoin::encode_hash(*it);
+                        json_object[i] = kth::encode_hash(*it);
                         ++i;
                     }
                 }
@@ -159,6 +159,6 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, Blockchain
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_

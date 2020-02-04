@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getblockhash(nlohmann::json const& json_object, size_t& height) {
@@ -47,9 +47,9 @@ bool json_in_getblockhash(nlohmann::json const& json_object, size_t& height) {
 template <typename Blockchain>
 bool getblockhash(nlohmann::json& json_object, int& error, std::string& error_code, const size_t height, Blockchain const& chain)
 {
-    libbitcoin::hash_digest hash;
+    kth::hash_digest hash;
     if(chain.get_block_hash(hash, height)){
-        json_object = libbitcoin::encode_hash(hash);
+        json_object = kth::encode_hash(hash);
         return true;
     } else return false;
 }
@@ -89,6 +89,6 @@ nlohmann::json process_getblockhash(nlohmann::json const& json_in, Blockchain co
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASH_HPP_

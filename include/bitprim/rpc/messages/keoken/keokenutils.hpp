@@ -28,17 +28,17 @@
 #include <knuth/keoken/transaction_processors/commons.hpp>
 #include <knuth/rpc/json/json.hpp>
 
-namespace bitprim {
+namespace kth {
 
 template <typename Blockchain>
-nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_const_ptr tx_ptr, bool testnet = false) {
+nlohmann::json decode_keoken( Blockchain const& chain, kth::transaction_const_ptr tx_ptr, bool testnet = false) {
 
     nlohmann::json container;
 
     auto keoken_data = knuth::keoken::first_keoken_output(*tx_ptr);
     if ( ! keoken_data.empty()) {
-        libbitcoin::data_source ds(keoken_data);
-        libbitcoin::istream_reader source(ds);
+        kth::data_source ds(keoken_data);
+        kth::istream_reader source(ds);
 
         auto version = source.read_2_bytes_big_endian();
         if ( ! source) return {};
@@ -46,7 +46,7 @@ nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_c
         if ( ! source) return {};
         container["version"] = version;
         container["type"] = type;
-        container["hash"] = libbitcoin::encode_hash((*tx_ptr).hash());
+        container["hash"] = kth::encode_hash((*tx_ptr).hash());
         switch (type) {
         case knuth::keoken::message::create_asset::type: {
             auto create = knuth::keoken::message::create_asset::factory_from_data(source);
@@ -72,70 +72,70 @@ nlohmann::json decode_keoken( Blockchain const& chain, libbitcoin::transaction_c
 }
 
 static
-libbitcoin::wallet::payment_address to_mainnet_addr (libbitcoin::wallet::payment_address const& input_addr) {
+kth::wallet::payment_address to_mainnet_addr (kth::wallet::payment_address const& input_addr) {
     //Generate an address
 
 
     uint8_t prefix;
-    if (input_addr.version() == libbitcoin::wallet::payment_address::testnet_p2sh) {
+    if (input_addr.version() == kth::wallet::payment_address::testnet_p2sh) {
         //It's p2sh testnet
-        prefix = libbitcoin::wallet::payment_address::mainnet_p2sh;
-    } else if (input_addr.version() == libbitcoin::wallet::payment_address::testnet_p2kh) {
+        prefix = kth::wallet::payment_address::mainnet_p2sh;
+    } else if (input_addr.version() == kth::wallet::payment_address::testnet_p2kh) {
         //It's p2kh testnet
-        prefix = libbitcoin::wallet::payment_address::mainnet_p2kh;
+        prefix = kth::wallet::payment_address::mainnet_p2kh;
     } else {
         // It's not testnet
         return input_addr.encoded();
     }
 
     // The wallet is testnet
-    libbitcoin::wallet::payment_address new_wallet(input_addr.hash(), prefix);
+    kth::wallet::payment_address new_wallet(input_addr.hash(), prefix);
     return new_wallet;
 }
 
 static
-libbitcoin::wallet::payment_address to_testnet_addr (libbitcoin::wallet::payment_address const& input_addr) {
+kth::wallet::payment_address to_testnet_addr (kth::wallet::payment_address const& input_addr) {
     uint8_t testnet_prefix;
-    if (input_addr.version() == libbitcoin::wallet::payment_address::mainnet_p2sh) {
+    if (input_addr.version() == kth::wallet::payment_address::mainnet_p2sh) {
         //It's p2sh mainnet
-        testnet_prefix = libbitcoin::wallet::payment_address::testnet_p2sh;
-    } else if (input_addr.version() == libbitcoin::wallet::payment_address::mainnet_p2kh) {
+        testnet_prefix = kth::wallet::payment_address::testnet_p2sh;
+    } else if (input_addr.version() == kth::wallet::payment_address::mainnet_p2kh) {
         //It's p2kh mainnet
-        testnet_prefix = libbitcoin::wallet::payment_address::testnet_p2kh;
+        testnet_prefix = kth::wallet::payment_address::testnet_p2kh;
     } else {
         // It's not mainnet
         return input_addr.encoded();
     }
 
     // The wallet is mainnet
-    libbitcoin::wallet::payment_address testnet_wallet(input_addr.hash(), testnet_prefix);
+    kth::wallet::payment_address testnet_wallet(input_addr.hash(), testnet_prefix);
     return testnet_wallet;
 }
 
 static
-libbitcoin::wallet::payment_address str_to_mainnet_addr (std::string const& input) {
+kth::wallet::payment_address str_to_mainnet_addr (std::string const& input) {
     //Generate an address
-    auto input_addr = libbitcoin::wallet::payment_address(input);
+    auto input_addr = kth::wallet::payment_address(input);
     return to_mainnet_addr(input_addr);
 }
 
 static
-libbitcoin::wallet::payment_address str_to_testnet_addr (std::string const& input) {
+kth::wallet::payment_address str_to_testnet_addr (std::string const& input) {
     //Generate an address
-    auto input_addr = libbitcoin::wallet::payment_address(input);
+    auto input_addr = kth::wallet::payment_address(input);
     return to_testnet_addr(input_addr);
 }
 
 
 static
-libbitcoin::wallet::payment_address str_to_network_wallet(bool testnet, std::string const& input) {
+kth::wallet::payment_address str_to_network_wallet(bool testnet, std::string const& input) {
     if (!testnet)
         return str_to_mainnet_addr(input);
     else
         return str_to_testnet_addr(input);
 }
 static
-libbitcoin::wallet::payment_address to_network_wallet(bool testnet, libbitcoin::wallet::payment_address const& input_addr) {
+kth::wallet::payment_address to_network_wallet(bool testnet, kth::wallet::payment_address const& input_addr) {
     if (!testnet)
         return to_mainnet_addr(input_addr);
     else

@@ -28,7 +28,7 @@
 #include <knuth/rpc/messages/utils.hpp>
 #include <boost/thread/latch.hpp>
 
-namespace bitprim {
+namespace kth {
 
 template <typename Node>
 bool getnetworkinfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Node & node)
@@ -36,7 +36,7 @@ bool getnetworkinfo(nlohmann::json& json_object, int& error, std::string& error_
     json_object["version"] = 001100;
 
     // json_object["subversion"] = "/Knuth:"+ std::string(KTH_CORE_VERSION);
-    json_object["subversion"] = libbitcoin::network::get_user_agent();
+    json_object["subversion"] = kth::network::get_user_agent();
 
     json_object["protocolversion"] = node.network_settings().protocol_maximum;
 

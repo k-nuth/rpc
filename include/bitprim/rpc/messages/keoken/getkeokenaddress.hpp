@@ -30,7 +30,7 @@
 
 #include <knuth/rpc/messages/keoken/keokenutils.hpp>
 
-namespace bitprim {
+namespace kth {
 
 inline
 bool json_in_getkeokenaddress(nlohmann::json const& json_object, std::string& payment_address, size_t& index_start, size_t& index_end)
@@ -43,7 +43,7 @@ bool json_in_getkeokenaddress(nlohmann::json const& json_object, std::string& pa
         return false;
 
     index_start = 0;
-    index_end = libbitcoin::max_size_t;
+    index_end = kth::max_size_t;
     try {
         auto temp = json_object["params"];
         if (temp.is_object()) {
@@ -79,13 +79,13 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
 #endif
 
     int i = 0;
-    libbitcoin::wallet::payment_address address(payment_address);
+    kth::wallet::payment_address address(payment_address);
     if (address)
     {
         boost::latch latch(2);
-        chain.fetch_keoken_history(address, INT_MAX, keoken_start, [&](const libbitcoin::code &ec,
-            std::shared_ptr <std::vector<libbitcoin::transaction_const_ptr>> keoken_txs) {
-                if (ec == libbitcoin::error::success) {
+        chain.fetch_keoken_history(address, INT_MAX, keoken_start, [&](const kth::code &ec,
+            std::shared_ptr <std::vector<kth::transaction_const_ptr>> keoken_txs) {
+                if (ec == kth::error::success) {
                     size_t i = 0;
                     size_t limit = index_end > (*keoken_txs).size() ? (*keoken_txs).size() : index_end;
                     size_t j = 0;
@@ -148,6 +148,6 @@ nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchai
     return container;
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_

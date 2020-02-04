@@ -20,7 +20,7 @@
 
 #include <knuth/rpc/messages/utils.hpp>
 
-namespace bitprim {
+namespace kth {
 
     double bits_to_difficulty(const uint32_t & bits) {
         double diff = 1.0;

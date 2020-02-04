@@ -27,7 +27,7 @@
 #include <knuth/keoken/memory_state.hpp>
 #endif
 
-namespace bitprim {
+namespace kth {
 
 // #ifdef KTH_WITH_KEOKEN
 //     using keoken_manager_t = knuth::keoken::manager<knuth::keoken::memory_state>;
@@ -116,7 +116,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
         auto it = signature_.find(key);
         if (it != signature_.end()) {
             if(json_in.find("params") != json_in.end()){
-                return it->second(json_in, node.chain_bitprim(), use_testnet_rules);
+                return it->second(json_in, node.chain_kth(), use_testnet_rules);
             } else {
                 nlohmann::json container;
                 container["result"];
@@ -128,7 +128,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
         auto it_n = no_params_map.find(key);
         if ( it_n != no_params_map.end()) {
-            return  it_n->second(json_in, node.chain_bitprim(), use_testnet_rules);
+            return  it_n->second(json_in, node.chain_kth(), use_testnet_rules);
         }
 
 #ifdef KTH_WITH_KEOKEN
@@ -155,22 +155,22 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
         if (json_in.find("params") != json_in.end()) {
             if (key == "submitblock")
-                return process_submitblock(json_in, node.chain_bitprim(), use_testnet_rules);
+                return process_submitblock(json_in, node.chain_kth(), use_testnet_rules);
 
             if (key == "sendrawtransaction")
-                return process_sendrawtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
+                return process_sendrawtransaction(json_in, node.chain_kth(), use_testnet_rules);
 
             if (key == "createtransaction")
-                return process_createtransaction(json_in, node.chain_bitprim(), use_testnet_rules);
+                return process_createtransaction(json_in, node.chain_kth(), use_testnet_rules);
 
             if (key == "createsignature")
-                return process_createsignature(json_in, node.chain_bitprim(), use_testnet_rules);
+                return process_createsignature(json_in, node.chain_kth(), use_testnet_rules);
 
             if (key == "setsignature")
-                return process_setsignature(json_in, node.chain_bitprim(), use_testnet_rules);
+                return process_setsignature(json_in, node.chain_kth(), use_testnet_rules);
 
             if (key == "newwallet")
-                return process_newwallet(json_in, node.chain_bitprim(), use_testnet_rules);
+                return process_newwallet(json_in, node.chain_kth(), use_testnet_rules);
 
 #ifdef KTH_WITH_KEOKEN
             if (key == "createasset")
@@ -180,10 +180,10 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
                 return process_sendtoken(json_in, use_testnet_rules);
 
             if (key == "getkeokenaddress")
-                return process_getkeokenaddress(json_in, node.chain_bitprim(), node.node_settings().keoken_genesis_height, use_testnet_rules);
+                return process_getkeokenaddress(json_in, node.chain_kth(), node.node_settings().keoken_genesis_height, use_testnet_rules);
 
             if (key == "getkeokenblock")
-                return process_getkeokenblock(json_in, node.chain_bitprim(), use_testnet_rules);
+                return process_getkeokenblock(json_in, node.chain_kth(), use_testnet_rules);
 
 #endif //KTH_WITH_KEOKEN
 
@@ -240,6 +240,6 @@ std::string process_data(nlohmann::json const& json_object, bool use_testnet_rul
     }
 }
 
-} //namespace bitprim
+} //namespace kth
 
 #endif //KTH_RPC_MESSAGES_HPP_
