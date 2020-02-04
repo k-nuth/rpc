@@ -5,9 +5,9 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-# bitprim-rpc
+# kth-rpc
 #==============================================================================
-project(bitprim-rpc
+project(kth-rpc
         VERSION 0
         LANGUAGES CXX C)
 
@@ -205,7 +205,7 @@ endif()
 
 
 if (NOT USE_CONAN)
-  # Require kth-node of at least version 0 and output ${bitprim_rpc_CPPFLAGS/LIBS/PKG}.
+  # Require kth-node of at least version 0 and output ${kth_rpc_CPPFLAGS/LIBS/PKG}.
   #------------------------------------------------------------------------------
   if (NOT TARGET kth-node)
     find_package(kth-node 0 REQUIRED)
@@ -284,14 +284,14 @@ endif()
 # Build
 #==============================================================================
 
-# src/bitprim-rpc.la => ${libdir}
+# src/kth-rpc.la => ${libdir}
 #------------------------------------------------------------------------------
 set(MODE STATIC)
 if (ENABLE_SHARED)
   set(MODE SHARED)
 endif()
 
-add_library(bitprim-rpc ${MODE}
+add_library(kth-rpc ${MODE}
     src/messages/utils.cpp
     src/http/rpc_server.cpp
     src/zmq/zmq_helper.cpp
@@ -299,43 +299,43 @@ add_library(bitprim-rpc ${MODE}
 )
 
 if (ENABLE_POSITION_INDEPENDENT_CODE) 
-  set_property(TARGET bitprim-rpc PROPERTY POSITION_INDEPENDENT_CODE ON)
+  set_property(TARGET kth-rpc PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif(ENABLE_POSITION_INDEPENDENT_CODE)
 
   
-target_include_directories(bitprim-rpc PUBLIC
+target_include_directories(kth-rpc PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
 
 
-target_compile_definitions(bitprim-rpc PUBLIC -DKTH_PROJECT_VERSION="\\"${KTH_PROJECT_VERSION}\\"") #TODO(fernando): manage with Conan????
+target_compile_definitions(kth-rpc PUBLIC -DKTH_PROJECT_VERSION="\\"${KTH_PROJECT_VERSION}\\"") #TODO(fernando): manage with Conan????
 
 if (NOT ENABLE_SHARED)
-  target_compile_definitions(bitprim-rpc PUBLIC -DBCT_STATIC -DBCN_STATIC -DBCR_STATIC -DBCB_STATIC -DBCD_STATIC -DBC_STATIC)
+  target_compile_definitions(kth-rpc PUBLIC -DBCT_STATIC -DBCN_STATIC -DBCR_STATIC -DBCB_STATIC -DBCD_STATIC -DBC_STATIC)
 endif()
 
 if (NOT MSVC)
-  target_compile_definitions(bitprim-rpc PUBLIC -DSYSCONFDIR=\"${SYSCONFDIR}\")
+  target_compile_definitions(kth-rpc PUBLIC -DSYSCONFDIR=\"${SYSCONFDIR}\")
 endif()
 
 if (NOT USE_CONAN)
-    target_link_libraries(bitprim-rpc PUBLIC kth-node)
+    target_link_libraries(kth-rpc PUBLIC kth-node)
 endif()
 
 if (NOT NO_CONAN_AT_ALL)
-  target_link_libraries(bitprim-rpc PUBLIC ${CONAN_LIBS})
+  target_link_libraries(kth-rpc PUBLIC ${CONAN_LIBS})
 elseif()
-  target_include_directories(bitprim-rpc PUBLIC ${ZeroMQ_INCLUDE_DIR})
-  target_link_libraries(bitprim-rpc PUBLIC ${ZeroMQ_LIBRARIES})
+  target_include_directories(kth-rpc PUBLIC ${ZeroMQ_INCLUDE_DIR})
+  target_link_libraries(kth-rpc PUBLIC ${ZeroMQ_LIBRARIES})
 endif()
 
 if (USE_CONAN)
   if (MINGW)
-    target_link_libraries(bitprim-rpc PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
+    target_link_libraries(kth-rpc PUBLIC ws2_32 wsock32) #TODO(fernando): manage with Conan
   endif()
 endif()
 
-_group_sources(bitprim-rpc "${CMAKE_CURRENT_LIST_DIR}")
+_group_sources(kth-rpc "${CMAKE_CURRENT_LIST_DIR}")
 
 # Tests
 #==============================================================================
@@ -344,7 +344,7 @@ if (WITH_TESTS)
     enable_testing()
 endif()
 
-# local: test/bitprim_rpc_test
+# local: test/kth_rpc_test
 #------------------------------------------------------------------------------
 if (WITH_TESTS)
 
@@ -352,29 +352,29 @@ if (WITH_TESTS)
       COMMAND ${CMAKE_CTEST_COMMAND} -C Debug --output-on-failure -R "test.+"
       COMMENT "Build and run all the unit tests.")
 
-  add_executable(bitprim_rpc_test
+  add_executable(kth_rpc_test
           test/rpc.cpp
           test/user_agent_dummy.cpp
   )
 
-  target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
+  target_link_libraries(kth_rpc_test PUBLIC kth-rpc)
 
-  # _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+  # _group_sources(kth_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-  add_test(NAME bitprim_rpc_test COMMAND bitprim_rpc_test)
+  add_test(NAME kth_rpc_test COMMAND kth_rpc_test)
 
-  add_dependencies(tests bitprim_rpc_test)
+  add_dependencies(tests kth_rpc_test)
 
 
 
-#  add_executable(bitprim_rpc_test
+#  add_executable(kth_rpc_test
 #          test/rpc.cpp
 #  )
 
-#  target_link_libraries(bitprim_rpc_test PUBLIC bitprim-rpc)
-#  _group_sources(bitprim_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+#  target_link_libraries(kth_rpc_test PUBLIC kth-rpc)
+#  _group_sources(kth_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-#  _add_tests(bitprim_rpc_test
+#  _add_tests(kth_rpc_test
 #          configuration_tests
 #          node_tests
 #          header_queue_tests
@@ -389,7 +389,7 @@ if (WITH_CONSOLE)
 
   add_executable(rpc.bn
           src/testing-main.cpp)
-  target_link_libraries(rpc.bn bitprim-rpc)
+  target_link_libraries(rpc.bn kth-rpc)
   set_target_properties(
           rpc.bn PROPERTIES
           FOLDER "rpc"
@@ -400,53 +400,53 @@ endif (WITH_CONSOLE)
 
 # Install
 #==============================================================================
-install(TARGETS bitprim-rpc
-        EXPORT bitprim-rpc
+install(TARGETS kth-rpc
+        EXPORT kth-rpc
         ARCHIVE DESTINATION lib)
 
 set(_kth_headers
-        bitprim/rpc.hpp
-        bitprim/rpc/define.hpp
-        bitprim/rpc/version.hpp
-        bitprim/rpc/http/server_http.hpp
-        bitprim/rpc/http/rpc_server.hpp
-        bitprim/rpc/json/json.hpp
-        bitprim/rpc/zmq/zmq_helper.hpp
-        bitprim/rpc/messages.hpp
-        bitprim/rpc/messages/messages.hpp
-        bitprim/rpc/messages/blockchain/getrawtransaction.hpp
-        bitprim/rpc/messages/blockchain/getaddressbalance.hpp
-        bitprim/rpc/messages/blockchain/getspentinfo.hpp
-        bitprim/rpc/messages/blockchain/getaddresstxids.hpp
-        bitprim/rpc/messages/blockchain/getaddressdeltas.hpp
-        bitprim/rpc/messages/blockchain/getaddressutxos.hpp
-        bitprim/rpc/messages/blockchain/getblockhashes.hpp
-        bitprim/rpc/messages/blockchain/getbestblockhash.hpp
-        bitprim/rpc/messages/blockchain/getblock.hpp
-        bitprim/rpc/messages/blockchain/getblockhash.hpp
-        bitprim/rpc/messages/blockchain/getblockchaininfo.hpp
-        bitprim/rpc/messages/blockchain/getblockheader.hpp
-        bitprim/rpc/messages/blockchain/getblockcount.hpp
-        bitprim/rpc/messages/blockchain/getdifficulty.hpp
-        bitprim/rpc/messages/blockchain/getchaintips.hpp
-        bitprim/rpc/messages/blockchain/getaddressmempool.hpp
+        kth/rpc.hpp
+        kth/rpc/define.hpp
+        kth/rpc/version.hpp
+        kth/rpc/http/server_http.hpp
+        kth/rpc/http/rpc_server.hpp
+        kth/rpc/json/json.hpp
+        kth/rpc/zmq/zmq_helper.hpp
+        kth/rpc/messages.hpp
+        kth/rpc/messages/messages.hpp
+        kth/rpc/messages/blockchain/getrawtransaction.hpp
+        kth/rpc/messages/blockchain/getaddressbalance.hpp
+        kth/rpc/messages/blockchain/getspentinfo.hpp
+        kth/rpc/messages/blockchain/getaddresstxids.hpp
+        kth/rpc/messages/blockchain/getaddressdeltas.hpp
+        kth/rpc/messages/blockchain/getaddressutxos.hpp
+        kth/rpc/messages/blockchain/getblockhashes.hpp
+        kth/rpc/messages/blockchain/getbestblockhash.hpp
+        kth/rpc/messages/blockchain/getblock.hpp
+        kth/rpc/messages/blockchain/getblockhash.hpp
+        kth/rpc/messages/blockchain/getblockchaininfo.hpp
+        kth/rpc/messages/blockchain/getblockheader.hpp
+        kth/rpc/messages/blockchain/getblockcount.hpp
+        kth/rpc/messages/blockchain/getdifficulty.hpp
+        kth/rpc/messages/blockchain/getchaintips.hpp
+        kth/rpc/messages/blockchain/getaddressmempool.hpp
         
-        bitprim/rpc/messages/mining/getmininginfo.hpp
-        bitprim/rpc/messages/util/getinfo.hpp
-        bitprim/rpc/messages/util/getnetworkinfo.hpp
-        bitprim/rpc/messages/util/validateaddress.hpp
-        bitprim/rpc/messages/utils.hpp
-        bitprim/rpc/messages/error_codes.hpp
+        kth/rpc/messages/mining/getmininginfo.hpp
+        kth/rpc/messages/util/getinfo.hpp
+        kth/rpc/messages/util/getnetworkinfo.hpp
+        kth/rpc/messages/util/validateaddress.hpp
+        kth/rpc/messages/utils.hpp
+        kth/rpc/messages/error_codes.hpp
 
-        bitprim/rpc/messages/mining/submitblock.hpp
-        bitprim/rpc/messages/wallet/sendrawtransaction.hpp
+        kth/rpc/messages/mining/submitblock.hpp
+        kth/rpc/messages/wallet/sendrawtransaction.hpp
 
 )
 
 if (WITH_MEMPOOL)
     set(_kth_headers
         ${_kth_headers}
-        bitprim/rpc/messages/mining/getblocktemplate.hpp
+        kth/rpc/messages/mining/getblocktemplate.hpp
     )
 endif()
 
@@ -459,9 +459,9 @@ endforeach()
 #==============================================================================
 include(CMakePackageConfigHelpers)
 
-export(EXPORT bitprim-rpc
-        FILE "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcTargets.cmake")
-export(PACKAGE bitprim-rpc)
+export(EXPORT kth-rpc
+        FILE "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcTargets.cmake")
+export(PACKAGE kth-rpc)
 
 if (UNIX)
   set(_config_package_location "lib/cmake")
@@ -469,21 +469,21 @@ elseif (WIN32)
   set(_config_package_location "cmake")
 endif()
 
-install(EXPORT bitprim-rpc
-        FILE bitprim-rpcTargets.cmake
+install(EXPORT kth-rpc
+        FILE kth-rpcTargets.cmake
         DESTINATION ${_config_package_location})
 
-configure_file(bitprim-rpcConfig.cmake.in
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfig.cmake"
+configure_file(kth-rpcConfig.cmake.in
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfig.cmake"
         @ONLY)
 
 write_basic_package_version_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
         COMPATIBILITY AnyNewerVersion)
 
 install(
         FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/bitprim-rpcConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/kth-rpcConfigVersion.cmake"
         DESTINATION ${_config_package_location})

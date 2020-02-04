@@ -12,14 +12,14 @@ echo "Knuth branch: ${KTH_PUSH_BRANCH}"
 
 
 # TODO(fernando): put in another place
-export KTH_PUSH_ACCOUNT=bitprim
+export KTH_PUSH_ACCOUNT=kth
 
 # ------------------------------------------------------
-export KTH_PUSH_PROJECT=kth-node-exe
+export KTH_PUSH_PROJECT=node-exe
 
 # body="{
-#     \"accountName\": \"bitprim\",
-#     \"projectSlug\": \"bitprim-rpc\",
+#     \"accountName\": \"kth\",
+#     \"projectSlug\": \"rpc\",
 #     \"branch\": \"${KTH_PUSH_BRANCH}\",
 #     \"environmentVariables\": {
 #        \"SKIP_NUGET\": \"true\"
@@ -41,7 +41,7 @@ curl -s -d "$body" -X POST \
 body="{
     \"request\": {
     \"branch\":\"${KTH_PUSH_BRANCH}\",
-    \"message\": \"Force by bitprim-rpc build: ${TRAVIS_BUILD_NUMBER}\"
+    \"message\": \"Force by rpc build: ${TRAVIS_BUILD_NUMBER}\"
 }}"
 
 curl -s -X POST \

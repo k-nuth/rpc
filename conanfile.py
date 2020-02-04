@@ -55,8 +55,8 @@ class KnuthRPCConan(KnuthConanFile):
 
     generators = "cmake"
     exports = "conan_*", "ci_utils/*"
-    exports_sources = "src/*", "CMakeLists.txt", "cmake/*", "bitprim-rpcConfig.cmake.in", "knuthbuildinfo.cmake", "include/*", "test/*"
-    package_files = "build/lbitprim-rpc.a"
+    exports_sources = "src/*", "CMakeLists.txt", "cmake/*", "kth-rpcConfig.cmake.in", "knuthbuildinfo.cmake", "include/*", "test/*"
+    package_files = "build/lkth-rpc.a"
     build_policy = "missing"
 
     @property
@@ -254,5 +254,5 @@ class KnuthRPCConan(KnuthConanFile):
 
     def package_info(self):
         self.cpp_info.includedirs = ['include']
-        self.cpp_info.libs = ["bitprim-rpc"]
+        self.cpp_info.libs = ["kth-rpc"]
 
