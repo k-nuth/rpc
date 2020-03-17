@@ -571,7 +571,7 @@ class exception : public std::exception
   protected:
     exception(int id_, const char* what_arg) : id(id_), m(what_arg) {}
 
-    static std::string name(const std::string& ename, int id_)
+    static std::string name(std::string const& ename, int id_)
     {
         return "[json.exception." + ename + "." + std::to_string(id_) + "] ";
     }
@@ -635,7 +635,7 @@ class parse_error : public exception
     @param[in] what_arg  the explanatory string
     @return parse_error object
     */
-    static parse_error create(int id_, std::size_t byte_, const std::string& what_arg)
+    static parse_error create(int id_, std::size_t byte_, std::string const& what_arg)
     {
         std::string w = exception::name("parse_error", id_) + "parse error" +
                         (byte_ != 0 ? (" at " + std::to_string(byte_)) : "") +
@@ -699,7 +699,7 @@ caught.,invalid_iterator}
 class invalid_iterator : public exception
 {
   public:
-    static invalid_iterator create(int id_, const std::string& what_arg)
+    static invalid_iterator create(int id_, std::string const& what_arg)
     {
         std::string w = exception::name("invalid_iterator", id_) + what_arg;
         return invalid_iterator(id_, w.c_str());
@@ -751,7 +751,7 @@ caught.,type_error}
 class type_error : public exception
 {
   public:
-    static type_error create(int id_, const std::string& what_arg)
+    static type_error create(int id_, std::string const& what_arg)
     {
         std::string w = exception::name("type_error", id_) + what_arg;
         return type_error(id_, w.c_str());
@@ -796,7 +796,7 @@ caught.,out_of_range}
 class out_of_range : public exception
 {
   public:
-    static out_of_range create(int id_, const std::string& what_arg)
+    static out_of_range create(int id_, std::string const& what_arg)
     {
         std::string w = exception::name("out_of_range", id_) + what_arg;
         return out_of_range(id_, w.c_str());
@@ -833,7 +833,7 @@ caught.,other_error}
 class other_error : public exception
 {
   public:
-    static other_error create(int id_, const std::string& what_arg)
+    static other_error create(int id_, std::string const& what_arg)
     {
         std::string w = exception::name("other_error", id_) + what_arg;
         return other_error(id_, w.c_str());
@@ -1406,7 +1406,7 @@ template<typename IteratorType> class iteration_proxy
         }
 
         /// return key of the iterator
-        const std::string& key() const
+        std::string const& key() const
         {
             assert(anchor.m_object != nullptr);
 
@@ -3652,7 +3652,7 @@ struct json_sax
     @return whether parsing should proceed (must return false)
     */
     virtual bool parse_error(std::size_t position,
-                             const std::string& last_token,
+                             std::string const& last_token,
                              const detail::exception& ex) = 0;
 
     virtual ~json_sax() = default;
@@ -10209,7 +10209,7 @@ class json_pointer
 
     @since version 2.0.0
     */
-    explicit json_pointer(const std::string& s = "")
+    explicit json_pointer(std::string const& s = "")
         : reference_tokens(split(s))
     {}
 
@@ -10251,7 +10251,7 @@ class json_pointer
 
     @throw out_of_range.404 if string @a s could not be converted to an integer
     */
-    static int array_index(const std::string& s)
+    static int array_index(std::string const& s)
     {
         std::size_t processed_chars = 0;
         int const res = std::stoi(s, &processed_chars);
@@ -10649,7 +10649,7 @@ class json_pointer
     @throw parse_error.107  if the pointer is not empty or begins with '/'
     @throw parse_error.108  if character '~' is not followed by '0' or '1'
     */
-    static std::vector<std::string> split(const std::string& reference_string)
+    static std::vector<std::string> split(std::string const& reference_string)
     {
         std::vector<std::string> result;
 
@@ -10724,8 +10724,8 @@ class json_pointer
 
     @since version 2.0.0
     */
-    static void replace_substring(std::string& s, const std::string& f,
-                                  const std::string& t)
+    static void replace_substring(std::string& s, std::string const& f,
+                                  std::string const& t)
     {
         assert(not f.empty());
         for (auto pos = s.find(f);                // find first occurrence of f
@@ -10757,7 +10757,7 @@ class json_pointer
 
     @note Empty objects or arrays are flattened to `null`.
     */
-    static void flatten(const std::string& reference_string,
+    static void flatten(std::string const& reference_string,
                         const BasicJsonType& value,
                         BasicJsonType& result)
     {
@@ -18264,7 +18264,7 @@ class basic_json
     @since version 2.0.0
     */
     static basic_json diff(const basic_json& source, const basic_json& target,
-                           const std::string& path = "")
+                           std::string const& path = "")
     {
         // the patch
         basic_json result(value_t::array);

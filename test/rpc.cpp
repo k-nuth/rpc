@@ -37,7 +37,7 @@ public:
     //bool get_gaps(database::block_database::heights& out_gaps) const;
 
     ///// Get a determination of whether the block hash exists in the store.
-    //bool get_block_exists(const hash_digest& block_hash) const;
+    //bool get_block_exists(hash_digest const& block_hash) const;
 
     /// Get the hash of the block if it exists.
     bool get_block_hash(kth::hash_digest& out_hash, size_t height) const {
@@ -52,7 +52,7 @@ public:
     //bool get_header(chain::header& out_header, size_t height) const;
 
     ///// Get the height of the block with the given hash.
-    //bool get_height(size_t& out_height, const hash_digest& block_hash) const;
+    //bool get_height(size_t& out_height, hash_digest const& block_hash) const;
 
     ///// Get the bits of the block with the given height.
     //bool get_bits(uint32_t& out_bits, const size_t& height) const;
@@ -79,16 +79,16 @@ public:
     //	size_t branch_height, bool require_confirmed) const;
 
     ///// Determine if an unspent transaction exists with the given hash.
-    //bool get_is_unspent_transaction(const hash_digest& hash,
+    //bool get_is_unspent_transaction(hash_digest const& hash,
     //	size_t branch_height, bool require_confirmed) const;
 
     ///// Get position data for a transaction.
     //bool get_transaction_position(size_t& out_height, size_t& out_position,
-    //	const hash_digest& hash, bool require_confirmed) const;
+    //	hash_digest const& hash, bool require_confirmed) const;
 
     ///////// Get the transaction of the given hash and its block height.
     //////transaction_ptr get_transaction(size_t& out_block_height,
-    //////    const hash_digest& hash, bool require_confirmed) const;
+    //////    hash_digest const& hash, bool require_confirmed) const;
 
     //// Writers.
     //// ------------------------------------------------------------------------
@@ -163,7 +163,7 @@ public:
     void fetch_block_hash_timestamp(size_t height, kth::blockchain::safe_chain::block_hash_time_fetch_handler handler) const {}
 
     ///// fetch block header by hash.
-    //void fetch_block_header(const hash_digest& hash,
+    //void fetch_block_header(hash_digest const& hash,
     //	block_header_fetch_handler handler) const;
 
     ///// fetch hashes of transactions for a block, by block height.
@@ -173,7 +173,7 @@ public:
     //void fetch_merkle_block(size_t height, merkle_block_fetch_handler handler) const;
 
     ///// fetch hashes of transactions for a block, by block hash.
-    //void fetch_merkle_block(const hash_digest& hash,
+    //void fetch_merkle_block(hash_digest const& hash,
     //	merkle_block_fetch_handler handler) const;
 
     ///// fetch compact block by block height.
@@ -181,11 +181,11 @@ public:
     //	compact_block_fetch_handler handler) const;
 
     ///// fetch compact block by block hash.
-    //void fetch_compact_block(const hash_digest& hash,
+    //void fetch_compact_block(hash_digest const& hash,
     //	compact_block_fetch_handler handler) const;
 
     ///// fetch height of block by hash.
-    //void fetch_block_height(const hash_digest& hash,
+    //void fetch_block_height(hash_digest const& hash,
     //	block_height_fetch_handler handler) const;
 
     /// fetch height of latest block.
@@ -219,17 +219,17 @@ public:
     //std::tuple<bool, size_t, uint64_t> validate_tx_2(chain::transaction const& tx, size_t height) const;
 
     ///// fetch position and height within block of transaction by hash.
-    //void fetch_transaction_position(const hash_digest& hash,
+    //void fetch_transaction_position(hash_digest const& hash,
     //	bool require_confirmed, transaction_index_fetch_handler handler) const;
 
     ///// fetch the set of block hashes indicated by the block locator.
     //void fetch_locator_block_hashes(get_blocks_const_ptr locator,
-    //	const hash_digest& threshold, size_t limit,
+    //	hash_digest const& threshold, size_t limit,
     //	inventory_fetch_handler handler) const;
 
     ///// fetch the set of block headers indicated by the block locator.
     //void fetch_locator_block_headers(get_headers_const_ptr locator,
-    //	const hash_digest& threshold, size_t limit,
+    //	hash_digest const& threshold, size_t limit,
     //	locator_block_headers_fetch_handler handler) const;
 
     ///// fetch a block locator relative to the current top and threshold.
