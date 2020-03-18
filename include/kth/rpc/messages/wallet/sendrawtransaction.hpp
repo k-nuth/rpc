@@ -75,7 +75,7 @@ bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& er
     }
 
     if (error != 0){
-        LOG_WARNING("rpc") << "Failed to Submit Transaction [Error code: " << error << "]";
+        LOG_WARNING("rpc", "Failed to Submit Transaction [Error code: ", error, "]");
         return false;
     }
     

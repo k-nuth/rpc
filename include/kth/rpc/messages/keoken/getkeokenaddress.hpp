@@ -61,8 +61,7 @@ bool json_in_getkeokenaddress(nlohmann::json const& json_object, std::string& pa
         }
     }
     catch (const std::exception & e) {
-        LOG_ERROR("rpc")
-        << "Malformed RPC message Raised an exception [" << e.what() << "]";
+        LOG_ERROR("rpc", "Malformed RPC message Raised an exception [", e.what(), "]");
         return false;
     }
 

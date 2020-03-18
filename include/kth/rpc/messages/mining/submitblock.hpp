@@ -86,13 +86,11 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
     }
 
     if (error != 0){
-    LOG_WARNING("rpc")
-            << "Failed to Submit Block [Error code: " << error << "]";
+        LOG_WARNING("rpc", "Failed to Submit Block [Error code: ", error, "]");
         return false;
     }
 
-    LOG_INFO("rpc")
-        << "Block submitted successfully [" << kth::encode_hash(block->hash()) << "]" ;
+    LOG_INFO("rpc", "Block submitted successfully [", kth::encode_hash(block->hash()), "]");
 
     return true;
 }

@@ -2,7 +2,6 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-
 cmake_minimum_required(VERSION 3.8)
 
 # kth-rpc
@@ -163,6 +162,13 @@ if (DB_READONLY_MODE)
   add_definitions(-DKTH_DB_READONLY)
 endif()
 
+
+# Implement --binlog.
+#------------------------------------------------------------------------------
+option(BINLOG "Uses BinLog logging library." OFF)
+if (BINLOG)
+  add_definitions(-DKTH_USE_BINLOG)
+endif()
 
 
 
