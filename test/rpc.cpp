@@ -233,7 +233,7 @@ public:
     //	locator_block_headers_fetch_handler handler) const;
 
     ///// fetch a block locator relative to the current top and threshold.
-    //void fetch_block_locator(const chain::block::indexes& heights,
+    //void fetch_block_locator(chain::block::indexes const& heights,
     //	block_locator_fetch_handler handler) const;
 
     //// Server Queries.
