@@ -37,7 +37,7 @@ class KnuthRPCConan(KnuthConanFile):
                "cflags": "ANY",
                "glibcxx_supports_cxx11_abi": "ANY",
                "cmake_export_compile_commands": [True, False],
-               "binlog": [True, False],
+               "log": ["boost", "spdlog", "binlog"],
                "use_libmdbx": [True, False],
     }
 
@@ -62,7 +62,7 @@ class KnuthRPCConan(KnuthConanFile):
         "cflags": "_DUMMY_",
         "glibcxx_supports_cxx11_abi": "_DUMMY_",
         "cmake_export_compile_commands": False,
-        "binlog": False,
+        "log": "boost",
         "use_libmdbx": False,
     }
 
@@ -77,7 +77,7 @@ class KnuthRPCConan(KnuthConanFile):
         return self.options.currency == "BCH" and self.options.get_safe("keoken")
 
     def requirements(self):
-        self.requires("boost/1.72.0@kth/stable")
+        self.requires("boost/1.73.0@kth/stable")
         self.requires("libzmq/4.3.2@kth/stable")
         self.requires("node/0.X@%s/%s" % (self.user, self.channel))
 
@@ -104,8 +104,9 @@ class KnuthRPCConan(KnuthConanFile):
         self.options["*"].mempool = self.options.mempool
         self.output.info("Compiling with mempool: %s" % (self.options.mempool,))
 
-        self.options["*"].binlog = self.options.binlog
-        self.output.info("Compiling with binlog: %s" % (self.options.binlog,))
+        #TODO(fernando): move to kthbuild
+        self.options["*"].log = self.options.log
+        self.output.info("Compiling with log: %s" % (self.options.log,))
 
         self.options["*"].use_libmdbx = self.options.use_libmdbx
         self.output.info("Compiling with use_libmdbx: %s" % (self.options.use_libmdbx,))
@@ -124,7 +125,7 @@ class KnuthRPCConan(KnuthConanFile):
         cmake.definitions["WITH_KEOKEN"] = option_on_off(self.is_keoken)
         cmake.definitions["WITH_MEMPOOL"] = option_on_off(self.options.mempool)
         cmake.definitions["DB_READONLY_MODE"] = option_on_off(self.options.db_readonly)
-        cmake.definitions["BINLOG"] = option_on_off(self.options.binlog)
+        cmake.definitions["LOG_LIBRARY"] = self.options.log
         cmake.definitions["USE_LIBMDBX"] = option_on_off(self.options.use_libmdbx)
 
         cmake.configure(source_dir=self.source_folder)
