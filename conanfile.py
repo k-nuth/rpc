@@ -77,7 +77,6 @@ class KnuthRPCConan(KnuthConanFile):
         return self.options.currency == "BCH" and self.options.get_safe("keoken")
 
     def requirements(self):
-        self.requires("boost/1.73.0@kth/stable")
         self.requires("libzmq/4.3.2@kth/stable")
         self.requires("node/0.X@%s/%s" % (self.user, self.channel))
 

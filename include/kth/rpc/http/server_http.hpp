@@ -169,7 +169,7 @@ namespace SimpleWeb {
         std::map<std::string,
                 std::function<void(std::shared_ptr<typename ServerBase<socket_type>::Response>, std::shared_ptr<typename ServerBase<socket_type>::Request>)> > default_resource;
 
-        std::function<void(std::shared_ptr<typename ServerBase<socket_type>::Request>, const boost::system::error_code&)> on_error;
+        std::function<void(std::shared_ptr<typename ServerBase<socket_type>::Request>, boost::system::error_code const&)> on_error;
 
         std::function<void(std::shared_ptr<socket_type> socket, std::shared_ptr<typename ServerBase<socket_type>::Request>)> on_upgrade;
 
@@ -220,8 +220,8 @@ namespace SimpleWeb {
         }
 
         ///Use this function if you need to recursively send parts of a longer message
-        void send(const std::shared_ptr<Response> &response, const std::function<void(const boost::system::error_code&)>& callback=nullptr) const {
-            boost::asio::async_write(*response->socket, response->streambuf, [this, response, callback](const boost::system::error_code& ec, size_t /*bytes_transferred*/) {
+        void send(const std::shared_ptr<Response> &response, const std::function<void(boost::system::error_code const&)>& callback=nullptr) const {
+            boost::asio::async_write(*response->socket, response->streambuf, [this, response, callback](boost::system::error_code const& ec, size_t /*bytes_transferred*/) {
                 if(callback)
                     callback(ec);
             });
@@ -244,7 +244,7 @@ namespace SimpleWeb {
 
             auto timer=std::make_shared<boost::asio::deadline_timer>(*io_service);
             timer->expires_from_now(boost::posix_time::seconds(seconds));
-            timer->async_wait([socket](const boost::system::error_code& ec){
+            timer->async_wait([socket](boost::system::error_code const& ec){
                 if(!ec) {
                     boost::system::error_code ec;
                     socket->lowest_layer().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
@@ -284,7 +284,7 @@ namespace SimpleWeb {
             boost::regex const e("(\\r\\n\\r\\n|\\n\\r\\n|\\r\\n\\n|\\n\\n)");
 
             boost::asio::async_read_until(*socket, request->streambuf, e,
-                                          [this, socket, request, timer](const boost::system::error_code& ec, size_t bytes_transferred) {
+                                          [this, socket, request, timer](boost::system::error_code const& ec, size_t bytes_transferred) {
                                               if(timer)
                                                   timer->cancel();
                                               if(!ec) {
@@ -316,7 +316,7 @@ namespace SimpleWeb {
                                                           boost::asio::async_read(*socket, request->streambuf,
                                                                                   boost::asio::transfer_exactly(content_length-num_additional_bytes),
                                                                                   [this, socket, request, timer]
-                                                                                          (const boost::system::error_code& ec, size_t /*bytes_transferred*/) {
+                                                                                          (boost::system::error_code const& ec, size_t /*bytes_transferred*/) {
                                                                                       if(timer)
                                                                                           timer->cancel();
                                                                                       if(!ec)
@@ -422,7 +422,7 @@ namespace SimpleWeb {
 
             auto response=std::shared_ptr<Response>(new Response(socket), [this, request, timer](Response *response_ptr) {
                 auto response=std::shared_ptr<Response>(response_ptr);
-                this->send(response, [this, response, request, timer](const boost::system::error_code& ec) {
+                this->send(response, [this, response, request, timer](boost::system::error_code const& ec) {
                     if(timer)
                         timer->cancel();
                     if(!ec) {
@@ -487,7 +487,7 @@ namespace SimpleWeb {
             //Shared_ptr is used to pass temporary objects to the asynchronous functions
             auto socket=std::make_shared<HTTP>(*io_service);
 
-            acceptor->async_accept(*socket, [this, socket](const boost::system::error_code& ec){
+            acceptor->async_accept(*socket, [this, socket](boost::system::error_code const& ec){
                 //Immediately start accepting a new connection (if io_service hasn't been stopped)
                 if (ec != boost::asio::error::operation_aborted)
                     accept();
