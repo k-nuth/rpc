@@ -8,11 +8,7 @@
 #include <kth/keoken/state_dto.hpp>
 #endif
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest.h"
-
-// Unit Tests ----------------------------------------------------
-#ifdef DOCTEST_LIBRARY_INCLUDED
+#include <test_helpers.hpp>
 
 class block_chain_dummy {
 public:
@@ -618,7 +614,3 @@ private:
 //     CHECK(output["result"] == "01000000019373b022dfb99400ee40b8987586aea9e158f3b0c62343d59896c212cee60d980100000000ffffffff03204e0000000000001976a9147fa36605e302ed00aeca0da8e2743772df11290188acce3b440a050000001976a914b43ff4532569a00bcab4ce60f87cdeebf985b69a88ac0000000000000000176a0400004b50100000000100000001000000000000000100000000");
 // }
 // #endif // KTH_WITH_KEOKEN
-
-
-#endif /*DOCTEST_LIBRARY_INCLUDED*/
-

@@ -393,24 +393,29 @@ endif()
 #------------------------------------------------------------------------------
 if (WITH_TESTS)
 
-  add_custom_target(tests ALL
-      COMMAND ${CMAKE_CTEST_COMMAND} -C Debug --output-on-failure -R "test.+"
-      COMMENT "Build and run all the unit tests.")
+  # add_custom_target(tests ALL
+  #     COMMAND ${CMAKE_CTEST_COMMAND} -C Debug --output-on-failure -R "test.+"
+  #     COMMENT "Build and run all the unit tests.")
 
   add_executable(kth_rpc_test
           test/rpc.cpp
           test/user_agent_dummy.cpp
+          test/main.cpp
   )
 
   target_link_libraries(kth_rpc_test PUBLIC kth-rpc)
+  _group_sources(kth_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
 
-  # _group_sources(kth_rpc_test "${CMAKE_CURRENT_LIST_DIR}/test")
+  target_include_directories(kth_rpc_test PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/test>)
 
-  add_test(NAME kth_rpc_test COMMAND kth_rpc_test)
+  include(CTest)
+  include(Catch)
+  catch_discover_tests(kth_rpc_test)
 
-  add_dependencies(tests kth_rpc_test)
 
-
+  # add_dependencies(tests kth_rpc_test)
+  # add_test(NAME kth_rpc_test COMMAND kth_rpc_test)
 
 #  add_executable(kth_rpc_test
 #          test/rpc.cpp

@@ -80,6 +80,9 @@ class KnuthRPCConan(KnuthConanFile):
         self.requires("libzmq/4.3.2@kth/stable")
         self.requires("node/0.X@%s/%s" % (self.user, self.channel))
 
+        if self.options.tests:
+            self.requires("catch2/2.12.2@")
+
     def config_options(self):
         KnuthConanFile.config_options(self)
 
