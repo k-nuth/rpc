@@ -159,8 +159,8 @@ using json = basic_json<>;
     #define JSON_CATCH(exception) catch(exception)
 #else
     #define JSON_THROW(exception) std::abort()
-    #define JSON_TRY if(true)
-    #define JSON_CATCH(exception) if(false)
+    #define JSON_TRY if (true)
+    #define JSON_CATCH(exception) if (false)
 #endif
 
 // override exception macros
@@ -179,8 +179,8 @@ using json = basic_json<>;
 
 // manual branch prediction
 #if defined(__clang__) || defined(__GNUC__) || defined(__GNUG__)
-    #define JSON_LIKELY(x)      __builtin_expect(!!(x), 1)
-    #define JSON_UNLIKELY(x)    __builtin_expect(!!(x), 0)
+    #define JSON_LIKELY(x)      __builtin_expect( ! !(x), 1)
+    #define JSON_UNLIKELY(x)    __builtin_expect( ! !(x), 0)
 #else
     #define JSON_LIKELY(x)      x
     #define JSON_UNLIKELY(x)    x

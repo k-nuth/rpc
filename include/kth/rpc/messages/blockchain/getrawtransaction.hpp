@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETRAWTRANSACTION_HPP_
@@ -36,7 +21,7 @@ namespace kth {
 // TODO: move this code to a better place
 
 inline
-std::string get_txn_type(const kth::chain::script& script) {
+std::string get_txn_type(const kth::domain::chain::script& script) {
     auto pattern = script.pattern();
     // The first operations access must be method-based to guarantee the cache.
     if (pattern == kth::machine::script_pattern::null_data)
@@ -169,7 +154,7 @@ bool getrawtransaction(nlohmann::json& json_object, int& error, std::string& err
                         // SPENT INFO
                         nlohmann::json spent;
                         boost::latch latch2(2);
-                        chain.fetch_spend(kth::chain::output_point(tx_ptr->hash(), i), [&](const kth::code &ec, kth::chain::input_point input) {
+                        chain.fetch_spend(kth::domain::chain::output_point(tx_ptr->hash(), i), [&](const kth::code &ec, kth::domain::chain::input_point input) {
                             if (ec == kth::error::not_found) {
                                 // Output not spent
                                 json_object["vout"][i]["spentTxId"] = spent["txid"];
@@ -262,7 +247,7 @@ nlohmann::json process_getrawtransaction(nlohmann::json const& json_in, Blockcha
 
     std::string tx_id;
     bool verbose;
-    if (!json_in_getrawtransaction(json_in, tx_id, verbose)) //if false return error
+    if ( ! json_in_getrawtransaction(json_in, tx_id, verbose)) //if false return error
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getrawtransaction \"txid\" ( verbose )\n"

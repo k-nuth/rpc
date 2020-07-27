@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
 #define KTH_RPC_MESSAGES_MINING_SUBMITBLOCK_HPP_
@@ -51,7 +36,7 @@ void handle_organize(const kth::code& ec) {
 }
 
 static
-void setcoinbasereserved(std::shared_ptr<bc::message::block> block){
+void setcoinbasereserved(std::shared_ptr<kd::message::block> block){
     kth::data_chunk stack_s(32);
     for(auto& data : stack_s){
         data = (uint8_t)0;
@@ -59,19 +44,20 @@ void setcoinbasereserved(std::shared_ptr<bc::message::block> block){
     kth::data_stack stack{};
     stack.insert(stack.begin(), stack_s);
 #ifndef KTH_CURRENCY_BCH
-    block->transactions()[0].inputs()[0].set_witness(kth::chain::witness(stack));
+    block->transactions()[0].inputs()[0].set_witness(kth::domain::chain::witness(stack));
 #endif
 }
 
 template <typename Blockchain>
 bool submitblock(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& incoming_hex, bool use_testnet_rules, Blockchain& chain) {
-    auto const block = std::make_shared<bc::message::block>();
+    auto const block = std::make_shared<kd::message::block>();
     kth::data_chunk out;
     kth::decode_base16(out, incoming_hex);
-    if (block->from_data(1, out)) {
+    if (domain::entity_from_data(*block, out, 1)) {
 #ifndef KTH_CURRENCY_BCH
-        if(!block->transactions()[0].is_segregated())
+        if ( ! block->transactions()[0].is_segregated()) {
             setcoinbasereserved(block);
+        }
 #endif
        chain.organize(block, [&](const kth::code & ec) {
             if (ec) {
@@ -104,7 +90,7 @@ nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& ch
     std::string error_code;
 
     std::string block_str;
-    if (!json_in_submitblock(json_in, block_str)) //if false return error
+    if ( ! json_in_submitblock(json_in, block_str)) //if false return error
     {
         container["result"];
         container["error"]["code"] = kth::RPC_MISC_ERROR;

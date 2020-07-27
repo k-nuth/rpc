@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCK_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCK_HPP_
@@ -57,7 +42,7 @@ bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, 
 
     kth::hash_digest hash;
     if (kth::decode_hash(hash, block_hash)) {
-        if(verbose)
+        if (verbose)
         {
 
             boost::latch latch(2);
@@ -104,7 +89,7 @@ bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, 
                         json_object["nextblockhash"];
 
                         kth::hash_digest nexthash;
-                        if(chain.get_block_hash(nexthash, height+1))
+                        if (chain.get_block_hash(nexthash, height+1))
                             json_object["nextblockhash"] = kth::encode_hash(nexthash);
                     
                 }
@@ -168,7 +153,7 @@ nlohmann::json process_getblock(nlohmann::json const& json_in, Blockchain const&
 
     std::string hash;
     bool verbose;
-    if (!json_in_getblock(json_in, hash, verbose)) //if false return error
+    if ( ! json_in_getblock(json_in, hash, verbose)) //if false return error
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblock \"blockhash\" ( verbose )\n"

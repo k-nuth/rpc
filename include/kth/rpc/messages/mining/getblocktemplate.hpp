@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_
 #define KTH_RPC_MESSAGES_MINING_GETBLOCKTEMPLATE_HPP_
@@ -31,7 +16,7 @@
 namespace kth {
 
 template <typename Blockchain>
-bool get_last_block_header(size_t& out_height, kth::message::header& out_header, Blockchain const& chain) {
+bool get_last_block_header(size_t& out_height, kth::domain::message::header& out_header, Blockchain const& chain) {
     //size_t out_height;
     if (chain.get_last_height(out_height)) {
         return chain.get_header(out_header, out_height);
@@ -126,7 +111,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     static std::chrono::time_point<std::chrono::high_resolution_clock> cache_timestamp = std::chrono::high_resolution_clock::now();
 
     size_t last_height;
-    kth::message::header header;
+    kth::domain::message::header header;
     if ( ! get_last_block_header(last_height, header, chain)) {
         return false;
     }
@@ -206,7 +191,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
     json_object["coinbasevalue"] = coinbase_reward + get_block_template_data.second /* acum fees*/;
     json_object["coinbaseaux"]["flags"] = "";
 
-    auto const header_bits = kth::chain::compact(bits);
+    auto const header_bits = kth::domain::chain::compact(bits);
     kth::uint256_t target(header_bits);
 
     std::ostringstream target_stream;

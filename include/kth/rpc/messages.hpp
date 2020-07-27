@@ -2,7 +2,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-
 #ifndef KTH_RPC_MESSAGES_HPP_
 #define KTH_RPC_MESSAGES_HPP_
 
@@ -109,7 +108,7 @@ nlohmann::json process_data_element(nlohmann::json const& json_in, bool use_test
 
         auto it = signature_.find(key);
         if (it != signature_.end()) {
-            if(json_in.find("params") != json_in.end()){
+            if (json_in.find("params") != json_in.end()){
                 return it->second(json_in, node.chain_kth(), use_testnet_rules);
             } else {
                 nlohmann::json container;

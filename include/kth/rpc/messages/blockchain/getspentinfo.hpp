@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETSPENTINFO_HPP_
@@ -58,10 +43,10 @@ bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_co
 
     kth::hash_digest hash;
     if (kth::decode_hash(hash, txid)) {
-        kth::chain::output_point point(hash, index);
+        kth::domain::chain::output_point point(hash, index);
         boost::latch latch(2);
 
-        chain.fetch_spend(point, [&](const kth::code &ec, kth::chain::input_point input) {
+        chain.fetch_spend(point, [&](const kth::code &ec, kth::domain::chain::input_point input) {
             if (ec == kth::error::success) {
                 json_object["txid"] = kth::encode_hash(input.hash());
                 json_object["index"] = input.index();
@@ -108,7 +93,7 @@ nlohmann::json process_getspentinfo(nlohmann::json const& json_in, Blockchain co
 
     std::string tx_id;
     size_t index;
-    if (!json_in_getspentinfo(json_in, tx_id, index)) //if false return error
+    if ( ! json_in_getspentinfo(json_in, tx_id, index)) //if false return error
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getspentinfo\n"

@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASHES_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASHES_HPP_
@@ -42,7 +27,7 @@ bool json_in_getblockhashes(nlohmann::json const& json_object, uint32_t& time_hi
         time_low = json_object["params"][1].get<uint32_t>();
 
         // TODO: params[2] should work if only one parameter is sent, fix the size() == 2
-        if (!json_object["params"][2].is_null() && json_object["params"][2].is_object() && json_object["params"][2].size() == 2) {
+        if ( ! json_object["params"][2].is_null() && json_object["params"][2].is_object() && json_object["params"][2].size() == 2) {
             no_orphans = json_object["params"][2]["noOrphans"];
             logical_times = json_object["params"][2]["logicalTimes"];
         }
@@ -54,9 +39,9 @@ bool json_in_getblockhashes(nlohmann::json const& json_object, uint32_t& time_hi
 }
 
 template <typename Blockchain>
-bool update_mid(size_t top_height, size_t low_height, size_t& mid, kth::message::header::ptr& header, Blockchain const& chain) {
+bool update_mid(size_t top_height, size_t low_height, size_t& mid, kth::domain::message::header::ptr& header, Blockchain const& chain) {
     size_t temp_mid = (top_height + low_height) / 2;
-    if(temp_mid == mid) {
+    if (temp_mid == mid) {
         return false;
     }
     else {
@@ -76,7 +61,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
         return false;
     }
 
-    kth::message::header::ptr genesis, top, mid_header;
+    kth::domain::message::header::ptr genesis, top, mid_header;
     getblockheader(0, genesis, chain);
     uint32_t time_genesis = genesis->timestamp();
 
@@ -115,11 +100,11 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
         valid_blocks = update_mid(top_height, low_height, mid, mid_header, chain);
     }
 
-    if(!valid_blocks) {
+    if ( ! valid_blocks) {
         return true;
     }
 
-    kth::message::header::ptr last_header_found = mid_header;
+    kth::domain::message::header::ptr last_header_found = mid_header;
     uint32_t last_time_found = mid_header->timestamp();
     size_t last_height = mid;
 
@@ -134,7 +119,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     }
 
     last_height = mid - 1;
-    if(getblockheader(last_height, last_header_found, chain) == kth::error::success) {
+    if (getblockheader(last_height, last_header_found, chain) == kth::error::success) {
         last_time_found = last_header_found->timestamp();
         while (last_time_found >= time_low && last_height >= 0) {
             hashes.push_front(std::make_pair(last_hash, last_time_found));
@@ -144,7 +129,7 @@ bool getblockhashes(nlohmann::json& json_object, int& error, std::string& error_
     }
 
     int i = 0;
-    if (!logical_times) {
+    if ( ! logical_times) {
         for (auto const & h : hashes) {
             json_object[i] = kth::encode_hash(h.first);
             ++i;
@@ -174,7 +159,7 @@ nlohmann::json process_getblockhashes(nlohmann::json const& json_in, Blockchain 
     bool no_orphans;
     bool logical_times;
 
-    if (!json_in_getblockhashes(json_in, time_high, time_low, no_orphans, logical_times))
+    if ( ! json_in_getblockhashes(json_in, time_high, time_low, no_orphans, logical_times))
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockhashes timestamp\n"

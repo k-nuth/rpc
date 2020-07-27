@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_KEOKENUTILS_HPP_
 #define KTH_RPC_MESSAGES_KEOKENUTILS_HPP_
@@ -49,14 +34,14 @@ nlohmann::json decode_keoken( Blockchain const& chain, kth::transaction_const_pt
         container["hash"] = kth::encode_hash((*tx_ptr).hash());
         switch (type) {
         case kth::keoken::message::create_asset::type: {
-            auto create = kth::keoken::message::create_asset::factory_from_data(source);
+            auto create = domain::create<kth::keoken::message::create_asset>(source);
             container["asset"] = create.name();
             container["amount"] =  create.amount();
             container["owner"] = (kth::keoken::get_first_input_addr(chain, *tx_ptr, testnet)).encoded();
             break;
         }
         case kth::keoken::message::send_tokens::type: {
-            auto message = kth::keoken::message::send_tokens::factory_from_data(source);
+            auto message = domain::create<kth::keoken::message::send_tokens>(source);
             container["asset"] = message.asset_id();
             container["amount"] = message.amount();
             auto addresses = kth::keoken::get_send_tokens_addrs(chain, *tx_ptr, testnet);
@@ -72,71 +57,71 @@ nlohmann::json decode_keoken( Blockchain const& chain, kth::transaction_const_pt
 }
 
 static
-kth::wallet::payment_address to_mainnet_addr (kth::wallet::payment_address const& input_addr) {
+kth::domain::wallet::payment_address to_mainnet_addr (kth::domain::wallet::payment_address const& input_addr) {
     //Generate an address
 
 
     uint8_t prefix;
-    if (input_addr.version() == kth::wallet::payment_address::testnet_p2sh) {
+    if (input_addr.version() == kth::domain::wallet::payment_address::testnet_p2sh) {
         //It's p2sh testnet
-        prefix = kth::wallet::payment_address::mainnet_p2sh;
-    } else if (input_addr.version() == kth::wallet::payment_address::testnet_p2kh) {
+        prefix = kth::domain::wallet::payment_address::mainnet_p2sh;
+    } else if (input_addr.version() == kth::domain::wallet::payment_address::testnet_p2kh) {
         //It's p2kh testnet
-        prefix = kth::wallet::payment_address::mainnet_p2kh;
+        prefix = kth::domain::wallet::payment_address::mainnet_p2kh;
     } else {
         // It's not testnet
         return input_addr.encoded();
     }
 
     // The wallet is testnet
-    kth::wallet::payment_address new_wallet(input_addr.hash(), prefix);
+    kth::domain::wallet::payment_address new_wallet(input_addr.hash(), prefix);
     return new_wallet;
 }
 
 static
-kth::wallet::payment_address to_testnet_addr (kth::wallet::payment_address const& input_addr) {
+kth::domain::wallet::payment_address to_testnet_addr (kth::domain::wallet::payment_address const& input_addr) {
     uint8_t testnet_prefix;
-    if (input_addr.version() == kth::wallet::payment_address::mainnet_p2sh) {
+    if (input_addr.version() == kth::domain::wallet::payment_address::mainnet_p2sh) {
         //It's p2sh mainnet
-        testnet_prefix = kth::wallet::payment_address::testnet_p2sh;
-    } else if (input_addr.version() == kth::wallet::payment_address::mainnet_p2kh) {
+        testnet_prefix = kth::domain::wallet::payment_address::testnet_p2sh;
+    } else if (input_addr.version() == kth::domain::wallet::payment_address::mainnet_p2kh) {
         //It's p2kh mainnet
-        testnet_prefix = kth::wallet::payment_address::testnet_p2kh;
+        testnet_prefix = kth::domain::wallet::payment_address::testnet_p2kh;
     } else {
         // It's not mainnet
         return input_addr.encoded();
     }
 
     // The wallet is mainnet
-    kth::wallet::payment_address testnet_wallet(input_addr.hash(), testnet_prefix);
+    kth::domain::wallet::payment_address testnet_wallet(input_addr.hash(), testnet_prefix);
     return testnet_wallet;
 }
 
 static
-kth::wallet::payment_address str_to_mainnet_addr (std::string const& input) {
+kth::domain::wallet::payment_address str_to_mainnet_addr (std::string const& input) {
     //Generate an address
-    auto input_addr = kth::wallet::payment_address(input);
+    auto input_addr = kth::domain::wallet::payment_address(input);
     return to_mainnet_addr(input_addr);
 }
 
 static
-kth::wallet::payment_address str_to_testnet_addr (std::string const& input) {
+kth::domain::wallet::payment_address str_to_testnet_addr (std::string const& input) {
     //Generate an address
-    auto input_addr = kth::wallet::payment_address(input);
+    auto input_addr = kth::domain::wallet::payment_address(input);
     return to_testnet_addr(input_addr);
 }
 
 
 static
-kth::wallet::payment_address str_to_network_wallet(bool testnet, std::string const& input) {
-    if (!testnet)
+kth::domain::wallet::payment_address str_to_network_wallet(bool testnet, std::string const& input) {
+    if ( ! testnet)
         return str_to_mainnet_addr(input);
     else
         return str_to_testnet_addr(input);
 }
 static
-kth::wallet::payment_address to_network_wallet(bool testnet, kth::wallet::payment_address const& input_addr) {
-    if (!testnet)
+kth::domain::wallet::payment_address to_network_wallet(bool testnet, kth::domain::wallet::payment_address const& input_addr) {
+    if ( ! testnet)
         return to_mainnet_addr(input_addr);
     else
         return to_testnet_addr(input_addr);

@@ -1,22 +1,6 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSBALANCE_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSBALANCE_HPP_
@@ -61,17 +45,17 @@ bool getaddressbalance(nlohmann::json& json_result, int& error, std::string& err
     uint64_t balance = 0;
     uint64_t received = 0;
     for (auto const & address : addresses) {
-        kth::wallet::payment_address payment_address(address);
+        kth::domain::wallet::payment_address payment_address(address);
         if (payment_address)
         {
             boost::latch latch(2);
-            chain.fetch_history(payment_address, INT_MAX, 0, [&](const kth::code &ec, kth::chain::history_compact::list history_compact_list) {
+            chain.fetch_history(payment_address, INT_MAX, 0, [&](const kth::code &ec, kth::domain::chain::history_compact::list history_compact_list) {
                 if (ec == kth::error::success) {
                     for (auto const & history : history_compact_list) {
-                        if (history.kind == kth::chain::point_kind::output) {
+                        if (history.kind == kth::domain::chain::point_kind::output) {
                             received += history.value;
                             boost::latch latch2(2);
-                            chain.fetch_spend(history.point, [&](const kth::code &ec, kth::chain::input_point input) {
+                            chain.fetch_spend(history.point, [&](const kth::code &ec, kth::domain::chain::input_point input) {
                                 if (ec == kth::error::not_found) {
                                     // Output not spent
                                     balance += history.value;
@@ -114,7 +98,7 @@ nlohmann::json process_getaddressbalance(nlohmann::json const& json_in, Blockcha
     std::string error_code;
 
     std::vector<std::string> payment_addresses;
-    if (!json_in_getaddressbalance(json_in, payment_addresses)) //if false return error
+    if ( ! json_in_getaddressbalance(json_in, payment_addresses)) //if false return error
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressbalance\n"

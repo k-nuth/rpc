@@ -2,7 +2,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-
 #ifndef KTH_RPC_DEFINE_HPP_
 #define KTH_RPC_DEFINE_HPP_
 

@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
 #define KTH_RPC_MESSAGES_WALLET_SENDRAWTRANSACTION_HPP_
@@ -49,13 +34,13 @@ bool json_in_sendrawtransaction(nlohmann::json const& json_object, std::string& 
 }
 
 template <typename Blockchain>
-bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& error_code, std::string const & incoming_hex, bool allowhighfees, bool use_testnet_rules, Blockchain& chain)
-{
+bool sendrawtransaction(nlohmann::json& json_object, int& error, std::string& error_code, std::string const & incoming_hex, bool allowhighfees, bool use_testnet_rules, Blockchain& chain) {
     //TODO: use allowhighfees
-    auto const tx = std::make_shared<bc::message::transaction>();
+    auto const tx = std::make_shared<kd::message::transaction>();
     kth::data_chunk out;
     kth::decode_base16(out, incoming_hex);
-    if (tx->from_data(1, out)) {
+
+    if (domain::entity_from_data(*tx, out, 1)) {
         boost::latch latch(2);
         chain.organize(tx, [&](const kth::code & ec) {
             if (ec) {
@@ -93,7 +78,7 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, Blockch
 
     std::string tx_str;
     bool allowhighfees = false;
-    if (!json_in_sendrawtransaction(json_in, tx_str, allowhighfees)) //if false return error
+    if ( ! json_in_sendrawtransaction(json_in, tx_str, allowhighfees)) //if false return error
     {
         container["result"];
         container["error"]["code"] = kth::RPC_PARSE_ERROR;

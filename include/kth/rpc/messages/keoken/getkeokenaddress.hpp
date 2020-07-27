@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
 #define KTH_RPC_MESSAGES_KEOKEN_GETKEOKENADDRESS_HPP_
@@ -47,13 +32,13 @@ bool json_in_getkeokenaddress(nlohmann::json const& json_object, std::string& pa
     try {
         auto temp = json_object["params"];
         if (temp.is_object()) {
-            if (!temp["index_start"].is_null()) {
+            if ( ! temp["index_start"].is_null()) {
                 index_start = temp["index_start"].get<size_t>();
             }
-            if (!temp["index_end"].is_null()) {
+            if ( ! temp["index_end"].is_null()) {
                 index_end = temp["index_end"].get<size_t>();
             }
-            if (!temp["address"].is_null()) {
+            if ( ! temp["address"].is_null()) {
                 payment_address = temp["address"].get<std::string>();
             }
         } else {
@@ -78,7 +63,7 @@ bool getkeokenaddress(nlohmann::json& json_object, int& error, std::string& erro
 #endif
 
     int i = 0;
-    kth::wallet::payment_address address(payment_address);
+    kth::domain::wallet::payment_address address(payment_address);
     if (address)
     {
         boost::latch latch(2);
@@ -127,7 +112,7 @@ nlohmann::json process_getkeokenaddress(nlohmann::json const& json_in, Blockchai
     std::string payment_address;
     size_t index_start;
     size_t index_end;
-    if (!json_in_getkeokenaddress(json_in, payment_address, index_start, index_end))
+    if ( ! json_in_getkeokenaddress(json_in, payment_address, index_start, index_end))
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "";

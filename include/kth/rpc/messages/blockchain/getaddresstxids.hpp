@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSTXIDS_HPP_
@@ -39,10 +24,10 @@ bool json_in_getaddresstxids(nlohmann::json const& json_object, std::vector<std:
     try {
         auto temp = json_object["params"][0];
         if (temp.is_object()) {
-            if (!temp["start"].is_null()) {
+            if ( ! temp["start"].is_null()) {
                 start_height = temp["start"];
             }
-            if (!temp["end"].is_null()) {
+            if ( ! temp["end"].is_null()) {
                 end_height = temp["end"];
             }
 
@@ -66,7 +51,7 @@ bool getaddresstxids(nlohmann::json& json_object, int& error, std::string& error
 {
     int i = 0;
     for (auto const & payment_address : payment_addresses) {
-        kth::wallet::payment_address address(payment_address);
+        kth::domain::wallet::payment_address address(payment_address);
         if (address)
         {
             boost::latch latch(2);
@@ -123,7 +108,7 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, Blockchain
     std::vector<std::string> payment_address;
     size_t start_height;
     size_t end_height;
-    if (!json_in_getaddresstxids(json_in, payment_address, start_height, end_height))
+    if ( ! json_in_getaddresstxids(json_in, payment_address, start_height, end_height))
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddresstxids\n"

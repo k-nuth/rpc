@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSDELTAS_HPP_
@@ -46,13 +31,13 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
     try {
         auto temp = json_object["params"][0];
         if (temp.is_object()) {
-            if (!temp["start"].is_null()) {
+            if ( ! temp["start"].is_null()) {
                 start_height = temp["start"].get<size_t>();
             }
-            if (!temp["end"].is_null()) {
+            if ( ! temp["end"].is_null()) {
                 end_height = temp["end"].get<size_t>();
             }
-            if (!temp["chainInfo"].is_null()) {
+            if ( ! temp["chainInfo"].is_null()) {
                 include_chain_info = temp["chainInfo"].get<bool>();
             }
 
@@ -83,15 +68,15 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
 
     int i = 0;
     for (auto const & payment_address : payment_addresses) {
-        kth::wallet::payment_address address(payment_address);
+        kth::domain::wallet::payment_address address(payment_address);
         if (address)
         {
             boost::latch latch(2);
             chain.fetch_history(address, INT_MAX, 0, [&](const kth::code &ec,
-                kth::chain::history_compact::list history_compact_list) {
+                kth::domain::chain::history_compact::list history_compact_list) {
                 if (ec == kth::error::success) {
                     for (auto const & history : history_compact_list) {
-                        if (history.kind == kth::chain::point_kind::output &&
+                        if (history.kind == kth::domain::chain::point_kind::output &&
                             history.height >= start_height && history.height <= end_height) {
                             //It's an output
                             boost::latch latch2(2);
@@ -123,7 +108,7 @@ bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& erro
                             //Check if it was spent and get the txn data
                             boost::latch latch3(2);
                             chain.fetch_spend(history.point, [&](const kth::code &ec,
-                                kth::chain::input_point input) {
+                                kth::domain::chain::input_point input) {
                                 if (ec == kth::error::success) {
                                     boost::latch latch4(2);
                                     chain.fetch_transaction(input.hash(), false, witness,
@@ -193,7 +178,7 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, Blockchai
     size_t start_height;
     size_t end_height;
     bool include_chain_info;
-    if (!json_in_getaddressdeltas(json_in, payment_address, start_height, end_height, include_chain_info))
+    if ( ! json_in_getaddressdeltas(json_in, payment_address, start_height, end_height, include_chain_info))
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressdeltas\n"

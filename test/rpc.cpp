@@ -2,9 +2,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-
 #include <kth/rpc/messages.hpp>
-include <kth/keoken/state_dto.hpp>
+
+#ifdef KTH_WITH_KEOKEN
+#include <kth/keoken/state_dto.hpp>
+#endif
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -118,8 +120,8 @@ public:
     //// ------------------------------------------------------------------------
 
     /// Get forks chain state relative to chain top.
-    kth::chain::chain_state::ptr chain_state() const {
-        return  kth::chain::chain_state::ptr();
+    kth::domain::chain::chain_state::ptr chain_state() const {
+        return  kth::domain::chain::chain_state::ptr();
     }
 
     ///// Get full chain state relative to the branch top.
@@ -195,8 +197,8 @@ public:
     void fetch_transaction(const kth::hash_digest& hash, bool require_confirmed, bool witness, kth::blockchain::safe_chain::transaction_fetch_handler handler) const {}
 
     ///// Generate fees for mining
-    //std::pair<bool, uint64_t> total_input_value(kth::chain::transaction const& tx) const;
-    //std::pair<bool, uint64_t> fees(kth::chain::transaction const& tx) const;
+    //std::pair<bool, uint64_t> total_input_value(kth::domain::chain::transaction const& tx) const;
+    //std::pair<bool, uint64_t> fees(kth::domain::chain::transaction const& tx) const;
     //bool is_missing_previous_outputs(chain::transaction const& tx) const;
     ////    bool is_double_spent(chain::transaction const& tx) const;
 
@@ -240,7 +242,7 @@ public:
     ////-------------------------------------------------------------------------
 
     ///// fetch the inpoint (spender) of an outpoint.
-    void fetch_spend(const kth::chain::output_point& outpoint, kth::blockchain::safe_chain::spend_fetch_handler handler) const {}
+    void fetch_spend(const kth::domain::chain::output_point& outpoint, kth::blockchain::safe_chain::spend_fetch_handler handler) const {}
 
     /// fetch outputs, values and spends for an address_hash.
     void fetch_history(const kth::short_hash& address_hash, size_t limit, size_t from_height, kth::blockchain::safe_chain::history_fetch_handler handler) const {}
@@ -266,9 +268,9 @@ public:
     }
 #endif
 
-  bool get_output(kth::chain::output& out_output, size_t& out_height,
+  bool get_output(kth::domain::chain::output& out_output, size_t& out_height,
                           uint32_t& out_median_time_past, bool& out_coinbase,
-                          const kth::chain::output_point& outpoint, size_t branch_height,
+                          const kth::domain::chain::output_point& outpoint, size_t branch_height,
                           bool require_confirmed) const {
         return true;
     }
@@ -327,6 +329,8 @@ public:
 
 };
 
+#ifdef KTH_WITH_KEOKEN
+
 class keoken_manager_dummy {
 public:
     void initialize_from_blockchain(){};
@@ -344,6 +348,8 @@ public:
     };
 
 };
+#endif // KTH_WITH_KEOKEN
+
 
 class full_node_dummy {
 public:

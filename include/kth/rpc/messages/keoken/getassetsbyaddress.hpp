@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_GETASSETSBYADDRESS_HPP_
 #define KTH_RPC_MESSAGES_GETASSETSBYADDRESS_HPP_
@@ -51,9 +36,9 @@ bool json_in_getassetsbyaddress(nlohmann::json const& json_object,
 template <typename KeokenManager>
 bool getassetsbyaddress(nlohmann::json& json_object,  int& error, std::string& error_code, std::string& asset_owner, bool use_testnet_rules, KeokenManager const& keoken_manager)
 {
-    kth::wallet::payment_address wallet = str_to_network_wallet(false, asset_owner);
+    kth::domain::wallet::payment_address wallet = str_to_network_wallet(false, asset_owner);
 
-    if(wallet){
+    if (wallet){
         auto assets_list = keoken_manager.get_assets_by_address(wallet);
         size_t i = 0;
         for(auto const& asset : assets_list) {
@@ -82,7 +67,7 @@ nlohmann::json process_getassetsbyaddress(nlohmann::json const& json_in, KeokenM
     std::string error_code;
     std::string asset_owner;
 
-    if (!json_in_getassetsbyaddress(json_in, asset_owner)){
+    if ( ! json_in_getassetsbyaddress(json_in, asset_owner)){
         container["result"];
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "";

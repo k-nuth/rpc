@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHEADER_HPP_
@@ -56,7 +41,7 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
         chain.fetch_block_header_txs_size(hash, [&](const kth::code &ec, kth::header_const_ptr header, 
             size_t height, const std::shared_ptr<kth::hash_list> txs, uint64_t serialized_size) {
             if (ec == kth::error::success) {
-                if (!verbose) {
+                if ( ! verbose) {
                     json_object = kth::encode_base16(header->to_data(0));
                 }
                 else {
@@ -92,7 +77,7 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
                     json_object["nextblockhash"];
 
                     kth::hash_digest nexthash;
-                    if(chain.get_block_hash(nexthash, height+1))
+                    if (chain.get_block_hash(nexthash, height+1))
                         json_object["nextblockhash"] = kth::encode_hash(nexthash);
                 }
             } else {
@@ -128,7 +113,7 @@ nlohmann::json process_getblockheader(nlohmann::json const& json_in, Blockchain 
 
     std::string hash;
     bool verbose;
-    if (!json_in_getblockheader(json_in, hash, verbose)) { //if false return error
+    if ( ! json_in_getblockheader(json_in, hash, verbose)) { //if false return error
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockheader \"hash\" ( verbose )\n"
             "\nIf verbose is false, returns a string that is serialized, "

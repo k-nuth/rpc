@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASH_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETBLOCKHASH_HPP_
@@ -48,7 +33,7 @@ template <typename Blockchain>
 bool getblockhash(nlohmann::json& json_object, int& error, std::string& error_code, const size_t height, Blockchain const& chain)
 {
     kth::hash_digest hash;
-    if(chain.get_block_hash(hash, height)){
+    if (chain.get_block_hash(hash, height)){
         json_object = kth::encode_hash(hash);
         return true;
     } else return false;
@@ -64,7 +49,7 @@ nlohmann::json process_getblockhash(nlohmann::json const& json_in, Blockchain co
     std::string error_code;
 
     size_t height;
-    if (!json_in_getblockhash(json_in, height)) //if false return error
+    if ( ! json_in_getblockhash(json_in, height)) //if false return error
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockhash height\n"

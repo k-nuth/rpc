@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
 #define KTH_RPC_MESSAGES_BLOCKCHAIN_GETADDRESSUTXOS_HPP_
@@ -42,7 +27,7 @@ bool json_in_getaddressutxos(nlohmann::json const& json_object, std::vector<std:
     try {
         auto temp = json_object["params"][0];
         if (temp.is_object()) {
-            if (!temp["chainInfo"].is_null()) {
+            if ( ! temp["chainInfo"].is_null()) {
                 chain_info = temp["chainInfo"];
             }
 
@@ -74,17 +59,17 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
     nlohmann::json temp_utxos, utxos;
     int i = 0;
     for (auto const & payment_address : payment_addresses) {
-        kth::wallet::payment_address address(payment_address);
+        kth::domain::wallet::payment_address address(payment_address);
         if (address)
         {
             chain.fetch_history(address, INT_MAX, 0, [&](const kth::code &ec,
-                kth::chain::history_compact::list history_compact_list) {
+                kth::domain::chain::history_compact::list history_compact_list) {
                 if (ec == kth::error::success) {
                     for (auto const & history : history_compact_list) {
-                        if (history.kind == kth::chain::point_kind::output) {
+                        if (history.kind == kth::domain::chain::point_kind::output) {
                             // It's outpoint
                             boost::latch latch2(2);
-                            chain.fetch_spend(history.point, [&](const kth::code &ec, kth::chain::input_point input) {
+                            chain.fetch_spend(history.point, [&](const kth::code &ec, kth::domain::chain::input_point input) {
                                 if (ec == kth::error::not_found) {
                                     // Output not spent
                                     temp_utxos[i]["address"] = address.encoded();
@@ -134,14 +119,14 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
 
             int k = 0;
             for (int j = 0; j < i ; ++j ) {
-              if(temp_utxos[j]["txid"] != "") {
+              if (temp_utxos[j]["txid"] != "") {
                 utxos[k] = temp_utxos[j];
                 ++k;
               }
             }
 
             for (auto const& r : unconfirmed) {
-                if(std::stoi (r.satoshis(), nullptr, 10) > 0) {
+                if (std::stoi (r.satoshis(), nullptr, 10) > 0) {
                   bool used = false;
 
                   for(auto const& dependant : unconfirmed) {
@@ -150,7 +135,7 @@ bool getaddressutxos(nlohmann::json& json_object, int& error, std::string& error
                       }
                   }
 
-                  if (!used) {
+                  if ( ! used) {
                       utxos[k]["address"] = r.address();
                       utxos[k]["txid"] = r.hash();
                       utxos[k]["outputIndex"] = r.index();
@@ -232,7 +217,7 @@ nlohmann::json process_getaddressutxos(nlohmann::json const& json_in, Blockchain
 
     std::vector<std::string> payment_address;
     bool chain_info;
-    if (!json_in_getaddressutxos(json_in, payment_address, chain_info))
+    if ( ! json_in_getaddressutxos(json_in, payment_address, chain_info))
     {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressutxos\n"

@@ -1,22 +1,7 @@
-/**
-* Copyright (c) 2016-2020 Knuth Project developers.
-*
-* This file is part of kth-node.
-*
-* kth-node is free software: you can redistribute it and/or
-* modify it under the terms of the GNU Affero General Public License with
-* additional permissions to the one published by the Free Software
-* Foundation, either version 3 of the License, or (at your option)
-* any later version. For more information see LICENSE.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+// Copyright (c) 2016-2020 Knuth Project developers.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 
 #ifndef KTH_RPC_MESSAGES_WALLET_CREATEASSET_HPP_
 #define KTH_RPC_MESSAGES_WALLET_CREATEASSET_HPP_
@@ -34,8 +19,8 @@ namespace kth {
 
 inline
 bool json_in_createasset(nlohmann::json const& json_object, 
-                        std::vector<kth::chain::input_point>& outputs_to_spend,  
-                        kth::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
+                        std::vector<kth::domain::chain::input_point>& outputs_to_spend,  
+                        kth::domain::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
                         std::string& asset_name, uint64_t& asset_amount) {
 
     auto const & size = json_object["params"].size();
@@ -52,7 +37,7 @@ bool json_in_createasset(nlohmann::json const& json_object,
         }
 
         std::string wallet = json_object["params"]["asset_owner"];
-        kth::wallet::payment_address read(wallet);
+        kth::domain::wallet::payment_address read(wallet);
         asset_owner = read;
         utxo_satoshis = json_object["params"]["utxo_satoshis"];
         asset_name = json_object["params"]["asset_name"];
@@ -68,8 +53,8 @@ bool json_in_createasset(nlohmann::json const& json_object,
 // template <typename Blockchain>
 inline
 bool createasset(nlohmann::json& json_object, int& error, std::string& error_code,
-                        std::vector<kth::chain::input_point>& outputs_to_spend,  
-                        kth::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
+                        std::vector<kth::domain::chain::input_point>& outputs_to_spend,  
+                        kth::domain::wallet::payment_address& asset_owner, uint64_t& utxo_satoshis, 
                         std::string& asset_name, uint64_t& asset_amount, bool use_testnet_rules) {
     json_object = kth::encode_base16(kth::keoken::wallet::tx_encode_create_asset(outputs_to_spend, asset_owner, utxo_satoshis, asset_name, asset_amount).second.to_data(true));
     return true;
@@ -85,8 +70,8 @@ nlohmann::json process_createasset(nlohmann::json const& json_in, bool use_testn
     std::string error_code;
 
 
-    std::vector<kth::chain::input_point> outputs_to_spend;
-    kth::wallet::payment_address asset_owner;
+    std::vector<kth::domain::chain::input_point> outputs_to_spend;
+    kth::domain::wallet::payment_address asset_owner;
     uint64_t utxo_satoshis; 
     std::string asset_name;
     uint64_t asset_amount;
