@@ -15,8 +15,7 @@
 namespace kth {
 
     template <typename Blockchain>
-    bool getbestblockhash(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
-    {
+    bool getbestblockhash(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain) {
         size_t top_height;
         chain.get_last_height(top_height);
         kth::hash_digest hash;
@@ -28,8 +27,7 @@ namespace kth {
     }
 
     template <typename Blockchain>
-    nlohmann::json process_getbestblockhash(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
-    {
+    nlohmann::json process_getbestblockhash(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules) {
         nlohmann::json container, result;
         container["id"] = json_in["id"];
 

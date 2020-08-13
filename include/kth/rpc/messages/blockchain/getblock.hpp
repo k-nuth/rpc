@@ -34,7 +34,7 @@ bool json_in_getblock(nlohmann::json const& json_object, std::string & hash, boo
 
 template <typename Blockchain>
 bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, const std::string & block_hash, bool verbose, Blockchain const& chain) {
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     bool witness = false;
 #else
     bool witness = true;
@@ -201,8 +201,7 @@ nlohmann::json process_getblock(nlohmann::json const& json_in, Blockchain const&
         return container;
     }
 
-    if (getblock(result, error, error_code, hash, verbose, chain))
-    {
+    if (getblock(result, error, error_code, hash, verbose, chain)) {
         container["result"] = result;
         container["error"];
     }

@@ -30,7 +30,7 @@ bool json_in_getblockhash(nlohmann::json const& json_object, size_t& height) {
 }
 
 template <typename Blockchain>
-bool getblockhash(nlohmann::json& json_object, int& error, std::string& error_code, const size_t height, Blockchain const& chain)
+bool getblockhash(nlohmann::json& json_object, int& error, std::string& error_code, size_t const height, Blockchain const& chain)
 {
     kth::hash_digest hash;
     if (chain.get_block_hash(hash, height)){
@@ -61,8 +61,7 @@ nlohmann::json process_getblockhash(nlohmann::json const& json_in, Blockchain co
         return container;
     }
 
-    if (getblockhash(result, error, error_code, height, chain))
-    {
+    if (getblockhash(result, error, error_code, height, chain)) {
         container["result"] = result;
         container["error"];
     }

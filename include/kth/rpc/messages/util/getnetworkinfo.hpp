@@ -61,8 +61,7 @@ nlohmann::json process_getnetworkinfo(nlohmann::json const& json_in, Node & node
     int error = 0;
     std::string error_code;
 
-    if (getnetworkinfo(result, error, error_code, use_testnet_rules, node))
-    {
+    if (getnetworkinfo(result, error, error_code, use_testnet_rules, node)) {
         container["result"] = result;
         container["error"];
     }

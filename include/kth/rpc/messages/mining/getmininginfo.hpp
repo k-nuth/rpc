@@ -16,8 +16,7 @@
 namespace kth {
 
     template <typename Blockchain>
-    bool getmininginfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Blockchain const& chain)
-    {
+    bool getmininginfo(nlohmann::json& json_object, int& error, std::string& error_code, bool use_testnet_rules, Blockchain const& chain) {
         auto last_block_data = get_last_block_difficulty(chain);
 
         if (std::get<0>(last_block_data)) {
@@ -53,8 +52,7 @@ namespace kth {
     }
 
     template <typename Blockchain>
-    nlohmann::json process_getmininginfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
-    {
+    nlohmann::json process_getmininginfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules) {
         nlohmann::json container, result;
         container["id"] = json_in["id"];
 

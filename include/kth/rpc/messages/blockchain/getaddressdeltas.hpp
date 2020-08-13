@@ -60,7 +60,7 @@ bool json_in_getaddressdeltas(nlohmann::json const& json_object, std::vector<std
 template <typename Blockchain>
 bool getaddressdeltas(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, size_t const& start_height, size_t const& end_height, const bool include_chain_info, Blockchain const& chain)
 {
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     bool witness = false;
 #else
     bool witness = true;
@@ -178,8 +178,7 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, Blockchai
     size_t start_height;
     size_t end_height;
     bool include_chain_info;
-    if ( ! json_in_getaddressdeltas(json_in, payment_address, start_height, end_height, include_chain_info))
-    {
+    if ( ! json_in_getaddressdeltas(json_in, payment_address, start_height, end_height, include_chain_info)) {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressdeltas\n"
             "\nReturns all changes for an address (requires addressindex to be enabled).\n"
@@ -207,8 +206,7 @@ nlohmann::json process_getaddressdeltas(nlohmann::json const& json_in, Blockchai
         return container;
     }
 
-    if (getaddressdeltas(result, error, error_code, payment_address, start_height, end_height, include_chain_info, chain))
-    {
+    if (getaddressdeltas(result, error, error_code, payment_address, start_height, end_height, include_chain_info, chain)) {
         container["result"] = result;
         container["error"];
     }

@@ -34,7 +34,7 @@ bool json_in_getkeokenblock(nlohmann::json const& json_object, std::string & has
 
 template <typename Blockchain>
 bool getkeokenblock(nlohmann::json& json_object, int& error, std::string& error_code, const std::string & block_hash, Blockchain const& chain, bool use_testnet_rules) {
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     bool witness = false;
 #else
     bool witness = true;
@@ -138,8 +138,7 @@ nlohmann::json process_getkeokenblock(nlohmann::json const& json_in, Blockchain 
         return container;
     }
 
-    if (getkeokenblock(result, error, error_code, hash, chain, use_testnet_rules))
-    {
+    if (getkeokenblock(result, error, error_code, hash, chain, use_testnet_rules)) {
         container["result"] = result;
         container["error"];
     }

@@ -35,7 +35,7 @@ bool json_in_getspentinfo(nlohmann::json const& json_object, std::string& tx_id,
 template <typename Blockchain>
 bool getspentinfo(nlohmann::json& json_object, int& error, std::string& error_code, std::string const& txid, size_t const& index, Blockchain const& chain)
 {
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     bool witness = false;
 #else
     bool witness = true;
@@ -112,8 +112,7 @@ nlohmann::json process_getspentinfo(nlohmann::json const& json_in, Blockchain co
         return container;
     }
 
-    if (getspentinfo(result, error, error_code, tx_id, index, chain))
-    {
+    if (getspentinfo(result, error, error_code, tx_id, index, chain)) {
         container["result"] = result;
         container["error"];
     }

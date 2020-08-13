@@ -155,8 +155,7 @@ nlohmann::json process_getblockheader(nlohmann::json const& json_in, Blockchain 
         return container;
     }
 
-    if (rpc_getblockheader(result, error, error_code, hash, verbose, chain))
-    {
+    if (rpc_getblockheader(result, error, error_code, hash, verbose, chain)) {
         container["result"] = result;
         container["error"];
     }

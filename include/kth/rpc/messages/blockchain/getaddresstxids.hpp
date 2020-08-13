@@ -108,8 +108,7 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, Blockchain
     std::vector<std::string> payment_address;
     size_t start_height;
     size_t end_height;
-    if ( ! json_in_getaddresstxids(json_in, payment_address, start_height, end_height))
-    {
+    if ( ! json_in_getaddresstxids(json_in, payment_address, start_height, end_height)) {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddresstxids\n"
             "\nReturns the txids for an address(es) (requires addressindex to be enabled).\n"
@@ -131,8 +130,7 @@ nlohmann::json process_getaddresstxids(nlohmann::json const& json_in, Blockchain
         return container;
     }
 
-    if (getaddresstxids(result, error, error_code, payment_address, start_height, end_height, chain))
-    {
+    if (getaddresstxids(result, error, error_code, payment_address, start_height, end_height, chain)) {
         container["result"] = result;
         container["error"];
     }

@@ -321,7 +321,7 @@ public:
     ////-------------------------------------------------------------------------
 
     //bool is_stale() const;
-    //const settings& chain_settings() const;
+    //settings const& chain_settings() const;
 
 };
 

@@ -119,8 +119,7 @@ nlohmann::json process_getaddressbalance(nlohmann::json const& json_in, Blockcha
         return container;
     }
 
-    if (getaddressbalance(result, error, error_code, payment_addresses, chain))
-    {
+    if (getaddressbalance(result, error, error_code, payment_addresses, chain)) {
         container["result"] = result;
         container["error"];
     }

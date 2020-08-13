@@ -36,7 +36,7 @@ void manager::start() {
 }
 
 void manager::stop() {
-    if (!stopped_) {
+    if ( ! stopped_) {
         zmq_.close();
         http_.stop();
     }

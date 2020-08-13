@@ -70,8 +70,7 @@ nlohmann::json process_getinfo(nlohmann::json const& json_in, Node & node, bool 
     int error = 0;
     std::string error_code;
 
-    if (getinfo(result, error, error_code, use_testnet_rules, node))
-    {
+    if (getinfo(result, error, error_code, use_testnet_rules, node)) {
         container["result"] = result;
         container["error"];
     }

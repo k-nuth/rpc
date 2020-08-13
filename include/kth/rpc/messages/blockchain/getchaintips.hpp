@@ -15,8 +15,7 @@
 namespace kth {
 
     template <typename Blockchain>
-    bool getchaintips(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
-    {
+    bool getchaintips(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain) {
         /*
         "getchaintips\n"
         "Return information about all known tips in the block tree,"
@@ -72,8 +71,7 @@ namespace kth {
     }
 
     template <typename Blockchain>
-    nlohmann::json process_getchaintips(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
-    {
+    nlohmann::json process_getchaintips(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules) {
         nlohmann::json container, result;
         container["id"] = json_in["id"];
 

@@ -96,8 +96,7 @@ nlohmann::json process_sendrawtransaction(nlohmann::json const& json_in, Blockch
         return container;
     }
 
-    if (sendrawtransaction(result, error, error_code, tx_str, allowhighfees, use_testnet_rules, chain))
-    {
+    if (sendrawtransaction(result, error, error_code, tx_str, allowhighfees, use_testnet_rules, chain)) {
         container["result"] = result;
         container["error"];
     }

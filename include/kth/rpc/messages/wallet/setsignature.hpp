@@ -82,8 +82,7 @@ nlohmann::json process_setsignature(nlohmann::json const& json_in, Blockchain& c
         return container;
     }
 
-    if (set_signature(result, error, error_code, private_key, json_signature,  tx, index, use_testnet_rules, chain))
-    {
+    if (set_signature(result, error, error_code, private_key, json_signature,  tx, index, use_testnet_rules, chain)) {
         container["result"] = result;
         container["error"];
     }

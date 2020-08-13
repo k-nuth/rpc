@@ -50,8 +50,7 @@ kth::hash_digest generate_merkle_root(std::vector<kth::hash_digest>& merkle)
     // Initial capacity is half of the original list (clear doesn't reset).
     update.reserve((merkle.size() + 1) / 2);
 
-    while (merkle.size() > 1)
-    {
+    while (merkle.size() > 1) {
         // If number of hashes is odd, duplicate last hash in the list.
         if (merkle.size() % 2 != 0)
             merkle.push_back(merkle.back());
@@ -88,7 +87,7 @@ std::vector<uint8_t> create_default_witness_commitment(std::vector<kth::hash_dig
 template <typename Blockchain>
 bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& error_code, std::chrono::nanoseconds timeout, Blockchain const& chain) {
 
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     bool witness = false;
 #else
     bool witness = true;
@@ -97,7 +96,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["capabilities"] = std::vector<std::string>{ "proposal" };
     json_object["version"] = 536870912;                          //TODO: hardcoded value
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     json_object["rules"] = std::vector<std::string>{ "csv" };
 #else
     json_object["rules"] = std::vector<std::string>{ "csv", "segwit" };
@@ -128,7 +127,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 
     json_object["previousblockhash"] = kth::encode_hash(header.hash());
 
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     json_object["sigoplimit"] = kth::get_max_block_sigops();
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
     json_object["sizelimit"] = kth::get_max_block_size();
@@ -163,7 +162,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
         transactions_json[i]["data"] = kth::encode_base16(tx_mem.raw());
         transactions_json[i]["txid"] = kth::encode_hash(tx_mem.txid());
 
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
         transactions_json[i]["hash"] = kth::encode_hash(tx_mem.txid());
 #else
         transactions_json[i]["hash"] = kth::encode_hash(tx_mem.hash());
@@ -179,7 +178,7 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 //        fees += tx_mem.tx_fees;
 
     }
-#ifndef KTH_CURRENCY_BCH
+#if ! defined(KTH_CURRENCY_BCH)
     if (witness) {
         json_object["default_witness_commitment"] = kth::encode_base16(create_default_witness_commitment(witness_gen));
     }

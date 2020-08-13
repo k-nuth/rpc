@@ -36,7 +36,7 @@ void zmq::close(){
 
 void zmq::start(){
     // Only send messages when the chain is not stale
-    if (!chain_.is_stale()){
+    if ( ! chain_.is_stale()){
         start_sending_messages();
     } else {
         // Check until the chain is no longer stale
@@ -100,7 +100,7 @@ static int zmq_send_multipart(void *sock, const void *data, size_t size, ...) {
 
         zmq_msg_close(&msg);
 
-        if (!data) break;
+        if ( ! data) break;
 
         size = va_arg(args, size_t);
     }
@@ -136,7 +136,7 @@ bool zmq::send_hash_block_handler(kth::code ec, size_t height,
                 const char *MSG_RAWTX = "rawtx";
                 auto const temp = tx.to_data(1);
                 success = send_message(MSG_RAWTX, &(*temp.begin()), temp.size());
-                if (!success) {
+                if ( ! success) {
                     return success;
                 }
             }
@@ -145,7 +145,7 @@ bool zmq::send_hash_block_handler(kth::code ec, size_t height,
             for (unsigned int i = 0; i < 32; i++)
                 data[31 - i] = temp.begin()[i];
             success = send_message(MSG_HASHBLOCK, data, 32);
-            if (!success) {
+            if ( ! success) {
                 break;
             }
         }

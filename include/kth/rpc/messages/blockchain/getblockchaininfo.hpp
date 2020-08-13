@@ -14,10 +14,9 @@
 
 namespace kth {
     template <typename Blockchain>
-    bool getblockchaininfo(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain)
-    {
+    bool getblockchaininfo(nlohmann::json& json_object, int& error, std::string& error_code, Blockchain const& chain) {
 
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     bool witness = false;
 #else
     bool witness = true;
@@ -58,8 +57,7 @@ namespace kth {
     }
 
     template <typename Blockchain>
-    nlohmann::json process_getblockchaininfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules)
-    {
+    nlohmann::json process_getblockchaininfo(nlohmann::json const& json_in, Blockchain const& chain, bool use_testnet_rules) {
         nlohmann::json container, result;
         container["id"] = json_in["id"];
 

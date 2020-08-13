@@ -125,8 +125,7 @@ nlohmann::json process_newwallet(nlohmann::json const& json_in, Node& node, bool
         container["error"]["message"] = "Parse error.";
         return container;
     }
-    if (newwallet(result, compressed, mainnet, use_testnet_rules, node))
-    {
+    if (newwallet(result, compressed, mainnet, use_testnet_rules, node)) {
         container["result"] = result;
         container["error"];
     }

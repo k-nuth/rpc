@@ -74,8 +74,7 @@ nlohmann::json process_getassetsbyaddress(nlohmann::json const& json_in, KeokenM
         return container;
     }
 
-    if (getassetsbyaddress(result, error, error_code, asset_owner, use_testnet_rules, keoken_manager))
-    {
+    if (getassetsbyaddress(result, error, error_code, asset_owner, use_testnet_rules, keoken_manager)) {
         container["result"] = result;
         container["error"];
     }

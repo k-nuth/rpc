@@ -44,7 +44,7 @@ bool json_in_getaddressmempool(nlohmann::json const& json_object, std::vector<st
 
 template <typename Blockchain>
 bool getaddressmempool(nlohmann::json& json_object, int& error, std::string& error_code, std::vector<std::string> const& payment_addresses, Blockchain const& chain, bool use_testnet_rules) {
-#ifdef KTH_CURRENCY_BCH
+#if defined(KTH_CURRENCY_BCH)
     bool witness = false;
 #else
     bool witness = true;
@@ -79,8 +79,7 @@ nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, Blockcha
     std::string error_code;
 
     std::vector<std::string> payment_addresses;
-    if ( ! json_in_getaddressmempool(json_in, payment_addresses))
-    {
+    if ( ! json_in_getaddressmempool(json_in, payment_addresses)) {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getaddressmempool\n"
                 "\nReturns all mempool deltas for an address (requires addressindex to be enabled).\n"
@@ -107,8 +106,7 @@ nlohmann::json process_getaddressmempool(nlohmann::json const& json_in, Blockcha
         return container;
     }
 
-    if (getaddressmempool(result, error, error_code, payment_addresses, chain, use_testnet_rules))
-    {
+    if (getaddressmempool(result, error, error_code, payment_addresses, chain, use_testnet_rules)) {
         container["result"] = result;
         container["error"];
     }

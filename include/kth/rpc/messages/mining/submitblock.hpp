@@ -43,7 +43,7 @@ void setcoinbasereserved(std::shared_ptr<kd::message::block> block){
     }
     kth::data_stack stack{};
     stack.insert(stack.begin(), stack_s);
-#ifndef KTH_CURRENCY_BCH
+#if ! defined(KTH_CURRENCY_BCH)
     block->transactions()[0].inputs()[0].set_witness(kth::domain::chain::witness(stack));
 #endif
 }
@@ -54,7 +54,7 @@ bool submitblock(nlohmann::json& json_object, int& error, std::string& error_cod
     kth::data_chunk out;
     kth::decode_base16(out, incoming_hex);
     if (domain::entity_from_data(*block, out, 1)) {
-#ifndef KTH_CURRENCY_BCH
+#if ! defined(KTH_CURRENCY_BCH)
         if ( ! block->transactions()[0].is_segregated()) {
             setcoinbasereserved(block);
         }
@@ -98,8 +98,7 @@ nlohmann::json process_submitblock(nlohmann::json const& json_in, Blockchain& ch
         return container;
     }
 
-    if (submitblock(result, error, error_code, block_str, use_testnet_rules, chain))
-    {
+    if (submitblock(result, error, error_code, block_str, use_testnet_rules, chain)) {
         container["result"] = result;
         container["error"];
     }

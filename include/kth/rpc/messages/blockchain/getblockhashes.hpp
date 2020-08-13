@@ -159,8 +159,7 @@ nlohmann::json process_getblockhashes(nlohmann::json const& json_in, Blockchain 
     bool no_orphans;
     bool logical_times;
 
-    if ( ! json_in_getblockhashes(json_in, time_high, time_low, no_orphans, logical_times))
-    {
+    if ( ! json_in_getblockhashes(json_in, time_high, time_low, no_orphans, logical_times)) {
         container["error"]["code"] = kth::RPC_PARSE_ERROR;
         container["error"]["message"] = "getblockhashes timestamp\n"
             "\nReturns array of hashes of blocks within the timestamp range provided.\n"
@@ -185,8 +184,7 @@ nlohmann::json process_getblockhashes(nlohmann::json const& json_in, Blockchain 
         return container;
     }
 
-    if (getblockhashes(result, error, error_code, time_high, time_low, no_orphans, logical_times, chain))
-    {
+    if (getblockhashes(result, error, error_code, time_high, time_low, no_orphans, logical_times, chain)) {
         container["result"] = result;
         container["error"];
     }
