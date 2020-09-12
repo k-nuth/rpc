@@ -47,8 +47,9 @@ namespace kth {
                 json_object["pruned"] = false;
                 json_object["pruneheight"] = 0;
                 json_object["softforks"] = nlohmann::json::array(); //TODO Check softforks
+#if ! defined(KTH_CURRENCY_BCH)
                 json_object["bip9_softforks"] = nlohmann::json::array(); //TODO Check softforks
-
+#endif
             }
             latch.count_down();
         });
