@@ -27,8 +27,8 @@ namespace kth {
         //TODO: check size and weight on mainnet, testnet is sending 0s
         //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
 
-        json_object["currentblocksize"] = kth::get_max_block_size();
-        json_object["currentblockweight"] = kth::get_max_block_size();
+        json_object["currentblocksize"] = kth::get_max_block_size(domain::config::network::mainnet);
+        json_object["currentblockweight"] = kth::get_max_block_size(domain::config::network::mainnet);
         json_object["currentblocktx"] = 0;
 
         json_object["difficulty"] = std::get<2>(last_block_data);

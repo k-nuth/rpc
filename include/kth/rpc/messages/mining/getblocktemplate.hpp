@@ -130,8 +130,8 @@ bool getblocktemplate(nlohmann::json& json_object, int& error, std::string& erro
 #if defined(KTH_CURRENCY_BCH)
     json_object["sigoplimit"] = kth::get_max_block_sigops();
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
-    json_object["sizelimit"] = kth::get_max_block_size();
-    json_object["weightlimit"] = kth::get_max_block_size();
+    json_object["sizelimit"] = kth::get_max_block_size(domain::config::network::mainnet);
+    json_object["weightlimit"] = kth::get_max_block_size(domain::config::network::mainnet);
 #else
     json_object["sigoplimit"] = kth::max_fast_sigops;
     //TODO(fernando): check what to do with the 2018-May-15 Hard Fork
