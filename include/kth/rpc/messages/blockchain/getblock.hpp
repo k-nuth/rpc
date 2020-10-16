@@ -47,7 +47,7 @@ bool getblock(nlohmann::json& json_object, int& error, std::string& error_code, 
 
             boost::latch latch(2);
             chain.fetch_block_header_txs_size(hash, [&](const kth::code &ec, kth::header_const_ptr header,
-                size_t height, const std::shared_ptr<kth::hash_list> txs, uint64_t serialized_size)
+                size_t height, std::shared_ptr<kth::hash_list> txs, uint64_t serialized_size)
             {
                 if (ec == kth::error::success) {
                         json_object["hash"] = block_hash;

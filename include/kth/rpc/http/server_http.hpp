@@ -466,7 +466,7 @@ namespace SimpleWeb {
     template<class socket_type>
     class Server : public ServerBase<socket_type> {};
 
-    typedef boost::asio::ip::tcp::socket HTTP;
+    using HTTP = boost::asio::ip::tcp::socket;
 
     template<>
     class Server<HTTP> : public ServerBase<HTTP> {

@@ -39,7 +39,7 @@ bool rpc_getblockheader(nlohmann::json& json_object, int& error, std::string& er
 
         boost::latch latch(2);
         chain.fetch_block_header_txs_size(hash, [&](const kth::code &ec, kth::header_const_ptr header, 
-            size_t height, const std::shared_ptr<kth::hash_list> txs, uint64_t serialized_size) {
+            size_t height, std::shared_ptr<kth::hash_list> txs, uint64_t serialized_size) {
             if (ec == kth::error::success) {
                 if ( ! verbose) {
                     json_object = kth::encode_base16(header->to_data(0));
