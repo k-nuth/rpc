@@ -339,11 +339,11 @@ add_library(kth-rpc ${MODE}
     src/manager.cpp
 )
 
-if (ENABLE_POSITION_INDEPENDENT_CODE) 
+if (ENABLE_POSITION_INDEPENDENT_CODE)
   set_property(TARGET kth-rpc PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif(ENABLE_POSITION_INDEPENDENT_CODE)
 
-  
+
 target_include_directories(kth-rpc PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
@@ -478,7 +478,7 @@ set(_kth_headers
         kth/rpc/messages/blockchain/getdifficulty.hpp
         kth/rpc/messages/blockchain/getchaintips.hpp
         kth/rpc/messages/blockchain/getaddressmempool.hpp
-        
+
         kth/rpc/messages/mining/getmininginfo.hpp
         kth/rpc/messages/util/getinfo.hpp
         kth/rpc/messages/util/getnetworkinfo.hpp
