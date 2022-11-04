@@ -1,7 +1,9 @@
 <!-- <a target="_blank" href="http://semver.org">![Version][badge.version]</a> -->
 <!-- <a target="_blank" href="https://cirrus-ci.com/github/k-nuth/rpc">![Build Status][badge.Cirrus]</a> -->
 
-# RPC <a target="_blank" href="https://github.com/k-nuth/rpc/releases">![Github Releases][badge.release]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/rpc">![Build status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/projects/k-nuth/rpc">![Build Status][badge.Appveyor]</a> <a href="#">![CPP][badge.cpp]</a> <a target="_blank" href="https://t.me/knuth_cash">![Telegram][badge.telegram]</a> <a target="_blank" href="https://k-nuth.slack.com/">![Slack][badge.slack]</a>
+# RPC (deprecated) <a target="_blank" href="https://github.com/k-nuth/rpc/releases">![Github Releases][badge.release]</a> <a target="_blank" href="https://travis-ci.org/k-nuth/rpc">![Build status][badge.Travis]</a> <a target="_blank" href="https://ci.appveyor.com/projects/k-nuth/rpc">![Build Status][badge.Appveyor]</a> <a href="#">![CPP][badge.cpp]</a> <a target="_blank" href="https://t.me/knuth_cash">![Telegram][badge.telegram]</a> <a target="_blank" href="https://k-nuth.slack.com/">![Slack][badge.slack]</a>
+
+# *Warning*: This module is obsolete and out of maintenance.
 
 > JSON-RPC library
 
